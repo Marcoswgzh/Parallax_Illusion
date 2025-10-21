@@ -1,5 +1,5 @@
 # Setup
-## On mac os
+## On Mac OS
 For mac install with homebrew:
 ```
 brew install cmake
@@ -16,11 +16,13 @@ Now create a .env file in the root directory and add the following:
 ```
 OPENCV_PATH="path-to-opencv-installation"
 ```
-NOTE: On mac os intel you might need to remove the version from the end of the path to make it work for the next steps.
+NOTE: On Mac OS Intel you might need to remove the version from the end of the path to make it work for the next steps.
 
 Now try building from the root directory with:
+```
 cmake .
 make
+```
 
 Execute with:
 ./parallax
@@ -35,8 +37,7 @@ TODO
 # Code 'rules'
 - Every header file should be in the same directory as it's corresponding .cpp file
 
-
-# Git Flow
+## Git Flow
 
 - Never commit or merge to main
 - Work from the dev branch, only merge to the dev branch with feature branches (so generally no commits to the dev branch)

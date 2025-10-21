@@ -1,5 +1,7 @@
+// ORDER MATTERS: glad.h must be included before any GLFW or OpenGL libraries.
+#include <glad.h>
+
 #include <GLFW/glfw3.h>
-#include <cstdlib>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
@@ -50,6 +52,8 @@ int main() {
     std::vector<cv::Rect> faces;
     face_cascade.detectMultiScale(gray_frame, faces, 1.3, 5);
 
+    // TODO: Drawing this isn't necessary for the final product (so only use
+    // coordinates calculated by this)
     // Draw a rectangle around each face
     for (cv::Rect face : faces) {
       cv::Point point1(face.x, face.y);
@@ -74,7 +78,6 @@ int main() {
     cv::imshow("Eye Tracking", frame);
 
     // Exit on q key pressed
-    // TODO: Make sure that value 1 doesn't slow down the display
     if (cv::waitKey(1) == 'q')
       break;
   }
