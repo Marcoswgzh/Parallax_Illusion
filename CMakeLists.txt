@@ -46,9 +46,17 @@ string(REGEX REPLACE "^[=;]+" "" OpenCV_ENV "${CMAKE_MATCH_1}")
 set(OpenCV_DIR "${OpenCV_ENV}/4.12.0_11/lib/cmake/opencv4")
 message(STATUS "Using opencv in directory: ${OpenCV_DIR}")
 
-# Find and link opencv
+# Find opencv
 find_package(OpenCV REQUIRED)
-target_link_libraries(parallax ${OpenCV_LIBS})
+
+# Find OpenGL
+find_package(OpenGL REQUIRED)
+
+# Compile GLFW
+add_subdirectory(external/glfw-3.4)
+
+# Link all dependencies
+target_link_libraries(parallax ${OpenCV_LIBS} glfw OpenGL::GL)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 

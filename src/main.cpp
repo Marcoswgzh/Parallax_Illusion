@@ -1,3 +1,4 @@
+#include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <iostream>
 #include <opencv2/opencv.hpp>

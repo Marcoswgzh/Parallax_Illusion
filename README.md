@@ -13,8 +13,10 @@ realpath "$(brew --prefix opencv)"
 ```
 
 Now create a .env file in the root directory and add the following:
+```
 OPENCV_PATH="path-to-opencv-installation"
-(on mac os intel you might need to remove the version from the end of the path to make it work)
+```
+NOTE: On mac os intel you might need to remove the version from the end of the path to make it work for the next steps.
 
 Now try building from the root directory with:
 cmake .
