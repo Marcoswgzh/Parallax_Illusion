@@ -2,8 +2,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-extern char **environ;
-
 int main() {
   // Convert OpenCV path predefined macro to string
   std::string opencv_string_path(OPENCV_PATH);
