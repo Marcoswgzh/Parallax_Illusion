@@ -3,89 +3,61 @@
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <iostream>
-#include <opencv2/opencv.hpp>
+
+#include "detection/detection.hpp"
+#include "render_triangle.hpp"
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+  glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow *window) {
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, true);
+}
 
 int main() {
-  // Convert OpenCV path predefined macro to string
-  std::string opencv_string_path(OPENCV_PATH);
+  glfwInit();
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // only for apple?
 
-  // Load face haarcascade classifier
-  cv::CascadeClassifier face_cascade;
-  if (!face_cascade.load(opencv_string_path +
-                         "/4.12.0_11/share/opencv4/haarcascades/"
-                         "haarcascade_frontalface_default.xml")) {
-    std::cerr << "Error loading Haar cascade file." << std::endl;
+  GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+  if (window == NULL) {
+    std::cout << "Failed to create GLFW window" << std::endl;
+    glfwTerminate();
+    return -1;
+  }
+  glfwMakeContextCurrent(window);
+
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
 
-  // Load eye haarcascade classifier
-  cv::CascadeClassifier eye_cascade;
-  if (!eye_cascade.load(opencv_string_path +
-                        "/4.12.0_11/share/opencv4/haarcascades/"
-                        "haarcascade_eye_tree_eyeglasses.xml")) {
-    std::cerr << "Error loading Haar cascade file." << std::endl;
-    return -1;
+  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+  float triangle[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+  TriangleRenderer renderer(triangle);
+
+  // Event loop
+  while (!glfwWindowShouldClose(window)) {
+    // First handle input
+    processInput(window);
+
+    // Handle rendering here
+    // Set a background color
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    renderer.draw();
+
+    // Swap buffers (refresh the screen with the created render)
+    glfwSwapBuffers(window);
+    glfwPollEvents();
   }
 
-  // Open the camera
-  cv::VideoCapture cap(0);
-  if (!cap.isOpened()) {
-    std::cerr << "Error: Could not open camera" << std::endl;
-    return -1;
-  }
-
-  // Define colors
-  cv::Scalar blue(255, 0, 0);
-  cv::Scalar green(0, 255, 0);
-
-  cv::Mat frame, gray_frame, roi_gray, roi_color;
-  while (true) {
-    // Read the next frame
-    cap.read(frame);
-    if (frame.empty())
-      break;
-
-    // Transform frame to grey frame for processing
-    cv::cvtColor(frame, gray_frame, cv::COLOR_BGR2GRAY);
-
-    // Detect faces
-    std::vector<cv::Rect> faces;
-    face_cascade.detectMultiScale(gray_frame, faces, 1.3, 5);
-
-    // TODO: Drawing this isn't necessary for the final product (so only use
-    // coordinates calculated by this)
-    // Draw a rectangle around each face
-    for (cv::Rect face : faces) {
-      cv::Point point1(face.x, face.y);
-      cv::Point point2(face.x + face.width, face.y + face.height);
-      cv::rectangle(frame, point1, point2, blue, 2);
-
-      // Set the face region as the roi
-      roi_gray = gray_frame(face);
-      roi_color = frame(face);
-
-      // Detect eyes in the face region
-      std::vector<cv::Rect> eyes;
-      eye_cascade.detectMultiScale(roi_gray, eyes);
-      for (cv::Rect eye : eyes) {
-        cv::Point eye_point1(eye.x, eye.y);
-        cv::Point eye_point2(eye.x + eye.width, eye.y + eye.height);
-        cv::rectangle(roi_color, eye_point1, eye_point2, green, 2);
-      }
-    }
-
-    // Display the captured frame
-    cv::imshow("Eye Tracking", frame);
-
-    // Exit on q key pressed
-    if (cv::waitKey(1) == 'q')
-      break;
-  }
-
-  // Free the camera capture
-  cap.release();
-  cv::destroyAllWindows();
-
+  // detect_and_show();
+  glfwTerminate();
   return 0;
 }

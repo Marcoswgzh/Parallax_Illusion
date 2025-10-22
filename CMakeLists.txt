@@ -7,7 +7,8 @@ if(NOT "${CMAKE_SOURCE_DIR}/build" STREQUAL "${CMAKE_BINARY_DIR}")
 endif()
 
 # Include all .cpp files from src as source files
-file(GLOB SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES src/*.cpp)
+message(STATUS "Linking the following sources: ${SOURCES}")
 
 add_executable(parallax ${SOURCES})
 
