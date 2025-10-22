@@ -5,10 +5,11 @@
 
 class TriangleRenderer {
 public:
-  TriangleRenderer(float vertices[]);
+  TriangleRenderer(float triangles[], int n_traingles);
   void draw();
 
 private:
+  int n_traingles;
   unsigned int VAO;
 };
 

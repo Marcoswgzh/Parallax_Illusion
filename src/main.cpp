@@ -12,7 +12,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window) {
+void process_input(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 }
@@ -37,19 +37,26 @@ int main() {
     return -1;
   }
 
+  // Set a callback function for window resizing
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
   // Initialize shaders and set them as the currently used
   Shader shaders;
   shaders.use();
 
-  float triangle[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
-  TriangleRenderer renderer(triangle);
+  float triangle[] = {
+      0.5f, -1.0f, 0.0f, 1.0f, 0.0f,  0.0f, -0.5f, -1.0f, 0.0f,
+      0.0f, 1.0f,  0.0f, 0.0f, -0.1f, 0.0f, 0.0f,  0.0f,  1.0f,
+
+      0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, -0.5f, 0.0f,  0.0f,
+      0.0f, 1.0f,  0.0f, 0.0f, 0.9f,  0.0f, 0.0f,  0.0f,  1.0f,
+  };
+  TriangleRenderer renderer(triangle, 2);
 
   // Event loop
   while (!glfwWindowShouldClose(window)) {
     // First handle input
-    processInput(window);
+    process_input(window);
 
     // Handle rendering here
     // Set a background color
