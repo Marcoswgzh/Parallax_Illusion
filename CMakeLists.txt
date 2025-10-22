@@ -49,20 +49,23 @@ message(STATUS "Using opencv in directory: ${OpenCV_DIR}")
 # Find opencv
 find_package(OpenCV REQUIRED)
 
-# Compile Glad
-add_library(glad external/glad/glad.c)
-
-# Looks in external/glad for header files and adds them to all targets which include it.
-target_include_directories(glad PUBLIC external/glad)
-
 # Find OpenGL
 find_package(OpenGL REQUIRED)
 
 # Compile GLFW
 add_subdirectory(external/glfw-3.4)
 
+# Compile Glad
+add_library(glad external/glad/glad.c)
+
+# Looks in external/glad for header files and adds them to all targets which include it.
+target_include_directories(glad PUBLIC external/glad)
+
+# Compile glm
+add_subdirectory(external/glm-1.0.2)
+
 # Link all dependencies
-target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} glfw glad OpenGL::GL)
+target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
