@@ -18,20 +18,27 @@ OPENCV_PATH="path-to-opencv-installation"
 ```
 NOTE: On Mac OS Intel you might need to remove the version from the end of the path to make it work for the next steps.
 
-Now try building from the root directory with:
-```
-cmake .
-make
-```
-
-Execute with:
-./parallax
-
 ## On windows
 TODO
 
 ## On linux
 TODO
+
+
+# How to run
+Create a build directory in the root of the project. This is only necessary if it doesn't exist yet. 
+It could be that vscode creates one for you, then you only have to go into it (don't worry about the files already in it).
+```
+mkdir build
+cd build
+```
+
+Then inside of the build directory run the following to compile and run:
+```
+cmake ..
+make
+./parallax
+```
 
 
 # Code 'rules'
