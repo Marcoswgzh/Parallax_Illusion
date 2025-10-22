@@ -10,10 +10,6 @@ public:
 
 private:
   unsigned int VAO;
-  unsigned int shaderProgram;
-
-  unsigned int load_shader(char const *shaderSource, GLenum shaderType);
-  void setup_shaders();
 };
 
 #endif

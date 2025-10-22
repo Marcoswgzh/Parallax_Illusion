@@ -6,6 +6,7 @@
 
 #include "detection/detection.hpp"
 #include "render_triangle.hpp"
+#include "shaders.hpp"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
@@ -37,6 +38,10 @@ int main() {
   }
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+  // Initialize shaders and set them as the currently used
+  Shader shaders;
+  shaders.use();
 
   float triangle[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
   TriangleRenderer renderer(triangle);
