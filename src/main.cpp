@@ -4,11 +4,12 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 
 #include "detection/detection.hpp"
-#include "projection.hpp"
-#include "render_triangle.hpp"
-#include "shaders.hpp"
+#include "render/render_triangle.hpp"
+#include "shaders/shaders.hpp"
+#include "view/projection.hpp"
 
 // Initial screen size (not constant)
 int width = 800;
@@ -24,6 +25,7 @@ float camera_speed = 0.02;
 float camera_view_x = 0;
 float camera_view_y = 0;
 float camera_view_z = 0;
+float camera_angle_delta = 1;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
@@ -33,6 +35,8 @@ void process_input(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
+  // TODO: These are very basic move opperations, improve by moving in the look
+  // direction
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
     camera_z += camera_speed;
     camera_view_z += camera_speed;
@@ -62,6 +66,20 @@ void process_input(GLFWwindow *window) {
     camera_y += camera_speed;
     camera_view_y += camera_speed;
   }
+
+  // Control camera perspective with keys
+  // TODO:
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+  }
 }
 
 int main() {
@@ -88,11 +106,17 @@ int main() {
   // Set a callback function for window resizing
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+  // Enable depth testing (closer objects are drawn over further objects)
+  glEnable(GL_DEPTH_TEST);
+
+  // Set a background color
+  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
   // Initialize shaders and set them as the currently used
   Shader shaders;
   shaders.use();
 
-  float triangles[] = {
+  vector<float> triangles = {
       0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
       1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
@@ -107,6 +131,7 @@ int main() {
   };
   int n_triangles = 4;
   TriangleRenderer renderer;
+  int piramid_render_index = renderer.add(triangles, n_triangles);
 
   // Use the width and height from the viewport
   int projector_width, projector_height;
@@ -118,10 +143,7 @@ int main() {
     // First handle input
     process_input(window);
 
-    // Handle rendering here
-    // Set a background color
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Project the triangles
     glm::mat4 view = glm::lookAt(
@@ -130,22 +152,23 @@ int main() {
         glm::vec3(0, 1, 0));                                    // Camera angle
     projector.set_view_projection(view);
 
-    float projected_triangles[18 * n_triangles];
+    vector<float> projected_triangles;
+    projected_triangles.reserve(18 * n_triangles);
     for (int i = 0; i < 18 * n_triangles / 6; i++) {
       glm::vec4 projected = projector.get_view_projection() *
                             glm::vec4(triangles[i * 6], triangles[i * 6 + 1],
                                       triangles[i * 6 + 2], 1.0f);
 
       glm::vec3 normalized_projection = glm::vec3(projected) / projected.w;
-      projected_triangles[i * 6] = normalized_projection.x;
-      projected_triangles[i * 6 + 1] = normalized_projection.y;
-      projected_triangles[i * 6 + 2] = normalized_projection.z;
-      projected_triangles[i * 6 + 3] = triangles[i * 6 + 3];
-      projected_triangles[i * 6 + 4] = triangles[i * 6 + 4];
-      projected_triangles[i * 6 + 5] = triangles[i * 6 + 5];
+      projected_triangles.push_back(normalized_projection.x);
+      projected_triangles.push_back(normalized_projection.y);
+      projected_triangles.push_back(normalized_projection.z);
+      projected_triangles.push_back(triangles[i * 6 + 3]);
+      projected_triangles.push_back(triangles[i * 6 + 4]);
+      projected_triangles.push_back(triangles[i * 6 + 5]);
     }
 
-    renderer.update(projected_triangles, n_triangles);
+    renderer.replace(0, projected_triangles, n_triangles, n_triangles);
     renderer.draw();
 
     // Swap buffers (refresh the screen with the created render)
