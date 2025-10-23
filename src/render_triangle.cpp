@@ -4,8 +4,11 @@
 #include <iostream>
 using namespace std;
 
-TriangleRenderer::TriangleRenderer(float triangles[], int n_traingles) {
+TriangleRenderer::TriangleRenderer() {}
+
+void TriangleRenderer::update(float triangles[], int n_traingles) {
   this->n_traingles = n_traingles;
+
   glGenVertexArrays(1, &VAO);
   glBindVertexArray(VAO);
 
@@ -31,5 +34,7 @@ TriangleRenderer::TriangleRenderer(float triangles[], int n_traingles) {
 
 void TriangleRenderer::draw() {
   glBindVertexArray(VAO);
+
+  // TODO: Make sure last argument is correct
   glDrawArrays(GL_TRIANGLES, 0, n_traingles * 6);
 }

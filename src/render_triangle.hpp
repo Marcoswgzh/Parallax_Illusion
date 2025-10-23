@@ -5,7 +5,8 @@
 
 class TriangleRenderer {
 public:
-  TriangleRenderer(float triangles[], int n_traingles);
+  TriangleRenderer();
+  void update(float triangles[], int n_traingles);
   void draw();
 
 private:
