@@ -7,7 +7,8 @@ if(NOT "${CMAKE_SOURCE_DIR}/build" STREQUAL "${CMAKE_BINARY_DIR}")
 endif()
 
 # Include all .cpp files from src as source files
-file(GLOB SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES src/*.cpp)
+message(STATUS "Linking the following sources: ${SOURCES}")
 
 add_executable(parallax ${SOURCES})
 
@@ -74,3 +75,9 @@ target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
+
+# Copy shaders to the build
+file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/vertex_shader.glsl
+     DESTINATION ${CMAKE_BINARY_DIR}/)
+file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/fragmentation_shader.glsl
+     DESTINATION ${CMAKE_BINARY_DIR}/)

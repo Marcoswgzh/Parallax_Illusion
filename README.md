@@ -42,7 +42,7 @@ make
 
 
 # Code 'rules'
-- Every header file should be in the same directory as it's corresponding .cpp file
+- Every header file should be in the same directory as it's corresponding .cpp file and should have the same name as that .cpp file.
 
 ## Git Flow
 
@@ -50,6 +50,7 @@ make
 - Work from the dev branch, only merge to the dev branch with feature branches (so generally no commits to the dev branch)
 - Creating a feature branch:
     - git checkout dev (make sure you branch from dev)
+    - git pull origin dev (make sure you have the latest changes before branching)
     - git checkout -b feature/your-feature-name (create and go to the branch)
 - Using a feature branch:
     - when on the feature branch you can commit all your changes here:
