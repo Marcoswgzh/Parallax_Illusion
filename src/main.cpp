@@ -14,6 +14,17 @@
 int width = 800;
 int height = 600;
 
+// Camera position
+float camera_x = 0;
+float camera_y = 0.5;
+float camera_z = -3;
+float camera_speed = 0.02;
+
+// Camera look at
+float camera_view_x = 0;
+float camera_view_y = 0;
+float camera_view_z = 0;
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
@@ -21,6 +32,36 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 void process_input(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
+
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    camera_z += camera_speed;
+    camera_view_z += camera_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    camera_z -= camera_speed;
+    camera_view_z -= camera_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    camera_x += camera_speed;
+    camera_view_x += camera_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    camera_x -= camera_speed;
+    camera_view_x -= camera_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+    camera_y -= camera_speed;
+    camera_view_y -= camera_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+    camera_y += camera_speed;
+    camera_view_y += camera_speed;
+  }
 }
 
 int main() {
@@ -53,16 +94,16 @@ int main() {
 
   float triangles[] = {
       0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
-      0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
+      1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
-      0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, 1.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,  1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 0.0f,
 
-      0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
-      0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  0.0f,  0.0f, -1.0f,
+      0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
 
-      0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  0.0f,  0.0f, 1.0f,
+      0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+      1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f,  1.0f, 0.0f,
   };
   int n_triangles = 4;
   TriangleRenderer renderer;
@@ -83,8 +124,10 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Project the triangles
-    glm::mat4 view = glm::lookAt(glm::vec3(1.0, 0.5, -3.0), glm::vec3(0, 0, 0),
-                                 glm::vec3(0, 1, 0));
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(camera_x, camera_y, camera_z), // Camera position
+        glm::vec3(camera_view_x, camera_view_y, camera_view_z), // Camera view
+        glm::vec3(0, 1, 0));                                    // Camera angle
     projector.set_view_projection(view);
 
     float projected_triangles[18 * n_triangles];
