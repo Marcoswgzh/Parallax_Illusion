@@ -11,3 +11,4 @@ parallax
 
 # Ignore the invironment file (content is specific to each user)
 .env
+*.a

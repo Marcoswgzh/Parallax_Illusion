@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 project(parallax)
 
+# Make sure cmake is run from the correct directory
+if(NOT "${CMAKE_SOURCE_DIR}/build" STREQUAL "${CMAKE_BINARY_DIR}")
+    message(FATAL_ERROR "Out of source build required. Run from ./build instead.\nYou can safely remove the generated files in your current directory.")
+endif()
+
 # Include all .cpp files from src as source files
-file(GLOB SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES src/*.cpp)
+message(STATUS "Linking the following sources: ${SOURCES}")
 
 add_executable(parallax ${SOURCES})
 
@@ -46,9 +52,32 @@ string(REGEX REPLACE "^[=;]+" "" OpenCV_ENV "${CMAKE_MATCH_1}")
 set(OpenCV_DIR "${OpenCV_ENV}/4.12.0_11/lib/cmake/opencv4")
 message(STATUS "Using opencv in directory: ${OpenCV_DIR}")
 
-# Find and link opencv
+# Find opencv
 find_package(OpenCV REQUIRED)
-target_link_libraries(parallax ${OpenCV_LIBS})
+
+# Find OpenGL
+find_package(OpenGL REQUIRED)
+
+# Compile GLFW
+add_subdirectory(external/glfw-3.4)
+
+# Compile Glad
+add_library(glad external/glad/glad.c)
+
+# Looks in external/glad for header files and adds them to all targets which include it.
+target_include_directories(glad PUBLIC external/glad)
+
+# Compile glm
+add_subdirectory(external/glm-1.0.2)
+
+# Link all dependencies
+target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
+
+# Copy shaders to the build
+file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/vertex_shader.glsl
+     DESTINATION ${CMAKE_BINARY_DIR}/)
+file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/fragmentation_shader.glsl
+     DESTINATION ${CMAKE_BINARY_DIR}/)
