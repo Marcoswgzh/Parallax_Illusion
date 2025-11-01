@@ -1,10 +1,16 @@
-// ORDER MATTERS: glad.h must be included before any GLFW or OpenGL libraries.
-#include <glad.h>
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <vector>
+#include <cmath>
+#include <cstdlib>
 
+#include <glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <vector>
+
+#include <opencv2/opencv.hpp>
 
 #include "detection/detection.hpp"
 #include "render/render_triangle.hpp"
@@ -27,156 +33,375 @@ float camera_view_y = 0;
 float camera_view_z = 0;
 float camera_angle_delta = 1;
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
+const float GAZE_SCALE_X = 1.2f;
+const float GAZE_SCALE_Y = 0.8f;
+const float CAMERA_SMOOTHING = 0.18f;
+
+// Parallax configuration
+const float PARALLAX_SCALE_X = 0.3f;
+const float PARALLAX_SCALE_Y = 0.2f;
+const float PARALLAX_SMOOTHING = 0.05f;
+
+// OpenCV globals
+cv::CascadeClassifier face_cascade;
+cv::CascadeClassifier eye_cascade;
+cv::VideoCapture cap;
+
+bool use_detection = true;
+
+// ---------- Helpers ----------
+template <typename T>
+T clamp_value(T v, T lo, T hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
+float lerp(float a, float b, float t) { return a + (b - a) * t; }
+
+// ---------- OpenCV init ----------
+bool init_detection()
+{
+  std::string opencv_path(OPENCV_PATH);
+
+  std::string face_fn = opencv_path + "/share/opencv4/haarcascades/haarcascade_frontalface_default.xml";
+  std::string eye_fn = opencv_path + "/share/opencv4/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
+
+  if (!face_cascade.load(face_fn))
+  {
+    std::cerr << "Error: could not load face cascade from " << face_fn << std::endl;
+    return false;
+  }
+  if (!eye_cascade.load(eye_fn))
+  {
+    std::cerr << "Error: could not load eye cascade from " << eye_fn << std::endl;
+    return false;
+  }
+
+  cap.open(0);
+  if (!cap.isOpened())
+  {
+    std::cerr << "Error: could not open camera\n";
+    return false;
+  }
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+
+  return true;
 }
 
-void process_input(GLFWwindow *window) {
+// ---------- GLFW input ----------
+void framebuffer_size_callback(GLFWwindow *window, int w, int h)
+{
+  glViewport(0, 0, w, h);
+}
+
+void process_input(GLFWwindow *window)
+{
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
-  // TODO: These are very basic move opperations, improve by moving in the look
-  // direction
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+  {
     camera_z += camera_speed;
     camera_view_z += camera_speed;
   }
-
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+  {
     camera_z -= camera_speed;
     camera_view_z -= camera_speed;
   }
-
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+  {
     camera_x += camera_speed;
     camera_view_x += camera_speed;
   }
-
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+  {
     camera_x -= camera_speed;
     camera_view_x -= camera_speed;
   }
-
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+  {
+    camera_y += camera_speed;
+    camera_view_y += camera_speed;
+  }
+  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+  {
     camera_y -= camera_speed;
     camera_view_y -= camera_speed;
   }
 
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-    camera_y += camera_speed;
-    camera_view_y += camera_speed;
+  static bool togglePressedBefore = false;
+  if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+  {
+    if (!togglePressedBefore)
+    {
+      use_detection = !use_detection;
+      std::cout << "Face detection " << (use_detection ? "ENABLED" : "DISABLED") << std::endl;
+    }
+    togglePressedBefore = true;
   }
-
-  // Control camera perspective with keys
-  // TODO:
-  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-  }
+  else
+    togglePressedBefore = false;
 }
 
-int main() {
-  glfwInit();
+// ---------- Gaze ----------
+struct Gaze
+{
+  float x, y;
+  bool valid;
+};
+
+Gaze compute_gaze_from_frame(const cv::Mat &frame)
+{
+  Gaze result{0.f, 0.f, false};
+  if (frame.empty())
+    return result;
+
+  cv::Mat gray;
+  cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+  cv::equalizeHist(gray, gray);
+
+  std::vector<cv::Rect> faces;
+  face_cascade.detectMultiScale(gray, faces, 1.1, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(60, 60));
+  if (faces.empty())
+    return result;
+
+  cv::Rect best = faces[0];
+  for (auto &f : faces)
+    if (f.area() > best.area())
+      best = f;
+
+  cv::Point face_center(best.x + best.width / 2, best.y + best.height / 2);
+  cv::Mat roi_gray = gray(best);
+
+  std::vector<cv::Rect> eyes;
+  eye_cascade.detectMultiScale(roi_gray, eyes, 1.05, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10));
+
+  if (eyes.empty())
+  {
+    float nx = (face_center.x - frame.cols / 2.f) / (frame.cols / 2.f);
+    float ny = -(face_center.y - frame.rows / 2.f) / (frame.rows / 2.f);
+    result.x = clamp_value(nx, -1.f, 1.f);
+    result.y = clamp_value(ny, -1.f, 1.f);
+    result.valid = true;
+    return result;
+  }
+
+  float sum_x = 0.f, sum_y = 0.f;
+  for (auto &e : eyes)
+  {
+    sum_x += e.x + e.width / 2.f;
+    sum_y += e.y + e.height / 2.f;
+  }
+  sum_x /= eyes.size();
+  sum_y /= eyes.size();
+
+  float eye_cx = best.x + sum_x;
+  float eye_cy = best.y + sum_y;
+
+  float nx = (eye_cx - frame.cols / 2.f) / (frame.cols / 2.f);
+  float ny = -(eye_cy - frame.rows / 2.f) / (frame.rows / 2.f);
+
+  result.x = clamp_value(nx, -1.f, 1.f);
+  result.y = clamp_value(ny, -1.f, 1.f);
+  result.valid = true;
+  return result;
+}
+
+// ---------- Main ----------
+int main()
+{
+  if (!init_detection())
+    return -1;
+
+  if (!glfwInit())
+  {
+    std::cerr << "GLFW init failed\n";
+    return -1;
+  }
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // only for apple?
+#ifdef __APPLE__
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-  GLFWwindow *window =
-      glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
-  if (window == NULL) {
-    std::cout << "Failed to create GLFW window" << std::endl;
+  GLFWwindow *window = glfwCreateWindow(width, height, "OpenCV+OpenGL", nullptr, nullptr);
+  if (!window)
+  {
+    std::cerr << "Failed create window\n";
     glfwTerminate();
     return -1;
   }
   glfwMakeContextCurrent(window);
 
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+  {
+    std::cerr << "GLAD init failed\n";
     return -1;
   }
 
-  // Set a callback function for window resizing
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-  // Enable depth testing (closer objects are drawn over further objects)
   glEnable(GL_DEPTH_TEST);
+  glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 
-  // Set a background color
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-  // Initialize shaders and set them as the currently used
   Shader shaders;
   shaders.use();
 
-  vector<float> triangles = {
-      0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
-      1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+  // Your triangle data
+  std::vector<float> triangles = {
+      0.0f,
+      1.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
 
-      0.0f, 1.0f, 0.0f, 0.0f,  1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      -1.0f,
+      0.0f,
+      1.0f,
+      0.0f,
 
-      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  0.0f,  0.0f, -1.0f,
-      0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      -1.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      -1.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      1.0f,
 
-      0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
-      1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f,  1.0f, 0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      1.0f,
+      1.0f,
+      0.0f,
+      -1.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+      1.0f,
+      1.0f,
+      0.0f,
   };
   int n_triangles = 4;
   TriangleRenderer renderer;
-  int piramid_render_index = renderer.add(triangles, n_triangles);
+  int pyramid_render_index = renderer.add(triangles, n_triangles);
 
-  // Use the width and height from the viewport
-  int projector_width, projector_height;
-  glfwGetFramebufferSize(window, &projector_width, &projector_height);
-  Projector projector(projector_width, projector_height);
+  int fb_w, fb_h;
+  glfwGetFramebufferSize(window, &fb_w, &fb_h);
+  Projector projector(fb_w, fb_h);
+  cv::Mat frame;
+  Gaze last_gaze{0.f, 0.f, false};
 
-  // Event loop
-  while (!glfwWindowShouldClose(window)) {
-    // First handle input
+  // Base camera position
+  float base_camera_x = 0.f;
+  float base_camera_y = 0.5f;
+  float base_camera_z = -3.f;
+
+  while (!glfwWindowShouldClose(window))
+  {
     process_input(window);
+
+    cap >> frame;
+
+    // ---------- Compute parallax camera view ----------
+    if (use_detection && !frame.empty())
+    {
+      Gaze g = compute_gaze_from_frame(frame);
+      if (g.valid)
+      {
+        last_gaze = g;
+
+        float target_view_x = g.x * GAZE_SCALE_X;
+        float target_view_y = g.y * GAZE_SCALE_Y;
+        float target_view_z = 0.f;
+
+        camera_view_x = lerp(camera_view_x, target_view_x, CAMERA_SMOOTHING);
+        camera_view_y = lerp(camera_view_y, target_view_y, CAMERA_SMOOTHING);
+        camera_view_z = lerp(camera_view_z, target_view_z, CAMERA_SMOOTHING);
+      }
+      else
+      {
+        // Slowly return view to center
+        camera_view_x = lerp(camera_view_x, 0.f, 0.01f);
+        camera_view_y = lerp(camera_view_y, 0.f, 0.01f);
+        camera_view_z = lerp(camera_view_z, 0.f, 0.01f);
+      }
+    }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Project the triangles
-    glm::mat4 view = glm::lookAt(
-        glm::vec3(camera_x, camera_y, camera_z), // Camera position
-        glm::vec3(camera_view_x, camera_view_y, camera_view_z), // Camera view
-        glm::vec3(0, 1, 0));                                    // Camera angle
+    // ---------- Camera/view ----------
+    glm::vec3 cam_pos(base_camera_x, base_camera_y, base_camera_z);
+    glm::vec3 cam_target = cam_pos + glm::vec3(camera_view_x, camera_view_y, 1.f); // look forward + parallax offsets
+    glm::mat4 view = glm::lookAt(cam_pos, cam_target, glm::vec3(0, 1, 0));
     projector.set_view_projection(view);
 
-    vector<float> projected_triangles;
-    projected_triangles.reserve(18 * n_triangles);
-    for (int i = 0; i < 18 * n_triangles / 6; i++) {
-      glm::vec4 projected = projector.get_view_projection() *
-                            glm::vec4(triangles[i * 6], triangles[i * 6 + 1],
-                                      triangles[i * 6 + 2], 1.0f);
-
-      glm::vec3 normalized_projection = glm::vec3(projected) / projected.w;
-      projected_triangles.push_back(normalized_projection.x);
-      projected_triangles.push_back(normalized_projection.y);
-      projected_triangles.push_back(normalized_projection.z);
-      projected_triangles.push_back(triangles[i * 6 + 3]);
-      projected_triangles.push_back(triangles[i * 6 + 4]);
-      projected_triangles.push_back(triangles[i * 6 + 5]);
+    // ---------- Project triangles ----------
+    std::vector<float> projected;
+    projected.reserve(18 * n_triangles);
+    for (int i = 0; i < 18 * n_triangles / 6; i++)
+    {
+      glm::vec4 p = projector.get_view_projection() *
+                    glm::vec4(triangles[i * 6], triangles[i * 6 + 1], triangles[i * 6 + 2], 1.f);
+      glm::vec3 np = glm::vec3(p) / p.w;
+      projected.push_back(np.x);
+      projected.push_back(np.y);
+      projected.push_back(np.z);
+      projected.push_back(triangles[i * 6 + 3]);
+      projected.push_back(triangles[i * 6 + 4]);
+      projected.push_back(triangles[i * 6 + 5]);
     }
-
-    renderer.replace(0, projected_triangles, n_triangles, n_triangles);
+    renderer.replace(pyramid_render_index, projected, n_triangles, n_triangles);
     renderer.draw();
 
-    // Swap buffers (refresh the screen with the created render)
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
 
-  // detect_and_show();
+  cap.release();
+  cv::destroyAllWindows();
   glfwTerminate();
   return 0;
 }
