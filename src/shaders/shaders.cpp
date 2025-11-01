@@ -28,7 +28,7 @@ unsigned int Shader::load(string shaderSource, GLenum shaderType) {
   // Check if the shader compilation was succesful
   int success;
   int logLength = 512;
-  char infoLog[logLength];
+  char* infoLog = new char[logLength];
   glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
   if (!success) {
@@ -55,7 +55,7 @@ Shader::Shader() {
   // Check if linking the shader program was succesful
   int success;
   int logLength = 512;
-  char infoLog[logLength];
+  char* infoLog = new char[logLength];
   glGetProgramiv(shaderId, GL_LINK_STATUS, &success);
   if (!success) {
     glGetProgramInfoLog(shaderId, 512, NULL, infoLog);
