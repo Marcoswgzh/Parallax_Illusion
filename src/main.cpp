@@ -113,7 +113,7 @@ int main() {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
   // Initialize shaders and set them as the currently used
-  Shader shaders;
+  Shader shaders("vertex_shader.glsl", "fragmentation_shader.glsl");
   shaders.use();
 
   vector<float> triangles = {

@@ -39,9 +39,9 @@ unsigned int Shader::load(string shaderSource, GLenum shaderType) {
   return shader;
 }
 
-Shader::Shader() {
-  string vertex_shader_source = readShader("vertex_shader.glsl");
-  string fragmentation_shader_source = readShader("fragmentation_shader.glsl");
+Shader::Shader(const char *vs_path, const char *fs_path) {
+  string vertex_shader_source = readShader(vs_path);
+  string fragmentation_shader_source = readShader(fs_path);
 
   unsigned int vertexShader = load(vertex_shader_source, GL_VERTEX_SHADER);
   unsigned int fragmentShader =

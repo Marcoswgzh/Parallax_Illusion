@@ -7,7 +7,7 @@ using namespace std;
 
 class Shader {
 public:
-  Shader();
+  Shader(const char *vs_path, const char *fs_path);
   void use();
 
 private:
