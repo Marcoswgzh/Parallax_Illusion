@@ -34,18 +34,18 @@ NOTE: On Mac OS Intel you might need to remove the version from the end of the p
 
 7. Run the provided build.bat file which will run the necessary commands to compile the program. (See caveats for OpenCV related errors)
 
-8. The final .exe is located in `[project directory]/build/debug/parallax.exe`
+8. The final .exe is located in `[project directory]/build/release/parallax.exe`
 
 ### Caveats
 This is stuff we should probably fix/change, so ideally we will remove these before submission.
 
 1. For CMake to work, `[OpenCV directory]/build` needs to be in the `PATH` environment variable.
 
-2. To run the application, `[OpenCV directory]/build/x64/vc16/bin` needs to be either in the same directory as `parallax.exe` or in `PATH`. (More specifically `opencv_world4120.dll`/`opencv_world4120d.dll` depending on whether debug mode is enabled or not)
+2. Due to hardcoded shader location, parallax.exe must be run from the project's root directory. This can be done by either copying `parallax.exe` to the project's root directory and running it from there, or by running `.\build\release\parallax.exe` from the terminal while the PWD is the project's root directory.
 
-3. Due to hardcoded shader location, parallax.exe must be run from the project's root directory. This can be done by either copying `parallax.exe` to the project's root directory and running it from there, or by running `.\build\debug\parallax.exe` from the terminal while the PWD is the project's root directory.
+3. If you are still having shader location related issues, see [this merge request](https://gitlab.maastrichtuniversity.nl/project-2-1-25-26/cs-ii/team_02/-/merge_requests/3).
 
-4. If you are still having shader location related issues, see [this merge request](https://gitlab.maastrichtuniversity.nl/project-2-1-25-26/cs-ii/team_02/-/merge_requests/3).
+4. The .exe is fully portable except the shaders need to be in the correct directory relative to the program. If Visual Studio build tools are not installed as above, computers require [Visual Studio C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) to be installed.
 
 ## On linux
 TODO

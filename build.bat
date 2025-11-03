@@ -7,10 +7,10 @@ if NOT %errorlevel%==0 (
     exit %errorlevel%
 )
 
-"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe" build\parallax.vcxproj
+"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --build build --config release
 
 if %errorlevel%==0 (
-    echo Build complete. The program is located in build/debug/parallax.exe
+    echo Build complete. The program is located in build/release/parallax.exe
     PAUSE
     exit 0
 )
