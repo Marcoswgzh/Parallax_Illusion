@@ -4,7 +4,16 @@
 #include <iostream>
 using namespace std;
 
+TriangleRenderer *TriangleRenderer::instance = nullptr;
+
 TriangleRenderer::TriangleRenderer() {}
+
+TriangleRenderer *TriangleRenderer::get_instance() {
+  if (instance == nullptr) {
+    instance = new TriangleRenderer();
+  }
+  return instance;
+}
 
 void TriangleRenderer::update() {
   vector<float> flattened = this->get_flattened();
@@ -39,7 +48,7 @@ vector<float> TriangleRenderer::get_flattened() {
   vector<float> flattened;
   flattened.reserve(this->n_triangles * 18);
 
-  for (VisualObject object : this->triangles) {
+  for (VisualObject object : this->visual_objects) {
     flattened.insert(flattened.end(), object.triangles.begin(),
                      object.triangles.end());
   }
@@ -47,21 +56,16 @@ vector<float> TriangleRenderer::get_flattened() {
   return flattened;
 }
 
-int TriangleRenderer::add(vector<float> triangles, int n_triangles) {
+int TriangleRenderer::add(VisualObject object) {
   // Make sure the change is noted
   this->change = true;
 
   // Update the total amount of triangles and number of visual objects
-  this->n_triangles += n_triangles;
+  this->n_triangles += object.n_triangles;
   this->n_visual_objects += 1;
 
-  // Create the visual object
-  VisualObject visual_object;
-  visual_object.triangles = triangles;
-  visual_object.n_triangles = n_triangles;
-
   // Add the triangles from the current object to the triangles vector
-  this->triangles.push_back(visual_object);
+  this->visual_objects.push_back(object);
 
   // Return the index of the added item (for later control of the visual
   // object)
@@ -83,7 +87,7 @@ void TriangleRenderer::replace(int index, vector<float> triangles,
   visual_object.n_triangles = n_triangles;
 
   // Replace the visual object
-  this->triangles[index] = visual_object;
+  this->visual_objects[index] = visual_object;
 }
 
 void TriangleRenderer::remove(int index, int n_triangles) {
@@ -96,7 +100,7 @@ void TriangleRenderer::remove(int index, int n_triangles) {
 
   // Remove the visual object
   // TODO: Make sure this indexing is correct
-  this->triangles.erase(this->triangles.begin() + index);
+  this->visual_objects.erase(this->visual_objects.begin() + index);
 }
 
 void TriangleRenderer::draw() {

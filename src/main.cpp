@@ -130,8 +130,13 @@ int main() {
       1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f,  1.0f, 0.0f,
   };
   int n_triangles = 4;
-  TriangleRenderer renderer;
-  int piramid_render_index = renderer.add(triangles, n_triangles);
+  VisualObject object;
+  object.triangles = triangles;
+  object.n_triangles = n_triangles;
+  object.plane = false;
+
+  TriangleRenderer *renderer = TriangleRenderer::get_instance();
+  int piramid_render_index = renderer->add(object);
 
   // Use the width and height from the viewport
   int projector_width, projector_height;
@@ -146,30 +151,19 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Project the triangles
+    // TODO: This camera refresh should happen in a camera class
     glm::mat4 view = glm::lookAt(
         glm::vec3(camera_x, camera_y, camera_z), // Camera position
         glm::vec3(camera_view_x, camera_view_y, camera_view_z), // Camera view
         glm::vec3(0, 1, 0));                                    // Camera angle
     projector.set_view_projection(view);
 
-    vector<float> projected_triangles;
-    projected_triangles.reserve(18 * n_triangles);
-    for (int i = 0; i < 18 * n_triangles / 6; i++) {
-      glm::vec4 projected = projector.get_view_projection() *
-                            glm::vec4(triangles[i * 6], triangles[i * 6 + 1],
-                                      triangles[i * 6 + 2], 1.0f);
+    vector<float> projected_triangles =
+        projector.project(triangles, n_triangles);
 
-      glm::vec3 normalized_projection = glm::vec3(projected) / projected.w;
-      projected_triangles.push_back(normalized_projection.x);
-      projected_triangles.push_back(normalized_projection.y);
-      projected_triangles.push_back(normalized_projection.z);
-      projected_triangles.push_back(triangles[i * 6 + 3]);
-      projected_triangles.push_back(triangles[i * 6 + 4]);
-      projected_triangles.push_back(triangles[i * 6 + 5]);
-    }
-
-    renderer.replace(0, projected_triangles, n_triangles, n_triangles);
-    renderer.draw();
+    renderer->replace(piramid_render_index, projected_triangles, n_triangles,
+                      n_triangles);
+    renderer->draw();
 
     // Swap buffers (refresh the screen with the created render)
     glfwSwapBuffers(window);
