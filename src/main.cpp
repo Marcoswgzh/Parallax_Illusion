@@ -7,7 +7,8 @@
 #include <vector>
 
 #include "detection/detection.hpp"
-#include "render/render_triangle.hpp"
+#include "render/renderer.hpp"
+#include "render/scene_renderer.hpp"
 #include "shaders/shaders.hpp"
 #include "view/projection.hpp"
 
@@ -129,13 +130,11 @@ int main() {
       0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
       1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f,  1.0f, 0.0f,
   };
-  int n_triangles = 4;
   VisualObject object;
   object.triangles = triangles;
-  object.n_triangles = n_triangles;
-  object.plane = false;
+  object.n_triangles = 4;
 
-  TriangleRenderer *renderer = TriangleRenderer::get_instance();
+  Renderer *renderer = SceneRenderer::get_instance();
   int piramid_render_index = renderer->add(object);
 
   // Use the width and height from the viewport
@@ -159,10 +158,10 @@ int main() {
     projector.set_view_projection(view);
 
     vector<float> projected_triangles =
-        projector.project(triangles, n_triangles);
+        projector.project(triangles, object.n_triangles);
 
-    renderer->replace(piramid_render_index, projected_triangles, n_triangles,
-                      n_triangles);
+    renderer->replace(piramid_render_index, projected_triangles,
+                      object.n_triangles, object.n_triangles);
     renderer->draw();
 
     // Swap buffers (refresh the screen with the created render)
