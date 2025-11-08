@@ -16,6 +16,7 @@
 #include "render/render_triangle.hpp"
 #include "shaders/shaders.hpp"
 #include "view/projection.hpp"
+#include "gaze/gaze.hpp"
 
 // Initial screen size (not constant)
 int width = 800;
@@ -43,10 +44,6 @@ const float PARALLAX_SCALE_Y = 0.2f;
 const float PARALLAX_SMOOTHING = 0.05f;
 
 bool use_detection = true;
-
-// ---------- Helpers ----------
-template <typename T>
-T clamp_value(T v, T lo, T hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
 float interpolate(float a, float b, float t) { return a + (b - a) * t; }
 
@@ -104,70 +101,6 @@ void process_input(GLFWwindow *window)
   }
   else
     togglePressedBefore = false;
-}
-
-// ---------- Gaze ----------
-struct Gaze
-{
-  float x, y;
-  bool valid;
-};
-
-Gaze compute_gaze_from_frame(const cv::Mat &frame)
-{
-  Gaze result{0.f, 0.f, false};
-  if (frame.empty())
-    return result;
-
-  cv::Mat gray;
-  cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-  cv::equalizeHist(gray, gray);
-
-  std::vector<cv::Rect> faces;
-  face_cascade.detectMultiScale(gray, faces, 1.1, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(60, 60));
-  if (faces.empty())
-    return result;
-
-  cv::Rect best = faces[0];
-  for (auto &f : faces)
-    if (f.area() > best.area())
-      best = f;
-
-  cv::Point face_center(best.x + best.width / 2, best.y + best.height / 2);
-  cv::Mat roi_gray = gray(best);
-
-  std::vector<cv::Rect> eyes;
-  eye_cascade.detectMultiScale(roi_gray, eyes, 1.05, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10));
-
-  if (eyes.empty())
-  {
-    float nx = (face_center.x - frame.cols / 2.f) / (frame.cols / 2.f);
-    float ny = -(face_center.y - frame.rows / 2.f) / (frame.rows / 2.f);
-    result.x = clamp_value(nx, -1.f, 1.f);
-    result.y = clamp_value(ny, -1.f, 1.f);
-    result.valid = true;
-    return result;
-  }
-
-  float sum_x = 0.f, sum_y = 0.f;
-  for (auto &e : eyes)
-  {
-    sum_x += e.x + e.width / 2.f;
-    sum_y += e.y + e.height / 2.f;
-  }
-  sum_x /= eyes.size();
-  sum_y /= eyes.size();
-
-  float eye_cx = best.x + sum_x;
-  float eye_cy = best.y + sum_y;
-
-  float nx = (eye_cx - frame.cols / 2.f) / (frame.cols / 2.f);
-  float ny = -(eye_cy - frame.rows / 2.f) / (frame.rows / 2.f);
-
-  result.x = clamp_value(nx, -1.f, 1.f);
-  result.y = clamp_value(ny, -1.f, 1.f);
-  result.valid = true;
-  return result;
 }
 
 // ---------- Main ----------

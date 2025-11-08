@@ -1,8 +1,10 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+
 cv::VideoCapture cap;
 cv::CascadeClassifier face_cascade;
 cv::CascadeClassifier eye_cascade;
+
 bool detect_and_show() {
   // Convert OpenCV path predefined macro to string
   std::string opencv_string_path(OPENCV_PATH);
