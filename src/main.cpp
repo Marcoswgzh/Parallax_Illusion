@@ -27,9 +27,9 @@ int height = 600;
 float camera_speed = 0.02;
 
 // Gaze config
-const float GAZE_SCALE_X = 1.2f;
-const float GAZE_SCALE_Y = 0.8f;
-const float CAMERA_SMOOTHING = 0.18f;
+const float GAZE_SCALE_X = 0.8f;
+const float GAZE_SCALE_Y = 0.5f;
+const float CAMERA_SMOOTHING = 0.05f;
 
 // Detection toggle
 bool use_detection = true;
