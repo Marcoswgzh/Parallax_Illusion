@@ -1,84 +1,91 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-
-void detect_and_show() {
+cv::VideoCapture cap;
+cv::CascadeClassifier face_cascade;
+cv::CascadeClassifier eye_cascade;
+bool detect_and_show() {
   // Convert OpenCV path predefined macro to string
   std::string opencv_string_path(OPENCV_PATH);
 
   // Load face haarcascade classifier
-  cv::CascadeClassifier face_cascade;
   if (!face_cascade.load(opencv_string_path +
-                         "/4.12.0_11/share/opencv4/haarcascades/"
+                         "/share/opencv4/haarcascades/"
                          "haarcascade_frontalface_default.xml")) {
     std::cerr << "Error loading Haar cascade file." << std::endl;
-    exit(EXIT_FAILURE);
+    //exit(EXIT_FAILURE);
+    return false;
   }
 
   // Load eye haarcascade classifier
-  cv::CascadeClassifier eye_cascade;
   if (!eye_cascade.load(opencv_string_path +
-                        "/4.12.0_11/share/opencv4/haarcascades/"
+                        "/share/opencv4/haarcascades/"
                         "haarcascade_eye_tree_eyeglasses.xml")) {
     std::cerr << "Error loading Haar cascade file." << std::endl;
-    exit(EXIT_FAILURE);
+    //exit(EXIT_FAILURE);
+    return false;
   }
 
   // Open the camera
-  cv::VideoCapture cap(0);
+  cap.open(0);
   if (!cap.isOpened()) {
     std::cerr << "Error: Could not open camera" << std::endl;
-    exit(EXIT_FAILURE);
+    //exit(EXIT_FAILURE);
+    return false;
   }
 
-  // Define colors
-  cv::Scalar blue(255, 0, 0);
-  cv::Scalar green(0, 255, 0);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 
-  cv::Mat frame, gray_frame, roi_gray, roi_color;
-  while (true) {
-    // Read the next frame
-    cap.read(frame);
-    if (frame.empty())
-      break;
+  return true;
+  // // Define colors
+  // cv::Scalar blue(255, 0, 0);
+  // cv::Scalar green(0, 255, 0);
 
-    // Transform frame to grey frame for processing
-    cv::cvtColor(frame, gray_frame, cv::COLOR_BGR2GRAY);
+  // cv::Mat frame, gray_frame, roi_gray, roi_color;
+  // while (true) {
+  //   // Read the next frame
+  //   cap.read(frame);
+  //   if (frame.empty())
+  //     break;
 
-    // Detect faces
-    std::vector<cv::Rect> faces;
-    face_cascade.detectMultiScale(gray_frame, faces, 1.3, 5);
+  //   // Transform frame to grey frame for processing
+  //   cv::cvtColor(frame, gray_frame, cv::COLOR_BGR2GRAY);
 
-    // TODO: Drawing this isn't necessary for the final product (so only use
-    // coordinates calculated by this)
-    // Draw a rectangle around each face
-    for (cv::Rect face : faces) {
-      cv::Point point1(face.x, face.y);
-      cv::Point point2(face.x + face.width, face.y + face.height);
-      cv::rectangle(frame, point1, point2, blue, 2);
+  //   // Detect faces
+  //   std::vector<cv::Rect> faces;
+  //   face_cascade.detectMultiScale(gray_frame, faces, 1.3, 5);
 
-      // Set the face region as the roi
-      roi_gray = gray_frame(face);
-      roi_color = frame(face);
+  //   // TODO: Drawing this isn't necessary for the final product (so only use
+  //   // coordinates calculated by this)
+  //   // Draw a rectangle around each face
+  //   for (cv::Rect face : faces) {
+  //     cv::Point point1(face.x, face.y);
+  //     cv::Point point2(face.x + face.width, face.y + face.height);
+  //     cv::rectangle(frame, point1, point2, blue, 2);
 
-      // Detect eyes in the face region
-      std::vector<cv::Rect> eyes;
-      eye_cascade.detectMultiScale(roi_gray, eyes);
-      for (cv::Rect eye : eyes) {
-        cv::Point eye_point1(eye.x, eye.y);
-        cv::Point eye_point2(eye.x + eye.width, eye.y + eye.height);
-        cv::rectangle(roi_color, eye_point1, eye_point2, green, 2);
-      }
-    }
+  //     // Set the face region as the roi
+  //     roi_gray = gray_frame(face);
+  //     roi_color = frame(face);
 
-    // Display the captured frame
-    cv::imshow("Eye Tracking", frame);
+  //     // Detect eyes in the face region
+  //     std::vector<cv::Rect> eyes;
+  //     eye_cascade.detectMultiScale(roi_gray, eyes);
+  //     for (cv::Rect eye : eyes) {
+  //       cv::Point eye_point1(eye.x, eye.y);
+  //       cv::Point eye_point2(eye.x + eye.width, eye.y + eye.height);
+  //       cv::rectangle(roi_color, eye_point1, eye_point2, green, 2);
+  //     }
+  //   }
 
-    // Exit on q key pressed
-    if (cv::waitKey(1) == 'q')
-      break;
-  }
+  //   // Display the captured frame
+  //   cv::imshow("Eye Tracking", frame);
 
-  // Free the camera capture
-  cap.release();
-  cv::destroyAllWindows();
+  //   // Exit on q key pressed
+  //   if (cv::waitKey(1) == 'q')
+  //     break;
+  // }
+
+  // // Free the camera capture
+  // cap.release();
+  // cv::destroyAllWindows();
 }

@@ -42,49 +42,13 @@ const float PARALLAX_SCALE_X = 0.3f;
 const float PARALLAX_SCALE_Y = 0.2f;
 const float PARALLAX_SMOOTHING = 0.05f;
 
-// OpenCV globals
-cv::CascadeClassifier face_cascade;
-cv::CascadeClassifier eye_cascade;
-cv::VideoCapture cap;
-
 bool use_detection = true;
 
 // ---------- Helpers ----------
 template <typename T>
 T clamp_value(T v, T lo, T hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
-float lerp(float a, float b, float t) { return a + (b - a) * t; }
-
-// ---------- OpenCV init ----------
-bool init_detection()
-{
-  std::string opencv_path(OPENCV_PATH);
-
-  std::string face_fn = opencv_path + "/share/opencv4/haarcascades/haarcascade_frontalface_default.xml";
-  std::string eye_fn = opencv_path + "/share/opencv4/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
-
-  if (!face_cascade.load(face_fn))
-  {
-    std::cerr << "Error: could not load face cascade from " << face_fn << std::endl;
-    return false;
-  }
-  if (!eye_cascade.load(eye_fn))
-  {
-    std::cerr << "Error: could not load eye cascade from " << eye_fn << std::endl;
-    return false;
-  }
-
-  cap.open(0);
-  if (!cap.isOpened())
-  {
-    std::cerr << "Error: could not open camera\n";
-    return false;
-  }
-  cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
-  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
-
-  return true;
-}
+float interpolate(float a, float b, float t) { return a + (b - a) * t; }
 
 // ---------- GLFW input ----------
 void framebuffer_size_callback(GLFWwindow *window, int w, int h)
@@ -209,7 +173,7 @@ Gaze compute_gaze_from_frame(const cv::Mat &frame)
 // ---------- Main ----------
 int main()
 {
-  if (!init_detection())
+  if (!detect_and_show())
     return -1;
 
   if (!glfwInit())
@@ -246,84 +210,21 @@ int main()
   Shader shaders;
   shaders.use();
 
-  // Your triangle data
+  // Triangle data
   std::vector<float> triangles = {
-      0.0f,
-      1.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
+    1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      -1.0f,
-      0.0f,
-      1.0f,
-      0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,  1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 0.0f,
 
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      -1.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      -1.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      1.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  0.0f,  0.0f, -1.0f,
+    0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
 
-      0.0f,
-      1.0f,
-      0.0f,
-      1.0f,
-      1.0f,
-      0.0f,
-      -1.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-      1.0f,
-      1.0f,
-      0.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f,  1.0f, 0.0f,
   };
+  
   int n_triangles = 4;
   TriangleRenderer renderer;
   int pyramid_render_index = renderer.add(triangles, n_triangles);
@@ -357,16 +258,16 @@ int main()
         float target_view_y = g.y * GAZE_SCALE_Y;
         float target_view_z = 0.f;
 
-        camera_view_x = lerp(camera_view_x, target_view_x, CAMERA_SMOOTHING);
-        camera_view_y = lerp(camera_view_y, target_view_y, CAMERA_SMOOTHING);
-        camera_view_z = lerp(camera_view_z, target_view_z, CAMERA_SMOOTHING);
+        camera_view_x = interpolate(camera_view_x, target_view_x, CAMERA_SMOOTHING);
+        camera_view_y = interpolate(camera_view_y, target_view_y, CAMERA_SMOOTHING);
+        camera_view_z = interpolate(camera_view_z, target_view_z, CAMERA_SMOOTHING);
       }
       else
       {
         // Slowly return view to center
-        camera_view_x = lerp(camera_view_x, 0.f, 0.01f);
-        camera_view_y = lerp(camera_view_y, 0.f, 0.01f);
-        camera_view_z = lerp(camera_view_z, 0.f, 0.01f);
+        camera_view_x = interpolate(camera_view_x, 0.f, 0.01f);
+        camera_view_y = interpolate(camera_view_y, 0.f, 0.01f);
+        camera_view_z = interpolate(camera_view_z, 0.f, 0.01f);
       }
     }
 
