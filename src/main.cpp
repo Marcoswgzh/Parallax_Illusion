@@ -7,10 +7,11 @@
 #include <vector>
 
 #include "detection/detection.hpp"
+#include "render/menu_renderer.hpp"
 #include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
+#include "scene/projection.hpp"
 #include "shaders/shaders.hpp"
-#include "view/projection.hpp"
 
 // Initial screen size (not constant)
 int width = 800;
@@ -114,11 +115,7 @@ int main() {
   // Set a background color
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-  // Initialize shaders and set them as the currently used
-  Shader shaders("vertex_shader.glsl", "fragmentation_shader.glsl");
-  shaders.use();
-
-  vector<float> triangles = {
+  vector<float> scene_pyramid = {
       0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
       1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
@@ -132,11 +129,24 @@ int main() {
       1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f,  1.0f, 0.0f,
   };
   VisualObject object;
-  object.triangles = triangles;
+  object.triangles = scene_pyramid;
   object.n_triangles = 4;
 
   Renderer *renderer3D = SceneRenderer::get_instance(window);
   int piramid_render_index = renderer3D->add(object);
+
+  VisualObject menu_object;
+  menu_object.triangles = {
+      0.8f, 1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 1.0f,  1.0f,
+      0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+
+      1.0f, 1.0f, 1.0f, 0.0f,  0.0f, 1.0f, -1.0f, 1.0f,
+      0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+  };
+  menu_object.n_triangles = 4;
+
+  Renderer *renderer2D = MenuRenderer::get_instance(window);
+  renderer2D->add(menu_object);
 
   // Event loop
   while (!glfwWindowShouldClose(window)) {
@@ -157,6 +167,9 @@ int main() {
 
     // Draw scene
     renderer3D->draw();
+
+    // Draw menu
+    renderer2D->draw();
 
     // Swap buffers (refresh the screen with the created render)
     glfwSwapBuffers(window);

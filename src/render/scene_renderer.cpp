@@ -1,5 +1,5 @@
 #include "scene_renderer.hpp"
-#include "../view/projection.hpp"
+#include "../scene/projection.hpp"
 #include "renderer.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -47,24 +47,14 @@ void SceneRenderer::update() {
   this->change = false;
 }
 
-vector<float> SceneRenderer::get_flattened() {
-  // First flatten the triangle data
-  vector<float> flattened;
-  flattened.reserve(this->n_triangles * 18);
-
-  for (VisualObject object : this->visual_objects) {
-    flattened.insert(flattened.end(), object.triangles.begin(),
-                     object.triangles.end());
-  }
-
-  return flattened;
-}
-
 void SceneRenderer::draw() {
   // Don't execute if there is nothing to draw
   if (this->n_triangles <= 0) {
     return;
   }
+
+  // Make sure to use the correct shaders
+  this->shader.use();
 
   // TODO: Track position/angle changes in the camera, so we only have to render
   // if the result will be different For now always rerender a 3D scene

@@ -27,7 +27,6 @@ public:
   virtual void draw() = 0;
 
 protected:
-  virtual vector<float> get_flattened() = 0;
   virtual void update() = 0;
 
   unsigned int VAO;

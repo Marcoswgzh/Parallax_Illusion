@@ -1,6 +1,7 @@
 #ifndef SCENE_RENDERER
 #define SCENE_RENDERER
 
+#include "../shaders/shaders.hpp"
 #include "renderer.hpp"
 #include <GLFW/glfw3.h>
 #include <glad.h>
@@ -21,8 +22,10 @@ public:
 
 private:
   SceneRenderer(GLFWwindow *window);
-  vector<float> get_flattened() override;
   void update() override;
+
+  // Initialize shaders
+  Shader shader = Shader("vertex_shader.glsl", "fragmentation_shader.glsl");
 
   static SceneRenderer *instance;
 

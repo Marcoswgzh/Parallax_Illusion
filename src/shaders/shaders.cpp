@@ -10,6 +10,8 @@ string Shader::readShader(char const *path) {
   std::ifstream file(path);
 
   // Check if the file is found
+  // TODO: Something weird happening here, couldn't find file, but correct
+  // render
   if (!file) {
     cerr << "ERROR: Couldn't open file: " << path << endl;
   }
