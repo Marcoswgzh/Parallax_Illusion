@@ -90,6 +90,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // only for apple?
 
+  // TODO: Create a window manager
   GLFWwindow *window =
       glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
   if (window == NULL) {
@@ -134,13 +135,8 @@ int main() {
   object.triangles = triangles;
   object.n_triangles = 4;
 
-  Renderer *renderer = SceneRenderer::get_instance();
-  int piramid_render_index = renderer->add(object);
-
-  // Use the width and height from the viewport
-  int projector_width, projector_height;
-  glfwGetFramebufferSize(window, &projector_width, &projector_height);
-  Projector projector(projector_width, projector_height);
+  Renderer *renderer3D = SceneRenderer::get_instance(window);
+  int piramid_render_index = renderer3D->add(object);
 
   // Event loop
   while (!glfwWindowShouldClose(window)) {
@@ -149,27 +145,24 @@ int main() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    Projector *projector = Projector::get_instance(window);
+
     // Project the triangles
     // TODO: This camera refresh should happen in a camera class
     glm::mat4 view = glm::lookAt(
         glm::vec3(camera_x, camera_y, camera_z), // Camera position
         glm::vec3(camera_view_x, camera_view_y, camera_view_z), // Camera view
         glm::vec3(0, 1, 0));                                    // Camera angle
-    projector.set_view_projection(view);
+    projector->set_view_projection(view);
 
-    vector<float> projected_triangles =
-        projector.project(triangles, object.n_triangles);
-
-    renderer->replace(piramid_render_index, projected_triangles,
-                      object.n_triangles, object.n_triangles);
-    renderer->draw();
+    // Draw scene
+    renderer3D->draw();
 
     // Swap buffers (refresh the screen with the created render)
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
 
-  // detect_and_show();
   glfwTerminate();
   return 0;
 }

@@ -1,21 +1,27 @@
 #include "scene_renderer.hpp"
+#include "../view/projection.hpp"
 #include "renderer.hpp"
+#include <GLFW/glfw3.h>
 #include <iostream>
 using namespace std;
 
 SceneRenderer *SceneRenderer::instance = nullptr;
 
-SceneRenderer *SceneRenderer::get_instance() {
+// TODO: One scene renderer for each window (so create a vector of instances
+// instead)
+SceneRenderer *SceneRenderer::get_instance(GLFWwindow *window) {
   if (instance == nullptr) {
-    instance = new SceneRenderer();
+    instance = new SceneRenderer(window);
   }
   return instance;
 }
 
-SceneRenderer::SceneRenderer() {}
+SceneRenderer::SceneRenderer(GLFWwindow *window) { this->window = window; }
 
 void SceneRenderer::update() {
-  vector<float> flattened = this->get_flattened();
+  Projector *projector = Projector::get_instance(this->window);
+  vector<float> projected =
+      projector->project_list(this->visual_objects, this->n_triangles);
 
   glGenVertexArrays(RenderGroups::Scene, &VAO);
   glBindVertexArray(VAO);
@@ -25,7 +31,7 @@ void SceneRenderer::update() {
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
   glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float),
-               flattened.data(), GL_DYNAMIC_DRAW);
+               projected.data(), GL_DYNAMIC_DRAW);
 
   // Tell OpenGL how it should interpret the vertex data
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
@@ -60,10 +66,9 @@ void SceneRenderer::draw() {
     return;
   }
 
-  // If there was a change, update
-  if (this->change) {
-    this->update();
-  }
+  // TODO: Track position/angle changes in the camera, so we only have to render
+  // if the result will be different For now always rerender a 3D scene
+  this->update();
 
   glBindVertexArray(this->VAO);
   glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
