@@ -1,21 +1,16 @@
-// ORDER MATTERS: glad.h must be included before any GLFW or OpenGL libraries.
-#include <glad.h>
 
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
 #include "detection/detection.hpp"
+#include "gl.h"
 #include "render/menu_renderer.hpp"
 #include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
 #include "scene/projection.hpp"
 #include "shaders/shaders.hpp"
-
-// Initial screen size (not constant)
-int width = 800;
-int height = 600;
+#include "window_manager.hpp"
 
 // Camera position
 float camera_x = 0;
@@ -29,153 +24,114 @@ float camera_view_y = 0;
 float camera_view_z = 0;
 float camera_angle_delta = 1;
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
-}
+void process_input(GLFWwindow* window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 
-void process_input(GLFWwindow *window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
+    // TODO: These are very basic move opperations, improve by moving in the
+    // look direction
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        camera_z += camera_speed;
+        camera_view_z += camera_speed;
+    }
 
-  // TODO: These are very basic move opperations, improve by moving in the look
-  // direction
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    camera_z += camera_speed;
-    camera_view_z += camera_speed;
-  }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        camera_z -= camera_speed;
+        camera_view_z -= camera_speed;
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-    camera_z -= camera_speed;
-    camera_view_z -= camera_speed;
-  }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        camera_x += camera_speed;
+        camera_view_x += camera_speed;
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    camera_x += camera_speed;
-    camera_view_x += camera_speed;
-  }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        camera_x -= camera_speed;
+        camera_view_x -= camera_speed;
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    camera_x -= camera_speed;
-    camera_view_x -= camera_speed;
-  }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        camera_y -= camera_speed;
+        camera_view_y -= camera_speed;
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    camera_y -= camera_speed;
-    camera_view_y -= camera_speed;
-  }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        camera_y += camera_speed;
+        camera_view_y += camera_speed;
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-    camera_y += camera_speed;
-    camera_view_y += camera_speed;
-  }
+    // Control camera perspective with keys
+    // TODO:
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    }
 
-  // Control camera perspective with keys
-  // TODO:
-  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-  }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-  }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-  }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    }
 }
 
 int main() {
-  glfwInit();
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // only for apple?
+    WindowManager window_manager = WindowManager();
 
-  // TODO: Create a window manager
-  GLFWwindow *window =
-      glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
-  if (window == NULL) {
-    std::cout << "Failed to create GLFW window" << std::endl;
+    vector<float> scene_pyramid = {
+        0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+        0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+
+        0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f, 1.0f, 0.0f,
+    };
+    VisualObject object;
+    object.triangles = scene_pyramid;
+    object.n_triangles = 4;
+
+    Renderer* renderer3D = SceneRenderer::get_instance(window_manager.get_window());
+    int piramid_render_index = renderer3D->add(object);
+
+    VisualObject menu_object;
+    menu_object.triangles = {
+        0.8f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+
+        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+    };
+    menu_object.n_triangles = 4;
+
+    Renderer* renderer2D = MenuRenderer::get_instance(window_manager.get_window());
+    renderer2D->add(menu_object);
+
+    // Event loop
+    while (!glfwWindowShouldClose(window_manager.get_window())) {
+        // First handle input
+        process_input(window_manager.get_window());
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Projector* projector = Projector::get_instance(window_manager.get_window());
+
+        // Project the triangles
+        // TODO: This camera refresh should happen in a camera class
+        glm::mat4 view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z),  // Camera position
+                                     glm::vec3(camera_view_x, camera_view_y,
+                                               camera_view_z),  // Camera view
+                                     glm::vec3(0, 1, 0));       // Camera angle
+        projector->set_view_projection(view);
+
+        // Draw scene
+        renderer3D->draw();
+
+        // Draw menu
+        renderer2D->draw();
+
+        // Swap buffers (refresh the screen with the created render)
+        glfwSwapBuffers(window_manager.get_window());
+        glfwPollEvents();
+    }
+
     glfwTerminate();
-    return -1;
-  }
-  glfwMakeContextCurrent(window);
-
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
-    return -1;
-  }
-
-  // Set a callback function for window resizing
-  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-  // Enable depth testing (closer objects are drawn over further objects)
-  glEnable(GL_DEPTH_TEST);
-
-  // Set a background color
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-  vector<float> scene_pyramid = {
-      0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
-      1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-
-      0.0f, 1.0f, 0.0f, 0.0f,  1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 0.0f,
-
-      0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  0.0f,  0.0f, -1.0f,
-      0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
-
-      0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
-      1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f,  1.0f, 0.0f,
-  };
-  VisualObject object;
-  object.triangles = scene_pyramid;
-  object.n_triangles = 4;
-
-  Renderer *renderer3D = SceneRenderer::get_instance(window);
-  int piramid_render_index = renderer3D->add(object);
-
-  VisualObject menu_object;
-  menu_object.triangles = {
-      0.8f, 1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 1.0f,  1.0f,
-      0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-
-      1.0f, 1.0f, 1.0f, 0.0f,  0.0f, 1.0f, -1.0f, 1.0f,
-      0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-  };
-  menu_object.n_triangles = 4;
-
-  Renderer *renderer2D = MenuRenderer::get_instance(window);
-  renderer2D->add(menu_object);
-
-  // Event loop
-  while (!glfwWindowShouldClose(window)) {
-    // First handle input
-    process_input(window);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    Projector *projector = Projector::get_instance(window);
-
-    // Project the triangles
-    // TODO: This camera refresh should happen in a camera class
-    glm::mat4 view = glm::lookAt(
-        glm::vec3(camera_x, camera_y, camera_z), // Camera position
-        glm::vec3(camera_view_x, camera_view_y, camera_view_z), // Camera view
-        glm::vec3(0, 1, 0));                                    // Camera angle
-    projector->set_view_projection(view);
-
-    // Draw scene
-    renderer3D->draw();
-
-    // Draw menu
-    renderer2D->draw();
-
-    // Swap buffers (refresh the screen with the created render)
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-  }
-
-  glfwTerminate();
-  return 0;
+    return 0;
 }
