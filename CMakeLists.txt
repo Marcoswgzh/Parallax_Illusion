@@ -76,8 +76,6 @@ target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm)
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 
-# Copy shaders to the build
-file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/vertex_shader.glsl
-     DESTINATION ${CMAKE_BINARY_DIR}/)
-file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/fragmentation_shader.glsl
+# Copy all shaders sources to the binary directory
+file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/sources/
      DESTINATION ${CMAKE_BINARY_DIR}/)
