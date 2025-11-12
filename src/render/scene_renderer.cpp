@@ -11,17 +11,17 @@ SceneRenderer* SceneRenderer::instance = nullptr;
 
 // TODO: One scene renderer for each window (so create a vector of instances
 // instead)
-SceneRenderer* SceneRenderer::get_instance(GLFWwindow* window) {
+SceneRenderer* SceneRenderer::get_instance() {
     if (instance == nullptr) {
-        instance = new SceneRenderer(window);
+        instance = new SceneRenderer();
     }
     return instance;
 }
 
-SceneRenderer::SceneRenderer(GLFWwindow* window) { this->window = window; }
+SceneRenderer::SceneRenderer() {}
 
 void SceneRenderer::update() {
-    Projector* projector = Projector::get_instance(this->window);
+    Projector* projector = Projector::get_instance();
     vector<float> projected = projector->project_list(this->visual_objects, this->n_triangles);
 
     glGenVertexArrays(RenderGroups::Scene, &VAO);

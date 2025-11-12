@@ -10,7 +10,7 @@ using namespace std;
 
 class SceneRenderer : public Renderer {
     public:
-        static SceneRenderer* get_instance(GLFWwindow* window);
+        static SceneRenderer* get_instance();
 
         // Scene renderer should not be cloneable
         SceneRenderer(SceneRenderer& other) = delete;
@@ -21,16 +21,13 @@ class SceneRenderer : public Renderer {
         void draw() override;
 
     private:
-        SceneRenderer(GLFWwindow* window);
+        SceneRenderer();
         void update() override;
 
         // Initialize shaders
         Shader shader = Shader("vertex_shader.glsl", "fragmentation_shader.glsl");
 
         static SceneRenderer* instance;
-
-        // TODO: Temporary window pointer
-        GLFWwindow* window;
 };
 
 #endif

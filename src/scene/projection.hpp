@@ -10,7 +10,7 @@ using namespace std;
 
 class Projector {
     public:
-        static Projector* get_instance(GLFWwindow* window);
+        static Projector* get_instance();
 
         // Projector should not be cloneable
         Projector(Projector& other) = delete;

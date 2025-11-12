@@ -10,14 +10,14 @@ MenuRenderer* MenuRenderer::instance = nullptr;
 
 // TODO: One scene renderer for each window (so create a vector of instances
 // instead)
-MenuRenderer* MenuRenderer::get_instance(GLFWwindow* window) {
+MenuRenderer* MenuRenderer::get_instance() {
     if (instance == nullptr) {
-        instance = new MenuRenderer(window);
+        instance = new MenuRenderer();
     }
     return instance;
 }
 
-MenuRenderer::MenuRenderer(GLFWwindow* window) { this->window = window; }
+MenuRenderer::MenuRenderer() {}
 
 void MenuRenderer::update() {
     vector<float> flattened = this->get_flattened();

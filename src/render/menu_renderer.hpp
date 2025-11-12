@@ -10,7 +10,7 @@ using namespace std;
 
 class MenuRenderer : public Renderer {
     public:
-        static MenuRenderer* get_instance(GLFWwindow* window);
+        static MenuRenderer* get_instance();
 
         // Scene renderer should not be cloneable
         MenuRenderer(MenuRenderer& other) = delete;
@@ -21,7 +21,7 @@ class MenuRenderer : public Renderer {
         void draw() override;
 
     private:
-        MenuRenderer(GLFWwindow* window);
+        MenuRenderer();
         vector<float> get_flattened();
         void update() override;
 
@@ -29,9 +29,6 @@ class MenuRenderer : public Renderer {
         Shader shader = Shader("vertex_shader_2d.glsl", "fragmentation_shader.glsl");
 
         static MenuRenderer* instance;
-
-        // TODO: Temporary window pointer
-        GLFWwindow* window;
 };
 
 #endif

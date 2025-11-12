@@ -5,6 +5,15 @@ using namespace std;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); }
 
+WindowManager* WindowManager::instance = nullptr;
+
+WindowManager* WindowManager::get_instance() {
+    if (instance == nullptr) {
+        instance = new WindowManager();
+    }
+    return instance;
+}
+
 WindowManager::WindowManager() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -12,11 +21,10 @@ WindowManager::WindowManager() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // only for apple?
 
-    // TODO: Create a window manager
     // Initial width and height
     int width = 800;
     int height = 600;
-    this->window = glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
+    this->window = glfwCreateWindow(width, height, "Parallax", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();

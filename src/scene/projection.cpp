@@ -5,17 +5,18 @@
 #include <vector>
 
 #include "../render/renderer.hpp"
+#include "../window_manager.hpp"
 using namespace std;
 
 Projector* Projector::instance = nullptr;
 
 // TODO: Probably fails after screen resizing because width and hieght are not
 // references to the frame buffer size
-Projector* Projector::get_instance(GLFWwindow* window) {
+Projector* Projector::get_instance() {
     if (instance == nullptr) {
         // Use the width and height from the viewport
         int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
+        glfwGetFramebufferSize(WindowManager::get_instance()->get_window(), &width, &height);
         instance = new Projector(width, height);
     }
     return instance;

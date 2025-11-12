@@ -75,7 +75,7 @@ void process_input(GLFWwindow* window) {
 }
 
 int main() {
-    WindowManager window_manager = WindowManager();
+    WindowManager* window_manager = WindowManager::get_instance();
 
     vector<float> scene_pyramid = {
         0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
@@ -90,28 +90,28 @@ int main() {
     object.triangles = scene_pyramid;
     object.n_triangles = 4;
 
-    Renderer* renderer3D = SceneRenderer::get_instance(window_manager.get_window());
+    Renderer* renderer3D = SceneRenderer::get_instance();
     int piramid_render_index = renderer3D->add(object);
 
     VisualObject menu_object;
     menu_object.triangles = {
-        0.8f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+        0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
 
         1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
     };
     menu_object.n_triangles = 4;
 
-    Renderer* renderer2D = MenuRenderer::get_instance(window_manager.get_window());
+    Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_object);
 
     // Event loop
-    while (!glfwWindowShouldClose(window_manager.get_window())) {
+    while (!glfwWindowShouldClose(window_manager->get_window())) {
         // First handle input
-        process_input(window_manager.get_window());
+        process_input(window_manager->get_window());
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Projector* projector = Projector::get_instance(window_manager.get_window());
+        Projector* projector = Projector::get_instance();
 
         // Project the triangles
         // TODO: This camera refresh should happen in a camera class
@@ -128,7 +128,7 @@ int main() {
         renderer2D->draw();
 
         // Swap buffers (refresh the screen with the created render)
-        glfwSwapBuffers(window_manager.get_window());
+        glfwSwapBuffers(window_manager->get_window());
         glfwPollEvents();
     }
 
