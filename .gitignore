@@ -12,3 +12,6 @@ parallax
 # Ignore the invironment file (content is specific to each user)
 .env
 *.a
+
+# Classic hidden file macOS likes to drop in places
+.DS_Store
