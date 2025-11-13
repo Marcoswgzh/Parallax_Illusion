@@ -49,7 +49,7 @@ string(REGEX MATCH "OPENCV_PATH=[\"']?([^\"'\n\r]+)[\"']?" _ ${ENV_CONTENT})
 
 # Clean and store the env variable (cmake treats it as a list, so we have to remove the =; prefix)
 string(REGEX REPLACE "^[=;]+" "" OpenCV_ENV "${CMAKE_MATCH_1}")
-set(OpenCV_DIR "${OpenCV_ENV}/lib/cmake/opencv4")
+set(OpenCV_DIR "${OpenCV_ENV}")
 message(STATUS "Using opencv in directory: ${OpenCV_DIR}")
 
 # Find and parse the HAARCASCADE_DIR env variable
@@ -58,7 +58,7 @@ string(REGEX MATCH "HAARCASCADE_DIR=[\"']?([^\"'\n\r]+)[\"']?" _ ${ENV_CONTENT})
 # Clean and store the env variable (cmake treats it as a list, so we have to remove the =; prefix)
 string(REGEX REPLACE "^[=;]+" "" HAARCASCADE_DIR "${CMAKE_MATCH_1}")
 set(HAARCASCADE_DIR "${HAARCASCADE_DIR}")
-message(STATUS "Using opencv in directory: ${HAARCASCADE_DIR}")
+message(STATUS "Using haarcascade from: ${HAARCASCADE_DIR}")
 
 # Find opencv
 find_package(OpenCV REQUIRED)

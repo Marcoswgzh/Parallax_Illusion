@@ -7,11 +7,10 @@ cv::CascadeClassifier eye_cascade;
 
 bool detect_and_show() {
   // Convert OpenCV path predefined macro to string
-  std::string opencv_path(OPENCV_PATH);
   std::string haarcascade_dir(HAARCASCADE_DIR);
 
   // Load face haarcascade classifier
-  if (!face_cascade.load(opencv_path + haarcascade_dir +
+  if (!face_cascade.load(haarcascade_dir +
                          "haarcascade_frontalface_default.xml")) {
     std::cerr << "Error loading Haar cascade file." << std::endl;
     // exit(EXIT_FAILURE);
@@ -19,7 +18,7 @@ bool detect_and_show() {
   }
 
   // Load eye haarcascade classifier
-  if (!eye_cascade.load(opencv_path + haarcascade_dir +
+  if (!eye_cascade.load(haarcascade_dir +
                         "haarcascade_eye_tree_eyeglasses.xml")) {
     std::cerr << "Error loading Haar cascade file." << std::endl;
     // exit(EXIT_FAILURE);
