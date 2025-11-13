@@ -1,22 +1,23 @@
 #ifndef SHADER
 #define SHADER
 
-#include <glad.h>
 #include <string>
+
+#include "../gl.h"
 using namespace std;
 
 class Shader {
-public:
-  Shader();
-  void use();
+    public:
+        Shader(const char* vs_path, const char* fs_path);
+        void use();
 
-private:
-  const char *vertex_shader_source;
-  const char *fragmentation_shader_source;
-  unsigned int shaderId;
+    private:
+        const char* vertex_shader_source;
+        const char* fragmentation_shader_source;
+        unsigned int shaderId;
 
-  string readShader(const char *path);
-  unsigned int load(string haderSource, GLenum shaderType);
+        string readShader(const char* path);
+        unsigned int load(string haderSource, GLenum shaderType);
 };
 
 #endif
