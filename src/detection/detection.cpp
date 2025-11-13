@@ -7,23 +7,22 @@ cv::CascadeClassifier eye_cascade;
 
 bool detect_and_show() {
   // Convert OpenCV path predefined macro to string
-  std::string opencv_string_path(OPENCV_PATH);
+  std::string opencv_path(OPENCV_PATH);
+  std::string haarcascade_dir(HAARCASCADE_DIR);
 
   // Load face haarcascade classifier
-  if (!face_cascade.load(opencv_string_path +
-                         "/share/opencv4/haarcascades/"
+  if (!face_cascade.load(opencv_path + haarcascade_dir +
                          "haarcascade_frontalface_default.xml")) {
     std::cerr << "Error loading Haar cascade file." << std::endl;
-    //exit(EXIT_FAILURE);
+    // exit(EXIT_FAILURE);
     return false;
   }
 
   // Load eye haarcascade classifier
-  if (!eye_cascade.load(opencv_string_path +
-                        "/share/opencv4/haarcascades/"
+  if (!eye_cascade.load(opencv_path + haarcascade_dir +
                         "haarcascade_eye_tree_eyeglasses.xml")) {
     std::cerr << "Error loading Haar cascade file." << std::endl;
-    //exit(EXIT_FAILURE);
+    // exit(EXIT_FAILURE);
     return false;
   }
 
@@ -31,7 +30,7 @@ bool detect_and_show() {
   cap.open(0);
   if (!cap.isOpened()) {
     std::cerr << "Error: Could not open camera" << std::endl;
-    //exit(EXIT_FAILURE);
+    // exit(EXIT_FAILURE);
     return false;
   }
 
