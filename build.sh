@@ -17,9 +17,19 @@ then
 
             printf "OPENCV_PATH=%s\n" "$OPENCV_PATH" > .env
         else
-            # probably not a good idea to automatically install packages
-            echo "Please use 'brew install opencv' to install OpenCV."
-            exit 1
+            # 'read' records the user's next input in the variable $REPLY
+            read -p "It appears you do not have OpenCV installed. Would you like to install it now? (y/n): " -n 1 -r
+
+            # Accept lowercase or uppercase letter y
+            if [[ $REPLY =~ ^[Yy]$ ]]
+            then
+                echo # Insert empty newline since 'read' does not do that.
+                brew install opencv
+                printf "OPENCV_PATH=%s\n" "$(brew --prefix opencv)" > .env
+            else
+                echo "Please use 'brew install opencv' to install OpenCV."
+                exit 1
+            fi
         fi
     else
         echo "Please create a .env file including an OPENCV_PATH variable pointing to the location of OpenCV."
