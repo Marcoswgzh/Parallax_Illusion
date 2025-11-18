@@ -11,6 +11,7 @@
 #include "scene/projection.hpp"
 #include "shaders/shaders.hpp"
 #include "window_manager.hpp"
+#include "menu/menu.hpp"
 
 // Camera position
 float camera_x = 0;
@@ -95,9 +96,9 @@ int main() {
 
     VisualObject menu_object;
     menu_object.triangles = {
-        0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+        0.8f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.8f, -1.0f, 0.0f, 0.0f, 0.0f,
 
-        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, -1.0f, 0.0f, 0.0f, 0.0f,  0.8f, -1.0f, 0.0f, 0.0f, 0.0f,
     };
     menu_object.n_triangles = 4;
 
