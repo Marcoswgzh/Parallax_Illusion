@@ -11,7 +11,7 @@
 #include "scene/projection.hpp"
 #include "shaders/shaders.hpp"
 #include "window_manager.hpp"
-#include "menu/menu.hpp"
+#include "menu/button.hpp"
 
 // Camera position
 float camera_x = 0;
@@ -105,6 +105,14 @@ int main() {
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_object);
 
+    std::vector<float> buttonVertices=createButtonVertices(0.82f,0.98f); //createButtonVertices(positionX,positionY)
+
+    VisualObject button_object;
+    button_object.triangles=buttonVertices;
+    button_object.n_triangles=2;
+
+    renderer2D->add(button_object);
+
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
         // First handle input
@@ -126,7 +134,9 @@ int main() {
         renderer3D->draw();
 
         // Draw menu
+        glDisable(GL_DEPTH_TEST);
         renderer2D->draw();
+        glEnable(GL_DEPTH_TEST);
 
         // Swap buffers (refresh the screen with the created render)
         glfwSwapBuffers(window_manager->get_window());
