@@ -52,6 +52,8 @@ string(REGEX REPLACE "^[=;]+" "" OpenCV_ENV "${CMAKE_MATCH_1}")
 set(OpenCV_DIR "${OpenCV_ENV}/lib/cmake/opencv4")
 message(STATUS "Using opencv in directory: ${OpenCV_DIR}")
 
+set(OpenCV_RUNTIME vc16)
+
 # Find opencv
 find_package(OpenCV REQUIRED)
 
