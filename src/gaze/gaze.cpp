@@ -36,8 +36,10 @@ Gaze compute_gaze_from_frame(const cv::Mat &frame)
     {
         float nx = (face_center.x - frame.cols / 2.f) / (frame.cols / 2.f);
         float ny = -(face_center.y - frame.rows / 2.f) / (frame.rows / 2.f);
-        result.x = clamp_value(nx, -1.f, 1.f);
-        result.y = clamp_value(ny, -1.f, 1.f);
+        //result.x = clamp_value(nx, -1.f, 1.f);
+        //result.y = clamp_value(ny, -1.f, 1.f);
+        result.x = nx;
+        result.y = ny;
         result.valid = true;
         return result;
     }

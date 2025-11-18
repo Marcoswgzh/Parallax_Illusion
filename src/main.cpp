@@ -171,6 +171,7 @@ int main()
             glm::vec4 p = projector.get_view_projection() *
                           glm::vec4(triangles[i * 6], triangles[i * 6 + 1], triangles[i * 6 + 2], 1.f);
             glm::vec3 np = glm::vec3(p) / p.w;
+
             projected.push_back(np.x);
             projected.push_back(np.y);
             projected.push_back(np.z);

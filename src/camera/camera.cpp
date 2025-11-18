@@ -24,10 +24,11 @@ void update_camera_gaze(const Gaze &gaze, float gazeScaleX, float gazeScaleY, fl
     cameraViewOffset.z = interpolate(cameraViewOffset.z, 0.f, smoothing);
 }
 
+
 void reset_camera_gaze(float smoothing) {
-    cameraViewOffset.x = interpolate(cameraViewOffset.x, 0.f, smoothing);
-    cameraViewOffset.y = interpolate(cameraViewOffset.y, 0.f, smoothing);
-    cameraViewOffset.z = interpolate(cameraViewOffset.z, 0.f, smoothing);
+    //cameraViewOffset.x = interpolate(cameraViewOffset.x, 0.f, smoothing);
+    //cameraViewOffset.y = interpolate(cameraViewOffset.y, 0.f, smoothing);
+    //cameraViewOffset.z = interpolate(cameraViewOffset.z, 0.f, smoothing);
 }
 
 glm::vec3 get_camera_position() {
