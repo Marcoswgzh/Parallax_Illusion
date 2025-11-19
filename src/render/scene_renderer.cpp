@@ -23,15 +23,21 @@ SceneRenderer::SceneRenderer() {}
 void SceneRenderer::update() {
     Projector* projector = Projector::get_instance();
     vector<float> projected = projector->project_list(this->visual_objects, this->n_triangles);
+    vector<int> flattened_indices = this->getFlattenedIndices();
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    unsigned int VBO;
+    unsigned int EBO, VBO;
+    glGenBuffers(1, &EBO);
     glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), projected.data(), GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->n_triangles * 3 * sizeof(unsigned int), flattened_indices.data(),
+                 GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -44,6 +50,16 @@ void SceneRenderer::update() {
     glBindVertexArray(0);
 
     this->change = false;
+}
+
+vector<int> SceneRenderer::getFlattenedIndices() {
+    vector<int> flattened;
+    flattened.reserve(this->n_triangles * 3);
+    for (VisualObject object : this->visual_objects) {
+        flattened.insert(flattened.end(), object.indices.begin(), object.indices.end());
+    }
+
+    return flattened;
 }
 
 void SceneRenderer::draw() {
@@ -60,5 +76,5 @@ void SceneRenderer::draw() {
     this->update();
 
     glBindVertexArray(this->VAO);
-    glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
+    glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
 }
