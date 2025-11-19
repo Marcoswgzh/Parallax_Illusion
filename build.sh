@@ -8,14 +8,15 @@ then
     # if brew exists, use it to locate opencv, otherwise fail
     if command -v brew > /dev/null 2>&1
     then
-        OPENCV_PATH=$(brew --prefix opencv)
+        OPENCV_PATH=$(realpath "$(brew --prefix opencv)")
 
         # if the output of brew is correct, then we will generate the .env file for the user, otherwise fail.
         if ls "$OPENCV_PATH" > /dev/null 2>&1
         then
             printf "Located OpenCV at %s, automatically generating .env file.\n" "$OPENCV_PATH"
 
-            printf "OPENCV_PATH=%s\n" "$OPENCV_PATH" > .env
+            printf "OPENCV_PATH=%s\n" "$OPENCV_PATH/lib/cmake/opencv4" > .env
+            printf "HAARCASCADE_DIR=%s\n" "$OPENCV_PATH/share/opencv4/haarcascades" >> .env
         else
             # 'read' records the user's next input in the variable $REPLY
             read -p "It appears you do not have OpenCV installed. Would you like to install it now? (y/n): " -n 1 -r
@@ -25,7 +26,9 @@ then
             then
                 echo # Insert empty newline since 'read' does not do that.
                 brew install opencv
-                printf "OPENCV_PATH=%s\n" "$(brew --prefix opencv)" > .env
+                OPENCV_PATH=$(realpath "$(brew --prefix opencv)")
+                printf "OPENCV_PATH=%s\n" "$OPENCV_PATH/lib/cmake/opencv4" > .env
+                printf "HAARCASCADE_DIR=%s\n" "$OPENCV_PATH/share/opencv4/haarcascades" >> .env
             else
                 echo "Please use 'brew install opencv' to install OpenCV."
                 exit 1
