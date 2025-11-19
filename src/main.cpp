@@ -25,6 +25,9 @@ float camera_view_y = 0;
 float camera_view_z = 0;
 float camera_angle_delta = 1;
 
+//Globally accessible button
+Button menu_button;
+
 void process_input(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 
@@ -75,6 +78,33 @@ void process_input(GLFWwindow* window) {
     }
 }
 
+ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+            int width, height;
+            glfwGetWindowSize(window, &width, &height);
+
+            //Convert screen coords to OpenGL NDC coords
+            float cx = (xpos/width) * 2.0f - 1.0f;
+            float cy = -(ypos/height) * 2.0f + 1.0f;
+
+            if (menu_button.contains(cx, cy)) {
+                std::cout << "Reset camera" << std::endl;
+                
+                //Reset camera position
+                camera_x = 0.0f;
+                camera_y = 0.5f;
+                camera_z = -3.0f;
+
+                //Reset camera view direction
+                camera_view_x = 0.0f;
+                camera_view_y = 0.0f;
+                camera_view_z = 0.0f;
+            }
+        }
+    }
+
 int main() {
     WindowManager* window_manager = WindowManager::get_instance();
 
@@ -110,6 +140,15 @@ int main() {
     VisualObject button_object;
     button_object.triangles=buttonVertices;
     button_object.n_triangles=2;
+
+    menu_button = {
+        .x = 0.82f,
+        .y = 0.98f,
+        .width = 0.16f,
+        .height = 0.12f
+    }; 
+
+    glfwSetMouseButtonCallback(window_manager->get_window(), mouseButtonCallback);
 
     renderer2D->add(button_object);
 

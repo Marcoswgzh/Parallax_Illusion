@@ -9,3 +9,7 @@ std::vector<float> createButtonVertices(float x, float y){
         x + buttonWidth, y, gray, gray, gray,  x + buttonWidth, y - buttonHeight, gray, gray, gray,  x, y - buttonHeight, gray, gray, gray,
     };
 }
+
+bool Button::contains(float cx, float cy){
+    return cx >= x && cx <= x + width && cy <= y && cy >= y - height; //cursor is inside the coordinates of the button
+}
