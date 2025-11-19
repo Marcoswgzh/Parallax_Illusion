@@ -23,7 +23,7 @@ class SceneRenderer : public Renderer {
     private:
         SceneRenderer();
         void update() override;
-        vector<int> getFlattenedIndices();
+        vector<int> get_flattened_indices();
 
         // Initialize shaders
         Shader shader = Shader("vertex_shader.glsl", "fragmentation_shader.glsl");

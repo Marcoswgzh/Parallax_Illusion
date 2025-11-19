@@ -85,24 +85,20 @@ int main() {
         -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
     };
     vector<int> scene_pyramid_indices = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
-    VisualObject object;
-    object.triangles = scene_pyramid;
-    object.indices = scene_pyramid_indices;
-    object.n_triangles = 4;
+    Mesh pyramid_mesh(scene_pyramid, scene_pyramid_indices, 4);
 
     Renderer* renderer3D = SceneRenderer::get_instance();
-    int piramid_render_index = renderer3D->add(object);
+    int piramid_render_index = renderer3D->add(pyramid_mesh);
 
-    VisualObject menu_object;
-    menu_object.triangles = {
+    vector<float> triangles = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
 
         1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
     };
-    menu_object.n_triangles = 4;
+    Mesh menu_mesh(triangles, {}, 4);
 
     Renderer* renderer2D = MenuRenderer::get_instance();
-    renderer2D->add(menu_object);
+    renderer2D->add(menu_mesh);
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {

@@ -20,7 +20,7 @@ class Projector {
 
         void set_view_projection(glm::mat4 view);
         vector<float> project(vector<float> triangles, int n_triangles);
-        vector<float> project_list(vector<VisualObject> objects, int n_triangles);
+        vector<float> project_list(vector<Mesh> objects, int n_triangles);
 
     private:
         Projector(int width, int height);
