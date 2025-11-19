@@ -24,11 +24,11 @@ void SceneRenderer::update() {
     Projector* projector = Projector::get_instance();
     vector<float> projected = projector->project_list(this->visual_objects, this->n_triangles);
 
-    glGenVertexArrays(RenderGroups::Scene, &VAO);
+    glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
     unsigned int VBO;
-    glGenBuffers(RenderGroups::Scene, &VBO);
+    glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), projected.data(), GL_DYNAMIC_DRAW);

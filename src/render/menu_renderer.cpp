@@ -22,11 +22,11 @@ MenuRenderer::MenuRenderer() {}
 void MenuRenderer::update() {
     vector<float> flattened = this->get_flattened();
 
-    glGenVertexArrays(RenderGroups::Menu, &VAO);
+    glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
     unsigned int VBO;
-    glGenBuffers(RenderGroups::Menu, &VBO);
+    glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 15 * sizeof(float), flattened.data(), GL_STATIC_DRAW);
