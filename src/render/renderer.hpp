@@ -4,11 +4,6 @@
 #include <vector>
 using namespace std;
 
-enum RenderGroups {
-    Scene = 1,
-    Menu = 2,
-};
-
 struct VisualObject {
         vector<float> triangles;
         int n_triangles;
