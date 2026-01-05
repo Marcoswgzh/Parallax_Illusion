@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "camera/camera.hpp"
-#include "detection/detection.hpp"
+#include "detection/recording.hpp"
 #include "gl.h"
 #include "render/menu_renderer.hpp"
 #include "render/renderer.hpp"
@@ -13,44 +13,37 @@
 #include "shaders/shaders.hpp"
 #include "window_manager.hpp"
 
-// Movement speed
-float camera_speed = 0.02;
-
-// Detection toggle
-bool use_detection = true;
-
 // Gaze config
 const float GAZE_SCALE_X = 1.2f;
 const float GAZE_SCALE_Y = 0.8f;
 const float CAMERA_SMOOTHING = 0.18f;
 
-void process_input(GLFWwindow* window) {
+void process_input(GLFWwindow* window, Camera* camera, Recorder* recorder) {
     // WASD + vertical
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) update_camera_input(0.f, 0.f, camera_speed);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) update_camera_input(0.f, 0.f, -camera_speed);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) update_camera_input(camera_speed, 0.f, 0.f);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) update_camera_input(-camera_speed, 0.f, 0.f);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) update_camera_input(0.f, camera_speed, 0.f);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) update_camera_input(0.f, -camera_speed, 0.f);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move(0.0f, 0.0f, camera->get_speed());
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move(0.0f, 0.0f, -camera->get_speed());
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move(camera->get_speed(), 0.0f, 0.0f);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move(-camera->get_speed(), 0.0f, 0.0f);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move(0.0f, camera->get_speed(), 0.0f);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move(0.0f, -camera->get_speed(), 0.0f);
 
     // Toggle detection
-    static bool togglePressedBefore = false;
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-        if (!togglePressedBefore) {
-            use_detection = !use_detection;
-            std::cout << "Face detection " << (use_detection ? "ENABLED" : "DISABLED") << std::endl;
-        }
-        togglePressedBefore = true;
-    } else
-        togglePressedBefore = false;
+        recorder->toggle();
+        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
+    }
 
     // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
 
 int main() {
-    // Start detection
-    if (!detect_and_show()) return -1;
+    // Initialize recorder
+    Recorder recorder;
+    recorder.start();
+
+    // Initialize camera
+    Camera camera;
 
     WindowManager* window_manager = WindowManager::get_instance();
 
@@ -81,29 +74,26 @@ int main() {
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_object);
 
-    cv::Mat frame;
-
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
-        // First handle input
-        process_input(window_manager->get_window());
+        recorder.update();
 
-        cap >> frame;
+        // First handle input
+        process_input(window_manager->get_window(), &camera, &recorder);
 
         // Apply gaze input if enabled
-        if (use_detection && !frame.empty()) {
-            Gaze g = compute_gaze_from_frame(frame);
-            if (g.valid)
-                update_camera_gaze(g, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
-            else
-                reset_camera_gaze(CAMERA_SMOOTHING);
+        if (recorder.use_detection()) {
+            cv::Rect face = recorder.get_face();
+            cv::Mat frame = recorder.get_frame();
+            Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
+            camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Compute view matrix
-        glm::vec3 cam_pos = get_camera_position();
-        glm::vec3 cam_target = get_camera_target();
+        glm::vec3 cam_pos = camera.get_camera_position();
+        glm::vec3 cam_target = camera.get_camera_target();
         glm::mat4 view = glm::lookAt(cam_pos, cam_target, glm::vec3(0, 1, 0));
 
         Projector* projector = Projector::get_instance();

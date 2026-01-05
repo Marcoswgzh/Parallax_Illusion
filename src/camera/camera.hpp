@@ -2,29 +2,32 @@
 #define CAMERA
 
 #include <glm/glm.hpp>
+#include <opencv2/opencv.hpp>
 
-#include "../gaze/gaze.hpp"
+struct Gaze {
+        float x = 0.f;
+        float y = 0.f;
+};
 
-// Camera state
-extern glm::vec3 cameraPosition;
-extern glm::vec3 cameraViewOffset;
+class Camera {
+    public:
+        Camera();
+        Gaze compute_gaze_from_facial(cv::Rect face, int columns, int rows);
+        void update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing);
+        float interpolate(float a, float b, float t);
+        glm::vec3 get_camera_position();
+        glm::vec3 get_camera_target();
+        float get_speed();
 
-// Initialize camera with optional position
-void init_camera(float x = 0.f, float y = 0.5f, float z = -3.f);
+        void move(float x, float y, float z);
+        void change_angle_x(float degree);
+        void change_angle_y(float degree);
+        void change_angle_z(float degree);
 
-// Update camera position from input (WASD/Space/Shift)
-void update_camera_input(float dx, float dy, float dz);
-
-// Update camera gaze offset
-void update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing);
-
-// Reset gaze offset to default
-void reset_camera_gaze(float smoothing);
-
-// Get camera position
-glm::vec3 get_camera_position();
-
-// Get camera target (position + forward + gaze offset)
-glm::vec3 get_camera_target();
+    private:
+        const float speed = 0.02;
+        glm::vec3 cameraPosition;
+        glm::vec3 cameraViewOffset;
+};
 
 #endif
