@@ -6,6 +6,7 @@ using namespace std;
 
 struct VisualObject {
         vector<float> triangles;
+        vector<int> indices;
         int n_triangles;
 };
 

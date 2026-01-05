@@ -17,7 +17,7 @@ class Shader {
         unsigned int shaderId;
 
         string readShader(const char* path);
-        unsigned int load(string haderSource, GLenum shaderType);
+        unsigned int load(string headerSource, GLenum shaderType);
 };
 
 #endif

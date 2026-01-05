@@ -3,7 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
-#include "detection/detection.hpp"
+#include "camera/camera.hpp"
+#include "detection/recording.hpp"
 #include "gl.h"
 #include "render/menu_renderer.hpp"
 #include "render/renderer.hpp"
@@ -12,82 +13,51 @@
 #include "shaders/shaders.hpp"
 #include "window_manager.hpp"
 
-// Camera position
-float camera_x = 0;
-float camera_y = 0.5;
-float camera_z = -3;
-float camera_speed = 0.02;
+// Gaze config
+const float GAZE_SCALE_X = 1.2f;
+const float GAZE_SCALE_Y = 0.8f;
+const float CAMERA_SMOOTHING = 0.18f;
 
-// Camera look at
-float camera_view_x = 0;
-float camera_view_y = 0;
-float camera_view_z = 0;
-float camera_angle_delta = 1;
+void process_input(GLFWwindow* window, Camera* camera, Recorder* recorder) {
+    // WASD + vertical
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move(0.0f, 0.0f, camera->get_speed());
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move(0.0f, 0.0f, -camera->get_speed());
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move(camera->get_speed(), 0.0f, 0.0f);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move(-camera->get_speed(), 0.0f, 0.0f);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move(0.0f, camera->get_speed(), 0.0f);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move(0.0f, -camera->get_speed(), 0.0f);
 
-void process_input(GLFWwindow* window) {
+    // Toggle detection
+    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+        recorder->toggle();
+        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
+    }
+
+    // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
-
-    // TODO: These are very basic move opperations, improve by moving in the
-    // look direction
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        camera_z += camera_speed;
-        camera_view_z += camera_speed;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        camera_z -= camera_speed;
-        camera_view_z -= camera_speed;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera_x += camera_speed;
-        camera_view_x += camera_speed;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera_x -= camera_speed;
-        camera_view_x -= camera_speed;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        camera_y -= camera_speed;
-        camera_view_y -= camera_speed;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        camera_y += camera_speed;
-        camera_view_y += camera_speed;
-    }
-
-    // Control camera perspective with keys
-    // TODO:
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-    }
 }
 
 int main() {
+    // Initialize recorder
+    Recorder recorder;
+    recorder.start();
+
+    // Initialize camera
+    Camera camera;
+
     WindowManager* window_manager = WindowManager::get_instance();
 
     vector<float> scene_pyramid = {
-        0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+        0.0f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-        0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        1.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 
-        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-
-        0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,  1.0f, 1.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
     };
+    vector<int> scene_pyramid_indices = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
     VisualObject object;
     object.triangles = scene_pyramid;
+    object.indices = scene_pyramid_indices;
     object.n_triangles = 4;
 
     Renderer* renderer3D = SceneRenderer::get_instance();
@@ -106,19 +76,27 @@ int main() {
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
+        recorder.update();
+
         // First handle input
-        process_input(window_manager->get_window());
+        process_input(window_manager->get_window(), &camera, &recorder);
+
+        // Apply gaze input if enabled
+        if (recorder.use_detection()) {
+            cv::Rect face = recorder.get_face();
+            cv::Mat frame = recorder.get_frame();
+            Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
+            camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
+        }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Projector* projector = Projector::get_instance();
+        // Compute view matrix
+        glm::vec3 cam_pos = camera.get_camera_position();
+        glm::vec3 cam_target = camera.get_camera_target();
+        glm::mat4 view = glm::lookAt(cam_pos, cam_target, glm::vec3(0, 1, 0));
 
-        // Project the triangles
-        // TODO: This camera refresh should happen in a camera class
-        glm::mat4 view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z),  // Camera position
-                                     glm::vec3(camera_view_x, camera_view_y,
-                                               camera_view_z),  // Camera view
-                                     glm::vec3(0, 1, 0));       // Camera angle
+        Projector* projector = Projector::get_instance();
         projector->set_view_projection(view);
 
         // Draw scene
