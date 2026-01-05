@@ -12,14 +12,13 @@ int Renderer::add(Mesh mesh) {
 
     // Update the total amount of triangles and number of visual objects
     this->n_triangles += mesh.get_n_triangles();
-    this->n_meshes += 1;
 
     // Add the triangles from the current object to the triangles vector
     this->meshes.push_back(mesh);
 
     // Return the index of the added item (for later control of the visual
     // object)
-    return this->n_meshes - 1;
+    return this->meshes.size();
 }
 
 void Renderer::replace(int index, vector<float> triangles, int n_triangles, int n_previous_triangles) {
@@ -43,7 +42,6 @@ void Renderer::remove(int index, int n_triangles) {
 
     // Update the total amount of triangles and number of visual objects
     this->n_triangles -= n_triangles;
-    this->n_meshes -= 1;
 
     // Remove the visual object
     // TODO: Make sure this indexing is correct

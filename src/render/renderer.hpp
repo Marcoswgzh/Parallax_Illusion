@@ -21,7 +21,6 @@ class Renderer {
 
         unsigned int VAO;
         bool change;          // Tracks changes in the visual objects
-        int n_meshes;         // Total amount of meshses in the renderer // TODO: Remove (use meshes.size())
         int n_triangles;      // Total amount of triangles in the renderer
         vector<Mesh> meshes;  // All the meshes in the renderer
 };
