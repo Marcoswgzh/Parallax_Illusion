@@ -22,7 +22,7 @@ class MenuRenderer : public Renderer {
 
     private:
         MenuRenderer();
-        vector<float> get_flattened();
+        vector<float> get_flattened_vertices();
         void update() override;
 
         // Initialize shaders

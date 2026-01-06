@@ -6,20 +6,19 @@
 #include "scene_renderer.hpp"
 using namespace std;
 
-int Renderer::add(VisualObject object) {
+int Renderer::add(Mesh mesh) {
     // Make sure the change is noted
     this->change = true;
 
     // Update the total amount of triangles and number of visual objects
-    this->n_triangles += object.n_triangles;
-    this->n_visual_objects += 1;
+    this->n_triangles += mesh.get_n_triangles();
 
     // Add the triangles from the current object to the triangles vector
-    this->visual_objects.push_back(object);
+    this->meshes.push_back(mesh);
 
     // Return the index of the added item (for later control of the visual
     // object)
-    return this->n_visual_objects - 1;
+    return this->meshes.size();
 }
 
 void Renderer::replace(int index, vector<float> triangles, int n_triangles, int n_previous_triangles) {
@@ -30,13 +29,11 @@ void Renderer::replace(int index, vector<float> triangles, int n_triangles, int 
     this->n_triangles -= n_previous_triangles;
     this->n_triangles += n_triangles;
 
-    // Create the visual object
-    VisualObject visual_object;
-    visual_object.triangles = triangles;
-    visual_object.n_triangles = n_triangles;
+    // Create the new mesh
+    Mesh mesh(triangles, {}, n_triangles);
 
     // Replace the visual object
-    this->visual_objects[index] = visual_object;
+    this->meshes[index] = mesh;
 }
 
 void Renderer::remove(int index, int n_triangles) {
@@ -45,9 +42,8 @@ void Renderer::remove(int index, int n_triangles) {
 
     // Update the total amount of triangles and number of visual objects
     this->n_triangles -= n_triangles;
-    this->n_visual_objects -= 1;
 
     // Remove the visual object
     // TODO: Make sure this indexing is correct
-    this->visual_objects.erase(this->visual_objects.begin() + index);
+    this->meshes.erase(this->meshes.begin() + index);
 }

@@ -20,7 +20,7 @@ MenuRenderer* MenuRenderer::get_instance() {
 MenuRenderer::MenuRenderer() {}
 
 void MenuRenderer::update() {
-    vector<float> flattened = this->get_flattened();
+    vector<float> flattened = this->get_flattened_vertices();
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -45,13 +45,13 @@ void MenuRenderer::update() {
     this->change = false;
 }
 
-vector<float> MenuRenderer::get_flattened() {
+vector<float> MenuRenderer::get_flattened_vertices() {
     // First flatten the triangle data
     vector<float> flattened;
     flattened.reserve(this->n_triangles * 15);
 
-    for (VisualObject object : this->visual_objects) {
-        flattened.insert(flattened.end(), object.triangles.begin(), object.triangles.end());
+    for (Mesh mesh : this->meshes) {
+        flattened.insert(flattened.end(), (*mesh.get_triangles()).begin(), (*mesh.get_triangles()).end());
     }
 
     return flattened;

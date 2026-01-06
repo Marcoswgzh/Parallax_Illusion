@@ -22,8 +22,8 @@ SceneRenderer::SceneRenderer() {}
 
 void SceneRenderer::update() {
     Projector* projector = Projector::get_instance();
-    vector<float> projected = projector->project_list(this->visual_objects, this->n_triangles);
-    vector<int> flattened_indices = this->getFlattenedIndices();
+    vector<float> projected = projector->project_list(this->meshes, this->n_triangles);
+    vector<int> flattened_indices = this->get_flattened_indices();
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -52,11 +52,13 @@ void SceneRenderer::update() {
     this->change = false;
 }
 
-vector<int> SceneRenderer::getFlattenedIndices() {
+vector<int> SceneRenderer::get_flattened_indices() {
     vector<int> flattened;
     flattened.reserve(this->n_triangles * 3);
-    for (VisualObject object : this->visual_objects) {
-        flattened.insert(flattened.end(), object.indices.begin(), object.indices.end());
+    for (Mesh mesh : this->meshes) {
+        vector<int>::iterator indices_start = (*mesh.get_indices()).begin();
+        vector<int>::iterator indices_end = (*mesh.get_indices()).end();
+        flattened.insert(flattened.end(), indices_start, indices_end);
     }
 
     return flattened;

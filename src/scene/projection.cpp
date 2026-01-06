@@ -53,23 +53,23 @@ vector<float> Projector::project(vector<float> triangles, int n_triangles) {
 
 // Doesn't make use of the project method for efficiency (concatenating vectors
 // together takes time).
-vector<float> Projector::project_list(vector<VisualObject> objects, int n_triangles) {
+vector<float> Projector::project_list(vector<Mesh> meshes, int n_triangles) {
     vector<float> projected_triangles;
     projected_triangles.reserve(18 * n_triangles);
 
-    for (VisualObject object : objects) {
+    for (Mesh mesh : meshes) {
         for (int i = 0; i < 18 * n_triangles / 6; i++) {
             glm::vec4 projected =
-                this->view_projection *
-                glm::vec4(object.triangles[i * 6], object.triangles[i * 6 + 1], object.triangles[i * 6 + 2], 1.0f);
+                this->view_projection * glm::vec4((*mesh.get_triangles())[i * 6], (*mesh.get_triangles())[i * 6 + 1],
+                                                  (*mesh.get_triangles())[i * 6 + 2], 1.0f);
 
             glm::vec3 normalized_projection = glm::vec3(projected) / projected.w;
             projected_triangles.push_back(normalized_projection.x);
             projected_triangles.push_back(normalized_projection.y);
             projected_triangles.push_back(normalized_projection.z);
-            projected_triangles.push_back(object.triangles[i * 6 + 3]);
-            projected_triangles.push_back(object.triangles[i * 6 + 4]);
-            projected_triangles.push_back(object.triangles[i * 6 + 5]);
+            projected_triangles.push_back((*mesh.get_triangles())[i * 6 + 3]);
+            projected_triangles.push_back((*mesh.get_triangles())[i * 6 + 4]);
+            projected_triangles.push_back((*mesh.get_triangles())[i * 6 + 5]);
         }
     }
 
