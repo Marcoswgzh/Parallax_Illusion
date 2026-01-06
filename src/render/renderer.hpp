@@ -12,7 +12,6 @@ class Renderer {
         virtual ~Renderer() = default;
 
         int add(Mesh mesh);
-        void replace(int index, vector<float> triangles, int n_triangles, int n_previous_triangles);
         void remove(int index, int n_triangles);
         virtual void draw() = 0;
 

@@ -60,7 +60,7 @@ vector<int> SceneRenderer::get_flattened_indices() {
         }
 
         // Add the amount of triangles to adjust the indices of the future meshes
-        offset += (int)(mesh.get_triangles()->size() / 6);
+        offset += (int)(mesh.get_vertices()->size() / 6);
     }
 
     return flattened;

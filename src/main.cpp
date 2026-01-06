@@ -85,17 +85,35 @@ int main() {
         -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
     };
     vector<int> scene_pyramid_indices = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
-    Mesh pyramid_mesh(scene_pyramid, scene_pyramid_indices, 4);
+    Mesh pyramid_mesh(scene_pyramid, scene_pyramid_indices, 4, glm::vec3(0.0, 0.0, 0.0));
+
+    vector<float> scene_pyramid2 = {
+        0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+        0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+
+        1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+        1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+
+        0.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+
+        -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
+    };
+    vector<int> scene_pyramid_indices2 = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
+    Mesh pyramid_mesh2(scene_pyramid2, scene_pyramid_indices2, 4, glm::vec3(1.0, 0.0, 0.0));
 
     Renderer* renderer3D = SceneRenderer::get_instance();
     int piramid_render_index = renderer3D->add(pyramid_mesh);
+    int piramid_render_index2 = renderer3D->add(pyramid_mesh2);
 
-    vector<float> triangles = {
+    vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
 
         1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
     };
-    Mesh menu_mesh(triangles, {}, 4);
+
+    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0));
 
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);
