@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include "../delta_time.hpp"
 #include "../mouse.hpp"
 #include "projection.hpp"
 
@@ -39,18 +40,18 @@ void Camera::update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeSc
 
 float Camera::interpolate(float a, float b, float t) { return a + (b - a) * t; }
 
-void Camera::move_forward() { this->cameraPosition += this->cameraFront * this->speed; }
-void Camera::move_backward() { this->cameraPosition -= this->cameraFront * this->speed; }
+void Camera::move_forward() { this->cameraPosition += this->cameraFront * this->get_speed(); }
+void Camera::move_backward() { this->cameraPosition -= this->cameraFront * this->get_speed(); }
 void Camera::move_left() {
-    this->cameraPosition -= glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->speed;
+    this->cameraPosition -= glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->get_speed();
 }
 
 void Camera::move_right() {
-    this->cameraPosition += glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->speed;
+    this->cameraPosition += glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->get_speed();
 }
 
-void Camera::move_up() { this->cameraPosition += this->speed * this->cameraUp; }
-void Camera::move_down() { this->cameraPosition -= this->speed * this->cameraUp; }
+void Camera::move_up() { this->cameraPosition += this->get_speed() * this->cameraUp; }
+void Camera::move_down() { this->cameraPosition -= this->get_speed() * this->cameraUp; }
 
 void Camera::view() {
     // Compute and set the view matrix
@@ -62,8 +63,8 @@ void Camera::view() {
 void Camera::update_mouse_view() {
     Mouse* mouse = Mouse::get_instance();
 
-    yaw += mouse->x_delta * this->sensitivity;
-    pitch -= mouse->y_delta * this->sensitivity;
+    yaw += mouse->x_delta * this->get_sensitivity();
+    pitch -= mouse->y_delta * this->get_sensitivity();
 
     // Bounds for pitch to prevent view from flipping
     if (this->pitch > 89.0f) this->pitch = 89.0f;
@@ -79,3 +80,7 @@ void Camera::update_mouse_view() {
     mouse->x_delta = 0;
     mouse->y_delta = 0;
 }
+
+float Camera::get_speed() { return this->speed * DeltaTime::get_instance()->get_delta_time(); }
+
+float Camera::get_sensitivity() { return this->sensitivity * DeltaTime::get_instance()->get_delta_time(); }

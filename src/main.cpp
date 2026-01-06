@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "camera/camera.hpp"
+#include "delta_time.hpp"
 #include "detection/recording.hpp"
 #include "gl.h"
 #include "mouse.hpp"
@@ -107,6 +108,7 @@ int main() {
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
+        DeltaTime::get_instance()->update();
         recorder->update();
 
         // First handle input

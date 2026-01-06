@@ -25,8 +25,12 @@ class Camera {
         void move_down();
 
     private:
-        const float speed = 0.02;
-        const float sensitivity = 0.1;
+        const float speed = 3.0;
+        const float sensitivity = 5.0;
+
+        float get_speed();
+        float get_sensitivity();
+
         float yaw = 90.0f;
         float pitch = 0.0f;
         glm::vec3 cameraPosition;
