@@ -15,9 +15,7 @@ class Camera {
         Gaze compute_gaze_from_facial(cv::Rect face, int columns, int rows);
         void update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing);
         float interpolate(float a, float b, float t);
-        glm::vec3 get_camera_position();
-        glm::vec3 get_camera_target();
-        glm::vec3 get_up();
+        void view();
 
         void move_forward();
         void move_backward();

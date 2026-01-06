@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "camera/camera.hpp"
-#include "camera/projection.hpp"
 #include "detection/recording.hpp"
 #include "gl.h"
 #include "render/menu_renderer.hpp"
@@ -93,14 +92,8 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Compute view matrix
-        glm::vec3 cam_pos = camera.get_camera_position();
-        glm::vec3 cam_target = camera.get_camera_target();
-        glm::vec3 cam_up = camera.get_up();
-        glm::mat4 view = glm::lookAt(cam_pos, cam_target, cam_up);
-
-        Projector* projector = Projector::get_instance();
-        projector->set_view_projection(view);
+        // Calculates a view matrix to look at the scene
+        camera.view();
 
         // Draw scene
         renderer3D->draw();

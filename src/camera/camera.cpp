@@ -1,8 +1,11 @@
 #include "camera.hpp"
 
+#include <glm/ext/matrix_transform.hpp>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <vector>
+
+#include "projection.hpp"
 
 static float clamp_value(float value, float low, float high) {
     return value < low ? low : (value > high ? high : value);
@@ -35,15 +38,6 @@ void Camera::update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeSc
 
 float Camera::interpolate(float a, float b, float t) { return a + (b - a) * t; }
 
-glm::vec3 Camera::get_camera_position() { return this->cameraPosition; }
-
-glm::vec3 Camera::get_camera_target() {
-    // Look forward along +Z axis plus gaze/parallax offset
-    return this->cameraPosition + glm::vec3(this->cameraFront.x, this->cameraFront.y, this->cameraFront.z);
-}
-
-glm::vec3 Camera::get_up() { return this->cameraUp; }
-
 void Camera::move_forward() { this->cameraPosition += this->cameraFront * this->speed; }
 void Camera::move_backward() { this->cameraPosition -= this->cameraFront * this->speed; }
 void Camera::move_left() {
@@ -56,3 +50,11 @@ void Camera::move_right() {
 
 void Camera::move_up() { this->cameraPosition += this->speed * this->cameraUp; }
 void Camera::move_down() { this->cameraPosition -= this->speed * this->cameraUp; }
+
+void Camera::view() {
+    // Compute view matrix
+    glm::mat4 view = glm::lookAt(this->cameraPosition, this->cameraPosition + this->cameraFront, this->cameraUp);
+
+    Projector* projector = Projector::get_instance();
+    projector->set_view_projection(view);
+}
