@@ -23,7 +23,7 @@ class Projector {
         vector<float> project_list(vector<Mesh> objects, int n_triangles);
 
     private:
-        Projector(int width, int height);
+        Projector();
         static Projector* instance;
 
         glm::mat4 projection;

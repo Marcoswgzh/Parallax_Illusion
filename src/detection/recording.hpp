@@ -5,7 +5,14 @@
 
 class Recorder {
     public:
-        Recorder();
+        static Recorder* get_instance();
+
+        // Should not be cloneable
+        Recorder(Recorder& other) = delete;
+
+        // Should not be assignable
+        void operator=(const Recorder&) = delete;
+
         void start();
         void update();
         cv::Mat get_frame();
@@ -14,6 +21,10 @@ class Recorder {
         void toggle();
 
     private:
+        Recorder();
+
+        static Recorder* instance;
+
         bool detection = true;
         cv::VideoCapture cap;
         cv::Mat frame;

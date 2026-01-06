@@ -2,8 +2,8 @@
 
 #include <iostream>
 
+#include "../camera/projection.hpp"
 #include "../gl.h"
-#include "../scene/projection.hpp"
 #include "renderer.hpp"
 using namespace std;
 
@@ -21,6 +21,8 @@ SceneRenderer* SceneRenderer::get_instance() {
 SceneRenderer::SceneRenderer() {}
 
 void SceneRenderer::update() {
+    // TODO: BUG: Multiple meshes not possible, because indices aren't correct (because they are relative to their
+    // object, not the total)
     Projector* projector = Projector::get_instance();
     vector<float> projected = projector->project_list(this->meshes, this->n_triangles);
     vector<int> flattened_indices = this->get_flattened_indices();
