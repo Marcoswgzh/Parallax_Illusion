@@ -17,9 +17,15 @@ class Camera {
         float interpolate(float a, float b, float t);
         glm::vec3 get_camera_position();
         glm::vec3 get_camera_target();
-        float get_speed();
+        glm::vec3 get_up();
 
-        void move(float x, float y, float z);
+        void move_forward();
+        void move_backward();
+        void move_left();
+        void move_right();
+        void move_up();
+        void move_down();
+
         void change_angle_x(float degree);
         void change_angle_y(float degree);
         void change_angle_z(float degree);
@@ -27,7 +33,8 @@ class Camera {
     private:
         const float speed = 0.02;
         glm::vec3 cameraPosition;
-        glm::vec3 cameraViewOffset;
+        glm::vec3 cameraFront;
+        const glm::vec3 cameraUp = glm::vec3(0, 1, 0);  // This will stay the same
 };
 
 #endif

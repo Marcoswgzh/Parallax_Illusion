@@ -10,7 +10,7 @@ static float clamp_value(float value, float low, float high) {
 
 Camera::Camera() {
     this->cameraPosition = glm::vec3(0.f, 0.5f, -3.f);
-    this->cameraViewOffset = glm::vec3(0.f, 0.f, 0.f);  // TODO: Initializing to zero makes it jitter at the start
+    this->cameraFront = glm::vec3(0.f, 0.f, 1.0f);
 }
 
 Gaze Camera::compute_gaze_from_facial(cv::Rect face, int columns, int rows) {
@@ -27,9 +27,10 @@ Gaze Camera::compute_gaze_from_facial(cv::Rect face, int columns, int rows) {
 }
 
 void Camera::update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing) {
-    cameraViewOffset.x = interpolate(cameraViewOffset.x, gaze.x * gazeScaleX, smoothing);
-    cameraViewOffset.y = interpolate(cameraViewOffset.y, gaze.y * gazeScaleY, smoothing);
-    cameraViewOffset.z = interpolate(cameraViewOffset.z, 0.f, smoothing);
+    return;  // TODO: Ignoring updating camera gaze, because it doesn't work propperly
+    cameraFront.x = interpolate(cameraFront.x, gaze.x * gazeScaleX, smoothing);
+    cameraFront.y = interpolate(cameraFront.y, gaze.y * gazeScaleY, smoothing);
+    cameraFront.z = interpolate(cameraFront.z, 0.f, smoothing);
 }
 
 float Camera::interpolate(float a, float b, float t) { return a + (b - a) * t; }
@@ -38,11 +39,20 @@ glm::vec3 Camera::get_camera_position() { return this->cameraPosition; }
 
 glm::vec3 Camera::get_camera_target() {
     // Look forward along +Z axis plus gaze/parallax offset
-    // TODO: Why +1.f on X axis
-    return this->cameraPosition +
-           glm::vec3(this->cameraViewOffset.x, this->cameraViewOffset.y, 1.f + this->cameraViewOffset.z);
+    return this->cameraPosition + glm::vec3(this->cameraFront.x, this->cameraFront.y, this->cameraFront.z);
 }
 
-float Camera::get_speed() { return this->speed; }
+glm::vec3 Camera::get_up() { return this->cameraUp; }
 
-void Camera::move(float dx, float dy, float dz) { this->cameraPosition += glm::vec3(dx, dy, dz); }
+void Camera::move_forward() { this->cameraPosition += this->cameraFront * this->speed; }
+void Camera::move_backward() { this->cameraPosition -= this->cameraFront * this->speed; }
+void Camera::move_left() {
+    this->cameraPosition -= glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->speed;
+}
+
+void Camera::move_right() {
+    this->cameraPosition += glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->speed;
+}
+
+void Camera::move_up() { this->cameraPosition += this->speed * this->cameraUp; }
+void Camera::move_down() { this->cameraPosition -= this->speed * this->cameraUp; }

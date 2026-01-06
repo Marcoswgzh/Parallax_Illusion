@@ -4,12 +4,12 @@
 #include <vector>
 
 #include "camera/camera.hpp"
+#include "camera/projection.hpp"
 #include "detection/recording.hpp"
 #include "gl.h"
 #include "render/menu_renderer.hpp"
 #include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
-#include "scene/projection.hpp"
 #include "shaders/shaders.hpp"
 #include "window_manager.hpp"
 
@@ -20,12 +20,12 @@ const float CAMERA_SMOOTHING = 0.18f;
 
 void process_input(GLFWwindow* window, Camera* camera, Recorder* recorder) {
     // WASD + vertical
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move(0.0f, 0.0f, camera->get_speed());
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move(0.0f, 0.0f, -camera->get_speed());
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move(camera->get_speed(), 0.0f, 0.0f);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move(-camera->get_speed(), 0.0f, 0.0f);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move(0.0f, camera->get_speed(), 0.0f);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move(0.0f, -camera->get_speed(), 0.0f);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move_forward();
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move_backward();
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move_left();
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move_right();
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move_up();
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move_down();
 
     // Toggle detection
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
@@ -48,11 +48,17 @@ int main() {
     WindowManager* window_manager = WindowManager::get_instance();
 
     vector<float> scene_pyramid = {
-        0.0f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
 
-        1.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
 
-        -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+        1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+
+        0.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+
+        -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
     };
     vector<int> scene_pyramid_indices = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
     Mesh pyramid_mesh(scene_pyramid, scene_pyramid_indices, 4);
@@ -90,7 +96,8 @@ int main() {
         // Compute view matrix
         glm::vec3 cam_pos = camera.get_camera_position();
         glm::vec3 cam_target = camera.get_camera_target();
-        glm::mat4 view = glm::lookAt(cam_pos, cam_target, glm::vec3(0, 1, 0));
+        glm::vec3 cam_up = camera.get_up();
+        glm::mat4 view = glm::lookAt(cam_pos, cam_target, cam_up);
 
         Projector* projector = Projector::get_instance();
         projector->set_view_projection(view);
