@@ -6,6 +6,7 @@
 #include "camera/camera.hpp"
 #include "detection/recording.hpp"
 #include "gl.h"
+#include "mouse.hpp"
 #include "render/menu_renderer.hpp"
 #include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
@@ -41,10 +42,14 @@ int main() {
     Recorder recorder;
     recorder.start();
 
+    // Get instance of window manager
+    WindowManager* window_manager = WindowManager::get_instance();
+
+    // Init mouse
+    Mouse* mouse = Mouse::get_instance();
+
     // Initialize camera
     Camera camera;
-
-    WindowManager* window_manager = WindowManager::get_instance();
 
     vector<float> scene_pyramid = {
         0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
@@ -75,6 +80,10 @@ int main() {
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);
 
+    // Captures the mouse, so it can be used for movement
+    // TODO: This must be able to be toggle on and of (same for the menu). With key f
+    glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
         recorder.update();
@@ -91,6 +100,9 @@ int main() {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Update mouse based camera view
+        camera.update_mouse_view();
 
         // Calculates a view matrix to look at the scene
         camera.view();

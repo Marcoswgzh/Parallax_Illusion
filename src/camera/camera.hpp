@@ -16,7 +16,7 @@ class Camera {
         void update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing);
         float interpolate(float a, float b, float t);
         void view();
-
+        void update_mouse_view();
         void move_forward();
         void move_backward();
         void move_left();
@@ -24,12 +24,11 @@ class Camera {
         void move_up();
         void move_down();
 
-        void change_angle_x(float degree);
-        void change_angle_y(float degree);
-        void change_angle_z(float degree);
-
     private:
         const float speed = 0.02;
+        const float sensitivity = 0.1;
+        float yaw = 90.0f;
+        float pitch = 0.0f;
         glm::vec3 cameraPosition;
         glm::vec3 cameraFront;
         const glm::vec3 cameraUp = glm::vec3(0, 1, 0);  // This will stay the same

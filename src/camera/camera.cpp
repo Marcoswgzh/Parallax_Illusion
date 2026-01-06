@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include "../mouse.hpp"
 #include "projection.hpp"
 
 static float clamp_value(float value, float low, float high) {
@@ -57,4 +58,25 @@ void Camera::view() {
 
     Projector* projector = Projector::get_instance();
     projector->set_view_projection(view);
+}
+
+void Camera::update_mouse_view() {
+    Mouse* mouse = Mouse::get_instance();
+
+    yaw += mouse->x_delta * this->sensitivity;
+    pitch -= mouse->y_delta * this->sensitivity;
+
+    // Bounds for pitch to prevent view from flipping
+    if (this->pitch > 89.0f) this->pitch = 89.0f;
+    if (this->pitch < -89.0f) this->pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    direction.y = sin(glm::radians(this->pitch));
+    direction.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    this->cameraFront = glm::normalize(direction);
+
+    // Reset the mouse deltas
+    mouse->x_delta = 0;
+    mouse->y_delta = 0;
 }
