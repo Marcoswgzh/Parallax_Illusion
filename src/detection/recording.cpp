@@ -3,6 +3,15 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+Recorder* Recorder::instance = nullptr;
+
+Recorder* Recorder::get_instance() {
+    if (instance == nullptr) {
+        instance = new Recorder();
+    }
+    return instance;
+}
+
 Recorder::Recorder() {
     // Convert OpenCV path predefined macro to string
     std::string haarcascade_dir(HAARCASCADE_DIR);

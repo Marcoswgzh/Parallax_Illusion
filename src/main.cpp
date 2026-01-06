@@ -14,11 +14,18 @@
 #include "window_manager.hpp"
 
 // Gaze config
+// TODO: Shoudn't be configured here, but in camera file
 const float GAZE_SCALE_X = 1.2f;
 const float GAZE_SCALE_Y = 0.8f;
 const float CAMERA_SMOOTHING = 0.18f;
 
-void process_input(GLFWwindow* window, Camera* camera, Recorder* recorder) {
+// Temporary "menu" toggle
+// TODO: Do this with the menu when it exists
+bool menu = true;
+
+void process_input(Camera* camera) {
+    GLFWwindow* window = WindowManager::get_instance()->get_window();
+
     // WASD + vertical
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move_forward();
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move_backward();
@@ -27,20 +34,32 @@ void process_input(GLFWwindow* window, Camera* camera, Recorder* recorder) {
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move_up();
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move_down();
 
-    // Toggle detection
-    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-        recorder->toggle();
-        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
-    }
-
     // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+        Recorder* recorder = Recorder::get_instance();
+        recorder->toggle();
+        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
+    }
+
+    // Toggle menu (and also if mouse is captured in center for movement)
+    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+        menu = !menu;
+        if (menu) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        } else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
+}
+
 int main() {
     // Initialize recorder
-    Recorder recorder;
-    recorder.start();
+    Recorder* recorder = Recorder::get_instance();
+    recorder->start();
 
     // Get instance of window manager
     WindowManager* window_manager = WindowManager::get_instance();
@@ -81,20 +100,22 @@ int main() {
     renderer2D->add(menu_mesh);
 
     // Captures the mouse, so it can be used for movement
-    // TODO: This must be able to be toggle on and of (same for the menu). With key f
     glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // Set a key callback for one time keypresses
+    glfwSetKeyCallback(window_manager->get_window(), key_callback);
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
-        recorder.update();
+        recorder->update();
 
         // First handle input
-        process_input(window_manager->get_window(), &camera, &recorder);
+        process_input(&camera);
 
         // Apply gaze input if enabled
-        if (recorder.use_detection()) {
-            cv::Rect face = recorder.get_face();
-            cv::Mat frame = recorder.get_frame();
+        if (recorder->use_detection()) {
+            cv::Rect face = recorder->get_face();
+            cv::Mat frame = recorder->get_frame();
             Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
             camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
         }

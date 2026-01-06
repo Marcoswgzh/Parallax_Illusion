@@ -10,27 +10,26 @@ using namespace std;
 
 Projector* Projector::instance = nullptr;
 
-// TODO: Probably fails after screen resizing because width and hieght are not
-// references to the frame buffer size
 Projector* Projector::get_instance() {
     if (instance == nullptr) {
-        // Use the width and height from the viewport
-        int width, height;
-        glfwGetFramebufferSize(WindowManager::get_instance()->get_window(), &width, &height);
-        instance = new Projector(width, height);
+        instance = new Projector();
     }
     return instance;
 }
 
 /**
- * Sets the projectors perspective 'settings'.
+ * Constructs the projector.
  */
-Projector::Projector(int width, int height) {
-    float fov = glm::radians(45.0f);
-    projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
-}
+Projector::Projector() {}
 
-void Projector::set_view_projection(glm::mat4 view) { view_projection = projection * view; }
+void Projector::set_view_projection(glm::mat4 view) {
+    // Get the width and height from the viewport
+    int width, height;
+    glfwGetFramebufferSize(WindowManager::get_instance()->get_window(), &width, &height);
+
+    this->projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+    this->view_projection = this->projection * view;
+}
 
 vector<float> Projector::project(vector<float> triangles, int n_triangles) {
     vector<float> projected_triangles;

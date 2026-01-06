@@ -53,9 +53,8 @@ void Camera::move_up() { this->cameraPosition += this->speed * this->cameraUp; }
 void Camera::move_down() { this->cameraPosition -= this->speed * this->cameraUp; }
 
 void Camera::view() {
-    // Compute view matrix
+    // Compute and set the view matrix
     glm::mat4 view = glm::lookAt(this->cameraPosition, this->cameraPosition + this->cameraFront, this->cameraUp);
-
     Projector* projector = Projector::get_instance();
     projector->set_view_projection(view);
 }
