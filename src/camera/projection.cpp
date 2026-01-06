@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 #include <vector>
 
 #include "../render/renderer.hpp"
@@ -57,7 +58,7 @@ vector<float> Projector::project_list(vector<Mesh> meshes, int n_triangles) {
     projected_triangles.reserve(18 * n_triangles);
 
     for (Mesh mesh : meshes) {
-        for (int i = 0; i < 18 * n_triangles / 6; i++) {
+        for (int i = 0; i < mesh.get_triangles()->size() / 6; i++) {
             glm::vec4 projected =
                 this->view_projection * glm::vec4((*mesh.get_triangles())[i * 6], (*mesh.get_triangles())[i * 6 + 1],
                                                   (*mesh.get_triangles())[i * 6 + 2], 1.0f);

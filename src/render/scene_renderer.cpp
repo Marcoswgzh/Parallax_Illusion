@@ -9,8 +9,6 @@ using namespace std;
 
 SceneRenderer* SceneRenderer::instance = nullptr;
 
-// TODO: One scene renderer for each window (so create a vector of instances
-// instead)
 SceneRenderer* SceneRenderer::get_instance() {
     if (instance == nullptr) {
         instance = new SceneRenderer();
@@ -21,8 +19,6 @@ SceneRenderer* SceneRenderer::get_instance() {
 SceneRenderer::SceneRenderer() {}
 
 void SceneRenderer::update() {
-    // TODO: BUG: Multiple meshes not possible, because indices aren't correct (because they are relative to their
-    // object, not the total)
     Projector* projector = Projector::get_instance();
     vector<float> projected = projector->project_list(this->meshes, this->n_triangles);
     vector<int> flattened_indices = this->get_flattened_indices();
@@ -57,10 +53,14 @@ void SceneRenderer::update() {
 vector<int> SceneRenderer::get_flattened_indices() {
     vector<int> flattened;
     flattened.reserve(this->n_triangles * 3);
+    int offset = 0;
     for (Mesh mesh : this->meshes) {
-        vector<int>::iterator indices_start = (*mesh.get_indices()).begin();
-        vector<int>::iterator indices_end = (*mesh.get_indices()).end();
-        flattened.insert(flattened.end(), indices_start, indices_end);
+        for (int index : *mesh.get_indices()) {
+            flattened.push_back(index + offset);
+        }
+
+        // Add the amount of triangles to adjust the indices of the future meshes
+        offset += (int)(mesh.get_triangles()->size() / 6);
     }
 
     return flattened;
