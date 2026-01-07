@@ -1,4 +1,4 @@
-#include "Mesh.hpp"
+#include "mesh.hpp"
 
 #include <glm/glm.hpp>
 

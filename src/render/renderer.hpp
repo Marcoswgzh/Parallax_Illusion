@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Mesh.hpp"
+#include "mesh.hpp"
 using namespace std;
 
 class Renderer {

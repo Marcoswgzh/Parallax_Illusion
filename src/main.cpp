@@ -12,6 +12,7 @@
 #include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
 #include "shaders/shaders.hpp"
+#include "shapes/cube.hpp"
 #include "window_manager.hpp"
 
 // Gaze config
@@ -71,41 +72,8 @@ int main() {
     // Initialize camera
     Camera camera;
 
-    vector<float> scene_pyramid = {
-        0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-
-        0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-
-        1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-
-        1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-
-        0.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-
-        -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
-    };
-    vector<int> scene_pyramid_indices = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
-    Mesh pyramid_mesh(scene_pyramid, scene_pyramid_indices, 4, glm::vec3(0.0, 0.0, 0.0));
-
-    vector<float> scene_pyramid2 = {
-        0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-
-        0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-
-        1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-
-        1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-
-        0.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-
-        -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
-    };
-    vector<int> scene_pyramid_indices2 = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
-    Mesh pyramid_mesh2(scene_pyramid2, scene_pyramid_indices2, 4, glm::vec3(1.0, 0.0, 0.0));
-
-    Renderer* renderer3D = SceneRenderer::get_instance();
-    int piramid_render_index = renderer3D->add(pyramid_mesh);
-    int piramid_render_index2 = renderer3D->add(pyramid_mesh2);
+    // A "floor"
+    Cube floor_cube(glm::vec3(50.0, 0.0, 50.0), glm::vec3(-25.0, 0.0, -25.0), glm::vec3(0.2, 0.2, 0.2));
 
     vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
@@ -149,7 +117,7 @@ int main() {
         camera.view();
 
         // Draw scene
-        renderer3D->draw();
+        SceneRenderer::get_instance()->draw();
 
         // Draw menu
         renderer2D->draw();
