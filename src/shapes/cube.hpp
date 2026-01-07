@@ -13,9 +13,6 @@ class Cube : public Shape3D {
         Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color);
 
         float get_volume();
-        float get_x();
-        float get_y();
-        float get_z();
         float get_width();
         float get_height();
         float get_depth();

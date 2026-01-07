@@ -72,8 +72,8 @@ int main() {
     // Initialize camera
     Camera camera;
 
-    // A "floor"
-    Cube floor_cube(glm::vec3(50.0, 0.0, 50.0), glm::vec3(-25.0, 0.0, -25.0), glm::vec3(0.2, 0.2, 0.2));
+    // Create cube for scene
+    Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
 
     vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
