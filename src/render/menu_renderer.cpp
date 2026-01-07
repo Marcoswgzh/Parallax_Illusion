@@ -51,7 +51,7 @@ vector<float> MenuRenderer::get_flattened_vertices() {
     flattened.reserve(this->n_triangles * 15);
 
     for (Mesh mesh : this->meshes) {
-        flattened.insert(flattened.end(), (*mesh.get_triangles()).begin(), (*mesh.get_triangles()).end());
+        flattened.insert(flattened.end(), (*mesh.get_vertices()).begin(), (*mesh.get_vertices()).end());
     }
 
     return flattened;

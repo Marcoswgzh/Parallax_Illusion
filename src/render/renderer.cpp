@@ -21,21 +21,6 @@ int Renderer::add(Mesh mesh) {
     return this->meshes.size();
 }
 
-void Renderer::replace(int index, vector<float> triangles, int n_triangles, int n_previous_triangles) {
-    // Make sure the change is noted
-    this->change = true;
-
-    // Update the total amount of triangles
-    this->n_triangles -= n_previous_triangles;
-    this->n_triangles += n_triangles;
-
-    // Create the new mesh
-    Mesh mesh(triangles, {}, n_triangles);
-
-    // Replace the visual object
-    this->meshes[index] = mesh;
-}
-
 void Renderer::remove(int index, int n_triangles) {
     // Make sure the change is noted
     this->change = true;

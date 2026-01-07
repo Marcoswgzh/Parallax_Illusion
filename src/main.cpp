@@ -12,6 +12,7 @@
 #include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
 #include "shaders/shaders.hpp"
+#include "shapes/cube.hpp"
 #include "window_manager.hpp"
 
 // Gaze config
@@ -71,31 +72,16 @@ int main() {
     // Initialize camera
     Camera camera;
 
-    vector<float> scene_pyramid = {
-        0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+    // Create cube for scene
+    Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
 
-        0.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-
-        1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-
-        1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-
-        0.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-
-        -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
-    };
-    vector<int> scene_pyramid_indices = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
-    Mesh pyramid_mesh(scene_pyramid, scene_pyramid_indices, 4);
-
-    Renderer* renderer3D = SceneRenderer::get_instance();
-    int piramid_render_index = renderer3D->add(pyramid_mesh);
-
-    vector<float> triangles = {
+    vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
 
         1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
     };
-    Mesh menu_mesh(triangles, {}, 4);
+
+    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0));
 
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);
@@ -131,7 +117,7 @@ int main() {
         camera.view();
 
         // Draw scene
-        renderer3D->draw();
+        SceneRenderer::get_instance()->draw();
 
         // Draw menu
         renderer2D->draw();
