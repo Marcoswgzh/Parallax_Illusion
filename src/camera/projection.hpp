@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../gl.h"
+#include "../render/mesh.hpp"
 #include "../render/renderer.hpp"
 using namespace std;
 
