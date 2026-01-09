@@ -17,13 +17,13 @@ Recorder::Recorder() {
     std::string haarcascade_dir(HAARCASCADE_DIR);
 
     // Load face haarcascade classifier
-    if (!this->face_cascade.load(haarcascade_dir + "haarcascade_frontalface_default.xml")) {
+    if (!this->face_cascade.load(haarcascade_dir + "/haarcascade_frontalface_default.xml")) {
         std::cerr << "Error loading Haar cascade file." << std::endl;
         exit(EXIT_FAILURE);
     }
 
     // Load eye haarcascade classifier
-    if (!this->eye_cascade.load(haarcascade_dir + "haarcascade_eye_tree_eyeglasses.xml")) {
+    if (!this->eye_cascade.load(haarcascade_dir + "/haarcascade_eye_tree_eyeglasses.xml")) {
         std::cerr << "Error loading Haar cascade file." << std::endl;
         exit(EXIT_FAILURE);
     }
