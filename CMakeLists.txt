@@ -79,11 +79,15 @@ add_library(glad external/glad/glad.c)
 # Looks in external/glad for header files and adds them to all targets which include it.
 target_include_directories(glad PUBLIC external/glad)
 
+# Does the same for stb_image
+add_library(stb_image external/stb_image/stb_image.cpp)
+target_include_directories(stb_image PUBLIC external/stb_image)
+
 # Compile glm
 add_subdirectory(external/glm-1.0.2)
 
 # Link all dependencies
-target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm)
+target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
