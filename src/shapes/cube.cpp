@@ -2,6 +2,7 @@
 
 #include "../render/mesh.hpp"
 #include "../render/scene_renderer.hpp"
+#include <optional>
 
 Cube::Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color) {
     vector<float> vertices = {
@@ -34,7 +35,7 @@ Cube::Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color) {
 
                            6, 4, 5, 6, 4, 7};
 
-    Mesh mesh(vertices, indices, 12, position);
+    Mesh mesh(vertices, indices, 12, position, std::nullopt);
 
     this->id = SceneRenderer::get_instance()->add(mesh);
 }

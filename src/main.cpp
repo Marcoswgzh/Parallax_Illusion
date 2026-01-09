@@ -14,6 +14,7 @@
 #include "shaders/shaders.hpp"
 #include "shapes/cube.hpp"
 #include "window_manager.hpp"
+#include <optional>
 
 // Gaze config
 // TODO: Shoudn't be configured here, but in camera file
@@ -81,7 +82,7 @@ int main() {
         1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
     };
 
-    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0));
+    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0), std::nullopt);
 
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);
