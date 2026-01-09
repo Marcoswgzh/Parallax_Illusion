@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(parallax)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Make sure cmake is run from the correct directory
 if(NOT "${CMAKE_SOURCE_DIR}/build" STREQUAL "${CMAKE_BINARY_DIR}")
     message(FATAL_ERROR "Out of source build required. Run from ./build instead.\nYou can safely remove the generated files in your current directory.")
