@@ -1,4 +1,3 @@
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
@@ -24,7 +23,7 @@ const float CAMERA_SMOOTHING = 0.18f;
 // TODO: Do this with the menu when it exists
 bool menu = true;
 
-void process_input(Camera* camera) {
+/*void process_input(Camera* camera) {
     GLFWwindow* window = WindowManager::get_instance()->get_window();
 
     // WASD + vertical
@@ -37,7 +36,7 @@ void process_input(Camera* camera) {
 
     // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
-}
+}*/
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_T && action == GLFW_PRESS) {
@@ -47,13 +46,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 
     // Toggle menu (and also if mouse is captured in center for movement)
-    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+    /*if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         menu = !menu;
         if (menu) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         } else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
+    }*/
+
+    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
     }
 }
 
@@ -101,7 +104,7 @@ int main() {
     renderer2D->add(menu_mesh);
 
     // Captures the mouse, so it can be used for movement
-    glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     // Set a key callback for one time keypresses
     glfwSetKeyCallback(window_manager->get_window(), key_callback);
@@ -112,20 +115,19 @@ int main() {
         recorder->update();
 
         // First handle input
-        process_input(&camera);
+        //process_input(&camera);
 
         // Apply gaze input if enabled
         if (recorder->use_detection()) {
             cv::Rect face = recorder->get_face();
-            cv::Mat frame = recorder->get_frame();
-            Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
-            camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
+            if (face.width > 0) {
+                cv::Mat frame = recorder->get_frame();
+                Gaze gaze = camera.compute_gaze_from_face(face, frame.cols, frame.rows);
+                camera.update_position_from_face(gaze, (float)face.width);
+            }
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Update mouse based camera view
-        camera.update_mouse_view();
 
         // Calculates a view matrix to look at the scene
         camera.view();

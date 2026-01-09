@@ -14,11 +14,23 @@ static float clamp_value(float value, float low, float high) {
 }
 
 Camera::Camera() {
-    this->cameraPosition = glm::vec3(0.f, 0.5f, -3.f);
-    this->cameraFront = glm::vec3(0.f, 0.f, 1.0f);
+    this->cameraPosition = CENTER_POSITION;
 }
 
-Gaze Camera::compute_gaze_from_facial(cv::Rect face, int columns, int rows) {
+void Camera::update_position_from_face(const Gaze& gaze, float faceWidth) {
+    float targetX = gaze.x * MOVEMENT_SCALE_X;
+    float targetY = gaze.y * MOVEMENT_SCALE_Y;
+
+    float compensatedWidth = faceWidth * (1.0f + (abs(gaze.x) * 0.5f));
+    float widthDiff = compensatedWidth - REFERENCE_FACE_WIDTH;
+    float targetZ = CENTER_POSITION.z + (widthDiff * DEPTH_SENSITIVITY);
+
+    this->cameraPosition.x = interpolate(this->cameraPosition.x, targetX, SMOOTHING_FACTOR);
+    this->cameraPosition.y = interpolate(this->cameraPosition.y, targetY, SMOOTHING_FACTOR);
+    this->cameraPosition.z = interpolate(this->cameraPosition.z, targetZ, SMOOTHING_FACTOR);
+}
+
+Gaze Camera::compute_gaze_from_face(cv::Rect face, int columns, int rows) {
     Gaze result;
     cv::Point face_center(face.x + face.width / 2, face.y + face.height / 2);
 
@@ -31,56 +43,11 @@ Gaze Camera::compute_gaze_from_facial(cv::Rect face, int columns, int rows) {
     return result;
 }
 
-void Camera::update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing) {
-    return;  // TODO: Ignoring updating camera gaze, because it doesn't work propperly
-    cameraFront.x = interpolate(cameraFront.x, gaze.x * gazeScaleX, smoothing);
-    cameraFront.y = interpolate(cameraFront.y, gaze.y * gazeScaleY, smoothing);
-    cameraFront.z = interpolate(cameraFront.z, 0.f, smoothing);
-}
-
 float Camera::interpolate(float a, float b, float t) { return a + (b - a) * t; }
 
-void Camera::move_forward() { this->cameraPosition += this->cameraFront * this->get_speed(); }
-void Camera::move_backward() { this->cameraPosition -= this->cameraFront * this->get_speed(); }
-void Camera::move_left() {
-    this->cameraPosition -= glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->get_speed();
-}
-
-void Camera::move_right() {
-    this->cameraPosition += glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->get_speed();
-}
-
-void Camera::move_up() { this->cameraPosition += this->get_speed() * this->cameraUp; }
-void Camera::move_down() { this->cameraPosition -= this->get_speed() * this->cameraUp; }
-
 void Camera::view() {
-    // Compute and set the view matrix
-    glm::mat4 view = glm::lookAt(this->cameraPosition, this->cameraPosition + this->cameraFront, this->cameraUp);
+    glm::vec3 target = this->cameraPosition +  glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::mat4 view = glm::lookAt(this->cameraPosition, target, this->cameraUp);
     Projector* projector = Projector::get_instance();
     projector->set_view_projection(view);
 }
-
-void Camera::update_mouse_view() {
-    Mouse* mouse = Mouse::get_instance();
-
-    yaw += mouse->x_delta * this->get_sensitivity();
-    pitch -= mouse->y_delta * this->get_sensitivity();
-
-    // Bounds for pitch to prevent view from flipping
-    if (this->pitch > 89.0f) this->pitch = 89.0f;
-    if (this->pitch < -89.0f) this->pitch = -89.0f;
-
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-    direction.y = sin(glm::radians(this->pitch));
-    direction.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-    this->cameraFront = glm::normalize(direction);
-
-    // Reset the mouse deltas
-    mouse->x_delta = 0;
-    mouse->y_delta = 0;
-}
-
-float Camera::get_speed() { return this->speed * DeltaTime::get_instance()->get_delta_time(); }
-
-float Camera::get_sensitivity() { return this->sensitivity * DeltaTime::get_instance()->get_delta_time(); }
