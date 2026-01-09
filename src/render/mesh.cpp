@@ -2,12 +2,12 @@
 
 #include <glm/glm.hpp>
 
-Mesh::Mesh(vector<float> vertices, vector<int> indices, int n_triangles, glm::vec3 position, std::optional<int> textureID) {
+Mesh::Mesh(vector<float> vertices, vector<int> indices, int n_triangles, glm::vec3 position, std::optional<Texture> texture) {
     this->vertices = vertices;
     this->indices = indices;
     this->n_triangles = n_triangles;
     this->position = position;
-    this->textureID = textureID;
+    this->texture = texture;
 }
 
 vector<float>* Mesh::get_vertices() {
@@ -26,6 +26,6 @@ glm::vec3 Mesh::get_position() {
     return this->position;
 }
 
-std::optional<int> Mesh::get_textureID() {
-    return this->textureID;
+std::optional<Texture> Mesh::get_texture() {
+    return this->texture;
 }
