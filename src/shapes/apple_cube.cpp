@@ -4,9 +4,9 @@
 #include "../render/scene_renderer.hpp"
 #include <optional>
 
-AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position, Texture texture) {
+AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position) {
 
-    // Last two elements of each row are texture coordinates, as opposed to last three being the colour information in Cube.cpp.
+    // Last two elements of each row are texture coordinates, as opposed to last three being the colour information in cube.cpp.
     vector<float> vertices = {
         0.0f,         0.0f,         0.0f,         0.0f,         0.0f,
 
@@ -37,7 +37,7 @@ AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position, Texture texture) 
 
                            6, 4, 5, 6, 4, 7};
 
-    Mesh mesh(vertices, indices, 12, position, texture);
+    Mesh mesh(vertices, indices, 12, position, Texture("apple_texture.png"));
 
     this->id = SceneRenderer::get_instance()->add(mesh);
 }

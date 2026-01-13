@@ -11,7 +11,7 @@
  */
 class AppleCube : public Shape3D {
     public:
-        AppleCube(glm::vec3 dimensions, glm::vec3 position, Texture texture);
+        AppleCube(glm::vec3 dimensions, glm::vec3 position);
 
         float get_volume();
         float get_width();
