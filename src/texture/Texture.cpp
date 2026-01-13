@@ -9,7 +9,7 @@ Texture::Texture(std::string imagePath) {
 
     // Read the data
     int width, height, channelCount;
-    unsigned char *data = stbi_load(imagePath.c_str(), &width, &height, &channelCount, 0);
+    unsigned char *data = stbi_load(imagePath.c_str(), &width, &height, &channelCount, 4);
 
     // Create a texture
     unsigned int textureID;
@@ -20,6 +20,9 @@ Texture::Texture(std::string imagePath) {
 
     // Actually generate the texture
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+    // Generate required mipmaps
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     // We're done with the actual texture data itself, so we can free it.
     stbi_image_free(data);

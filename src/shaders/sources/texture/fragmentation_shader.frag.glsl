@@ -1,8 +1,10 @@
 #version 330 core
 
 in vec2 textureCoords;
-out vec4 fragmentation_color;
+out vec4 finalColour;
+
+uniform sampler2D meshTexture;
 
 void main() {
-    fragmentation_color = vec4(vec3(1,0,0), 1.0f);
+    finalColour = texture(meshTexture, textureCoords);
 }

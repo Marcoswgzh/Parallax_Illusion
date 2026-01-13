@@ -37,7 +37,7 @@ AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position) {
 
                            6, 4, 5, 6, 4, 7};
 
-    Mesh mesh(vertices, indices, 12, position, Texture("apple_texture.png"));
+    Mesh mesh(vertices, indices, 12, position, Texture("textures/smile.png"));
 
     this->id = SceneRenderer::get_instance()->add(mesh);
 }

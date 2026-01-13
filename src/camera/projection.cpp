@@ -33,12 +33,12 @@ void Projector::set_view_projection(glm::mat4 view) {
 }
 
 vector<float> Projector::project(Mesh mesh, int offset) {
-    vector<float> projected_vertices;
-    projected_vertices.reserve(18 * mesh.get_n_triangles());
-
     int stride = 3 + offset;
 
-    for (int i = 0; i < 18 * mesh.get_n_triangles() / stride; i++) {
+    vector<float> projected_vertices;
+    projected_vertices.reserve(3 * stride * mesh.get_n_triangles());
+
+    for (int i = 0; i < 3 * stride * mesh.get_n_triangles() / stride; i++) {
         glm::vec4 projected =
             this->view_projection * glm::vec4((*mesh.get_vertices())[i * stride] + mesh.get_position().x,
                                               (*mesh.get_vertices())[i * stride + 1] + mesh.get_position().y,

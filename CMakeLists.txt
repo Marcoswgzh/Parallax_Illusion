@@ -95,3 +95,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Copy all shaders sources to the binary directory
 file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/sources/
      DESTINATION ${CMAKE_BINARY_DIR}/)
+
+# Copy all textures to the textures directory
+file(COPY ${CMAKE_SOURCE_DIR}/textures DESTINATION ${CMAKE_BINARY_DIR})
