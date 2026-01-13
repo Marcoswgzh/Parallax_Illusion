@@ -20,7 +20,7 @@ SceneRenderer::SceneRenderer() {}
 
 void SceneRenderer::update() {
     Projector* projector = Projector::get_instance();
-    vector<float> projected = projector->project_list(this->meshes, this->n_triangles);
+    vector<float> projected = projector->project_list(this->meshes, this->n_triangles, 3);
     vector<int> flattened_indices = this->get_flattened_indices();
 
     glGenVertexArrays(1, &VAO);

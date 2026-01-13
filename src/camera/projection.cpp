@@ -32,9 +32,7 @@ void Projector::set_view_projection(glm::mat4 view) {
     this->view_projection = this->projection * view;
 }
 
-// Doesn't make use of the project method for efficiency (concatenating vectors
-// together takes time).
-vector<float> Projector::project_list(vector<Mesh> meshes, int n_triangles) {
+vector<float> Projector::project_list(vector<Mesh> meshes, int n_triangles, int offset) {
     vector<float> projected_vertices;
     projected_vertices.reserve(18 * n_triangles);
 
@@ -49,9 +47,11 @@ vector<float> Projector::project_list(vector<Mesh> meshes, int n_triangles) {
             projected_vertices.push_back(normalized_projection.x);
             projected_vertices.push_back(normalized_projection.y);
             projected_vertices.push_back(normalized_projection.z);
-            projected_vertices.push_back((*mesh.get_vertices())[i * 6 + 3]);
-            projected_vertices.push_back((*mesh.get_vertices())[i * 6 + 4]);
-            projected_vertices.push_back((*mesh.get_vertices())[i * 6 + 5]);
+
+            // Loop with offset amount (all none position elements are ignored)
+            for (int j = 0; j < offset; j++) {
+                projected_vertices.push_back((*mesh.get_vertices())[i * 6 + 3 + j]);
+            }
         }
     }
 
