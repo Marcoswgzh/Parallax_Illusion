@@ -18,10 +18,14 @@ SceneRenderer* SceneRenderer::get_instance() {
 
 SceneRenderer::SceneRenderer() {}
 
-void SceneRenderer::update() {
+void SceneRenderer::update_mesh(Mesh mesh) {
+    // Make sure to use the correct shaders
+    // TODO: Use correct shader
+    this->shader.use();
+
     Projector* projector = Projector::get_instance();
-    vector<float> projected = projector->project_list(this->meshes, this->n_triangles);
-    vector<int> flattened_indices = this->get_flattened_indices();
+    vector<float> projected = projector->project(mesh, 3);
+    vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -50,6 +54,13 @@ void SceneRenderer::update() {
     this->change = false;
 }
 
+void SceneRenderer::update() {
+    // Update all the meshes
+    for (Mesh mesh : this->meshes) {
+        this->update_mesh(mesh);
+    }
+}
+
 vector<int> SceneRenderer::get_flattened_indices() {
     vector<int> flattened;
     flattened.reserve(this->n_triangles * 3);
@@ -71,9 +82,6 @@ void SceneRenderer::draw() {
     if (this->n_triangles <= 0) {
         return;
     }
-
-    // Make sure to use the correct shaders
-    this->shader.use();
 
     // TODO: Track position/angle changes in the camera, so we only have to render
     // if the result will be different For now always rerender a 3D scene
