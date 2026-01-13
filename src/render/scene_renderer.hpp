@@ -22,13 +22,14 @@ class SceneRenderer : public Renderer {
 
     private:
         SceneRenderer();
-        void update_mesh(Mesh mesh);
+        void update_coloured_mesh(Mesh mesh);
+        void update_textured_mesh(Mesh mesh);
         void update() override;
         vector<int> get_flattened_indices();
 
         // Initialize shaders
-        Shader colour_shader = Shader("vertex_shader.vert.glsl", "fragmentation_shader_colour.frag.glsl");
-        Shader texture_shader = Shader("vertex_shader.vert.glsl", "fragmentation_shader_texture.frag.glsl");
+        Shader colour_shader = Shader("colour/vertex_shader.vert.glsl", "colour/fragmentation_shader.frag.glsl");
+        Shader texture_shader = Shader("texture/vertex_shader.vert.glsl", "texture/fragmentation_shader.frag.glsl");
 
         static SceneRenderer* instance;
 };

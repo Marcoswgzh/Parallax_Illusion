@@ -18,15 +18,8 @@ SceneRenderer* SceneRenderer::get_instance() {
 
 SceneRenderer::SceneRenderer() {}
 
-void SceneRenderer::update_mesh(Mesh mesh) {
-    // Make sure to use the correct shaders
-
-    if (mesh.get_texture().has_value()) {
-        this->texture_shader.use();
-    }
-    else {
-        this->colour_shader.use();
-    }
+void SceneRenderer::update_coloured_mesh(Mesh mesh) {
+    this->colour_shader.use();
 
     Projector* projector = Projector::get_instance();
     vector<float> projected = projector->project(mesh, 3);
@@ -59,10 +52,53 @@ void SceneRenderer::update_mesh(Mesh mesh) {
     this->change = false;
 }
 
+void SceneRenderer::update_textured_mesh(Mesh mesh) {
+    this->texture_shader.use();
+
+    Projector* projector = Projector::get_instance();
+    vector<float> projected = projector->project(mesh, 3);
+    vector<int> flattened_indices = *mesh.get_indices();
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    unsigned int EBO, VBO;
+    glGenBuffers(1, &EBO);
+    glGenBuffers(1, &VBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), projected.data(), GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->n_triangles * 3 * sizeof(unsigned int), flattened_indices.data(),
+                 GL_DYNAMIC_DRAW);
+
+    // Tell OpenGL how it should interpret the vertex data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind VBO and VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    this->change = false;
+}
+
+
 void SceneRenderer::update() {
     // Update all the meshes
     for (Mesh mesh : this->meshes) {
-        this->update_mesh(mesh);
+
+        // Use different update method depending on whether the mesh has a texture or not
+        if (mesh.get_texture().has_value()) {
+            this->update_textured_mesh(mesh);
+        }
+        else {
+            this->update_coloured_mesh(mesh);
+        }
+
     }
 }
 
