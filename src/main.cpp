@@ -15,6 +15,7 @@
 #include "shapes/cube.hpp"
 #include "window_manager.hpp"
 #include <optional>
+#include "shapes/apple_cube.hpp"
 
 // Gaze config
 // TODO: Shoudn't be configured here, but in camera file
@@ -74,7 +75,8 @@ int main() {
     Camera camera;
 
     // Create cube for scene
-    Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
+    // Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
+    AppleCube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0));
 
     vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,

@@ -56,7 +56,7 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     this->texture_shader.use();
 
     Projector* projector = Projector::get_instance();
-    vector<float> projected = projector->project(mesh, 3);
+    vector<float> projected = projector->project(mesh, 2);
     vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -67,16 +67,17 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), projected.data(), GL_DYNAMIC_DRAW);
+    // Three points per triangle * stride
+    glBufferData(GL_ARRAY_BUFFER, projected.size() * sizeof(float), projected.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->n_triangles * 3 * sizeof(unsigned int), flattened_indices.data(),
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, flattened_indices.size() * sizeof(unsigned int), flattened_indices.data(),
                  GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // Unbind VBO and VAO
