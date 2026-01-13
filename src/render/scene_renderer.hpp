@@ -22,6 +22,7 @@ class SceneRenderer : public Renderer {
 
     private:
         SceneRenderer();
+        void update_mesh(Mesh mesh);
         void update() override;
         vector<int> get_flattened_indices();
 
