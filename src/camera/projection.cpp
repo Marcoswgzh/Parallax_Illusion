@@ -32,26 +32,4 @@ void Projector::set_view_projection(glm::mat4 view) {
     this->view_projection = this->projection * view;
 }
 
-vector<float> Projector::project(Mesh mesh, int offset) {
-    vector<float> projected_vertices;
-    projected_vertices.reserve(18 * mesh.get_n_triangles());
-
-    for (int i = 0; i < 18 * mesh.get_n_triangles() / 6; i++) {
-        glm::vec4 projected =
-            this->view_projection * glm::vec4((*mesh.get_vertices())[i * 6] + mesh.get_position().x,
-                                              (*mesh.get_vertices())[i * 6 + 1] + mesh.get_position().y,
-                                              (*mesh.get_vertices())[i * 6 + 2] + mesh.get_position().z, 1.0f);
-
-        glm::vec3 normalized_projection = glm::vec3(projected) / projected.w;
-        projected_vertices.push_back(normalized_projection.x);
-        projected_vertices.push_back(normalized_projection.y);
-        projected_vertices.push_back(normalized_projection.z);
-
-        // Loop with offset amount (all none position elements are ignored)
-        for (int j = 0; j < offset; j++) {
-            projected_vertices.push_back((*mesh.get_vertices())[i * 6 + 3 + j]);
-        }
-    }
-
-    return projected_vertices;
-}
+glm::mat4 Projector::get_view_projection() { return this->view_projection; }

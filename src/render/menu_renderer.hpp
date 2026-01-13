@@ -26,7 +26,7 @@ class MenuRenderer : public Renderer {
         void update() override;
 
         // Initialize shaders
-        Shader shader = Shader("vertex_shader_2d.glsl", "fragmentation_shader.glsl");
+        Shader shader = Shader("2D/shader.vert.glsl", "2D/shader.frag.glsl");
 
         static MenuRenderer* instance;
 };
