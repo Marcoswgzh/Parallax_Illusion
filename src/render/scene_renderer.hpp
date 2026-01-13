@@ -27,7 +27,8 @@ class SceneRenderer : public Renderer {
         vector<int> get_flattened_indices();
 
         // Initialize shaders
-        Shader shader = Shader("vertex_shader.glsl", "fragmentation_shader.glsl");
+        Shader colour_shader = Shader("vertex_shader.vert.glsl", "fragmentation_shader_colour.frag.glsl");
+        Shader texture_shader = Shader("vertex_shader.vert.glsl", "fragmentation_shader_texture.frag.glsl");
 
         static SceneRenderer* instance;
 };

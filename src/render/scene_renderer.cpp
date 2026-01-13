@@ -20,8 +20,13 @@ SceneRenderer::SceneRenderer() {}
 
 void SceneRenderer::update_mesh(Mesh mesh) {
     // Make sure to use the correct shaders
-    // TODO: Use correct shader
-    this->shader.use();
+
+    if (mesh.get_texture().has_value()) {
+        this->texture_shader.use();
+    }
+    else {
+        this->colour_shader.use();
+    }
 
     Projector* projector = Projector::get_instance();
     vector<float> projected = projector->project(mesh, 3);
