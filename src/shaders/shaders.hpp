@@ -12,6 +12,7 @@ class Shader {
         Shader(const char* vs_path, const char* fs_path);
         Shader(const char* vs_path, const char* gs_path, const char* fs_path);
         void set_mat4(const char* name, const glm::mat4& value);
+        void set_vec3(const char* name, const glm::vec3& value);
         void use();
 
     private:

@@ -9,16 +9,25 @@ out vec3 color;
 out vec3 frag_position;
 out vec3 normal;
 
+uniform vec3 camera_position;
+
 void main()
 {
-    vec3 posA = gl_in[0].gl_Position.xyz;
-    vec3 posB = gl_in[1].gl_Position.xyz;
-    vec3 posC = gl_in[2].gl_Position.xyz;
+    vec3 pos_A = gl_in[0].gl_Position.xyz;
+    vec3 pos_B = gl_in[1].gl_Position.xyz;
+    vec3 pos_C = gl_in[2].gl_Position.xyz;
 
-    vec3 AC = posA - posC;
-    vec3 BC = posB - posC;
-    normal = cross(AC, BC);
+    vec3 AC = pos_A - pos_C;
+    vec3 BC = pos_B - pos_C;
 
+    // Calculate vector from point A to camera position
+    vec3 A_to_cam = camera_position - pos_A;
+
+    normal = cross(AC, BC) * -1;
+    if (dot(normal, A_to_cam) < 0) {
+        normal *= -1;
+    }
+    
     for (int i = 0; i < 3; i++) {
         gl_Position = gl_in[i].gl_Position;
         color = v_color[i];

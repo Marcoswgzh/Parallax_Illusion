@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "../camera/camera.hpp"
 #include "../camera/projection.hpp"
 #include "../gl.h"
 #include "renderer.hpp"
@@ -24,6 +25,7 @@ void SceneRenderer::update_mesh(Mesh mesh) {
     this->shader.use();
     Projector* projector = Projector::get_instance();
     this->shader.set_mat4("projection", projector->get_view_projection());
+    this->shader.set_vec3("camera_direction", this->camera.get_camera_position());
     vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -78,6 +80,9 @@ vector<int> SceneRenderer::get_flattened_indices() {
 }
 
 void SceneRenderer::draw() {
+    // Update the camera before the draw
+    this->camera.update();
+
     // Don't execute if there is nothing to draw
     if (this->n_triangles <= 0) {
         return;

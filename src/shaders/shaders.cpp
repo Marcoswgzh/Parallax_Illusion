@@ -110,4 +110,9 @@ void Shader::set_mat4(const char* name, const glm::mat4& value) {
     glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
 }
 
+void Shader::set_vec3(const char* name, const glm::vec3& value) {
+    int location = glGetUniformLocation(this->shader_id, name);
+    glUniform3fv(location, 1, &value[0]);
+}
+
 void Shader::use() { glUseProgram(shader_id); }

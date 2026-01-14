@@ -25,16 +25,8 @@ const float CAMERA_SMOOTHING = 0.18f;
 // TODO: Do this with the menu when it exists
 bool menu = true;
 
-void process_input(Camera* camera) {
+void process_input() {
     GLFWwindow* window = WindowManager::get_instance()->get_window();
-
-    // WASD + vertical
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move_forward();
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move_backward();
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move_left();
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move_right();
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move_up();
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move_down();
 
     // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
@@ -69,9 +61,6 @@ int main() {
     // Init mouse
     Mouse* mouse = Mouse::get_instance();
 
-    // Initialize camera
-    Camera camera;
-
     // Create cube for scene
     Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
 
@@ -98,23 +87,17 @@ int main() {
         recorder->update();
 
         // First handle input
-        process_input(&camera);
+        process_input();
 
         // Apply gaze input if enabled
-        if (recorder->use_detection()) {
-            cv::Rect face = recorder->get_face();
-            cv::Mat frame = recorder->get_frame();
-            Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
-            camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
-        }
+        // if (recorder->use_detection()) {
+        //     cv::Rect face = recorder->get_face();
+        //     cv::Mat frame = recorder->get_frame();
+        //     Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
+        //     camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
+        // }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Update mouse based camera view
-        camera.update_mouse_view();
-
-        // Calculates a view matrix to look at the scene
-        camera.view();
 
         // Draw scene
         SceneRenderer::get_instance()->draw();
