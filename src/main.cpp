@@ -14,6 +14,9 @@
 #include "shaders/shaders.hpp"
 #include "shapes/cube.hpp"
 #include "window_manager.hpp"
+#include "menu/menu.hpp"     
+#include "menu/button.hpp"
+
 
 // Gaze config
 // TODO: Shoudn't be configured here, but in camera file
