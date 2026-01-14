@@ -1,12 +1,19 @@
 #ifndef FRAME
 #define FRAME
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 
-class Frame { 
-    private: int x; int y; int width; int height; cv::Scalar color; cv::Rect visual;
-    public: 
-    //frame constructor
+class Frame {
+private:
+    int x;
+    int y;
+    int width;
+    int height;
+    cv::Scalar color;
+    cv::Rect visual;
+
+public:
+    //constructor
     Frame(int x, int y, int width, int height, const cv::Scalar& color);
 
     //getter methods

@@ -18,6 +18,10 @@ int Frame::getY() const {
     return y;
 }
 
+int Frame::getWidth() const { 
+    return width;
+}
+
 int Frame::getHeight() const {
     return height;
 }
@@ -26,6 +30,6 @@ cv::Rect Frame::getVisual() const {
     return visual; 
 }
 
-cv::Scalar Frame:getColor() const{
+cv::Scalar Frame::getColor() const{
     return color;
 }
