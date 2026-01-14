@@ -9,7 +9,7 @@ Texture::Texture(std::string imagePath) {
 
     // Read the data
     int width, height, channelCount;
-    unsigned char *data = stbi_load(imagePath.c_str(), &width, &height, &channelCount, 4);
+    unsigned char *data = stbi_load(imagePath.c_str(), &width, &height, &channelCount, 0);
 
     // Create a texture
     unsigned int textureID;
@@ -18,8 +18,19 @@ Texture::Texture(std::string imagePath) {
     // Bind the texture so the following commands work on our newly created texture
     glBindTexture(GL_TEXTURE_2D, textureID);
 
+    GLint internalFormat;
+
+    if (channelCount == 4) {
+        internalFormat = GL_RGBA;
+    }
+    else {
+        // Assume 3 channels.
+        internalFormat = GL_RGB;
+
+    } 
+
     // Actually generate the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, internalFormat, GL_UNSIGNED_BYTE, data);
 
     // Generate required mipmaps
     glGenerateMipmap(GL_TEXTURE_2D);

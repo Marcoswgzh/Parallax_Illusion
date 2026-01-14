@@ -36,7 +36,7 @@ void process_input(Camera* camera) {
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move_left();
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move_right();
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move_up();
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move_down();
+    // if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move_down();
 
     // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
