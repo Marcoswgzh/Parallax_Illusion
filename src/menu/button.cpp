@@ -1,18 +1,18 @@
 #include "button.hpp"
-#include "mouse.hpp"
-#include "window_manager.hpp"
+#include "../mouse.hpp"
+#include "../window_manager.hpp"
 #include <iostream>
 
 static Button* active_button = nullptr;
 
-Button::Button (Frame& frame, int x, int y, int width, int height, const cv::Scalar& color)
+Button::Button(Frame& frame, int x, int y, int width, int height, const cv::Scalar& color)
     : Frame(frame.getX() + x, frame.getY() + y, width, height, color),
-    parent_frame(frame),
-    local_x(x),
-    local_y(y),
-    local_width(width),
-    local_height(height),
-    local_color(color)
+      parentFrame(frame),
+      localX(x),
+      localY(y),
+      localWidth(width),
+      localHeight(height),
+      localColor(color)
 {
     active_button = this;
 }
@@ -27,12 +27,12 @@ void Button::mouseButtonCallback(GLFWwindow* window, int button, int action, int
     Mouse* mouse = Mouse::get_instance();
 
     cv::Point click_point(
-        static_cast<int>(mouse->get_x()),
-        static_cast<int>(mouse->get_y())
+        static_cast<int>(mouse->previous_x),
+        static_cast<int>(mouse->previous_y)
     );
 
     if(active_button->getVisual().contains(click_point)){
-        std::cout<<"Button clicked" << std:endl;
+        std::cout<<"Button clicked" << std::endl;
 
         // action
     }

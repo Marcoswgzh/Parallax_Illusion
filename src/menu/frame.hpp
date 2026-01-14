@@ -23,6 +23,8 @@ public:
     int getHeight() const;
     cv::Rect getVisual() const;
     cv::Scalar getColor() const;
+
+    std::vector<float> getVertices() const;
 };
 
 #endif
