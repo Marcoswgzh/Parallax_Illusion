@@ -78,13 +78,9 @@ int main() {
     // Create cube for scene
     Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
 
-    vector<float> vertices = {
-        0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-
-        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-    };
-
-    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0));
+    using namespace cv;
+    Menu menu_panel(0, 0, 300, 400, Scalar(0.0f, 1.0f, 0.0f));
+    Mesh menu_mesh(menu_panel.getVertices(), {}, 5, glm::vec3(0.0f));
 
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);
@@ -94,6 +90,8 @@ int main() {
 
     // Set a key callback for one time keypresses
     glfwSetKeyCallback(window_manager->get_window(), key_callback);
+
+    glfwSetMouseButtonCallback(window_manager->get_window(), Button::mouseButtonCallback);
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {

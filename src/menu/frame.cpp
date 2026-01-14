@@ -34,11 +34,14 @@ std::vector<float> Frame::getVertices() const {
     float y1 = static_cast<float>(y);
     float x2 = x1 + static_cast<float>(width);
     float y2 = y1 - static_cast<float>(height);
-    
-    float color = 0.4f;
-    
+    float r = static_cast<float>(color[2]);
+    float g = static_cast<float>(color[1]);
+    float b = static_cast<float>(color[0]);
+
     return {
-        x1,y1,color,color,color,  x2,y1,color,color,color,  x1,y2,color,color,color,
-        x2,y1,color,color,color,  x2,y2,color,color,color,  x1,y2,color,color,color
+        x1,y1, b,g,r,  x2,y1, b,g,r,
+        x1,y2, b,g,r,  x2,y1, b,g,r,
+        x2,y2, b,g,r,  x1,y2, b,g,r
     };
 }
+
