@@ -65,7 +65,9 @@ int main() {
     // Create cube for scene
     Cube cube1(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
     Cube cube2(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 4.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
-    // AppleCube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0));
+    Cube cube3(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 4.0), glm::vec3(0.2, 0.4, 0.8));
+    Cube cube4(glm::vec3(2.0, 2.0, 2.0), glm::vec3(4.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
+    //AppleCube apple_cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, -4.0, 0.0));
 
     vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,

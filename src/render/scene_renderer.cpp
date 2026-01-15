@@ -35,10 +35,10 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mesh.get_positioned_vertices().size() * sizeof(float), mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->n_triangles * 3 * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
