@@ -9,15 +9,22 @@ void main() {
     // TODO: Move to uniform block
     float ambient_strength = 0.5;
     vec3 light_color = vec3(1.0f, 1.0f, 1.0f);
-    vec3 light_position = vec3(1.0f, 3.0f, 1.0f);
+    vec3 light_position = vec3(4.0f, 3.0f, 2.0f);
     vec3 ambient = ambient_strength * light_color;
 
     // Get light direction
-    vec3 normal = normalize(normal);
-    vec3 light_direction = normalize(light_position - frag_position);
+    vec3 normal_direction;
+    if (!gl_FrontFacing) {
+        normal_direction = -normal;
+    } else {
+        normal_direction = normal;
+    }
+
+    vec3 normal = normalize(normal_direction);
+    vec3 light_direction = normalize(frag_position - light_position);
 
     // Calculate diffusion
-    float diffuse = max(dot(normal, light_direction), 0);
+    float diffuse = max(dot(normal, light_direction) * -1.0, 0.0);
     vec3 diffusion = diffuse * light_color;
 
     vec3 result = (ambient + diffusion) * color;

@@ -25,7 +25,6 @@ void SceneRenderer::update_mesh(Mesh mesh) {
     this->shader.use();
     Projector* projector = Projector::get_instance();
     this->shader.set_mat4("projection", projector->get_view_projection());
-    this->shader.set_vec3("camera_direction", this->camera.get_camera_position());
     vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
