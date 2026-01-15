@@ -5,11 +5,14 @@ in vec3 frag_position;
 in vec3 normal;
 out vec4 fragmentation_color;
 
+uniform vec3 camera_position;
+
 void main() {
     // TODO: Move to uniform block
     float ambient_strength = 0.5;
+    float specular_strength = 0.6;
     vec3 light_color = vec3(1.0f, 1.0f, 1.0f);
-    vec3 light_position = vec3(4.0f, 3.0f, 2.0f);
+    vec3 light_position = vec3(1.0f, 3.0f, 1.0f);
     vec3 ambient = ambient_strength * light_color;
 
     // Get light direction
@@ -27,6 +30,12 @@ void main() {
     float diffuse = max(dot(normal, light_direction) * -1.0, 0.0);
     vec3 diffusion = diffuse * light_color;
 
-    vec3 result = (ambient + diffusion) * color;
+    // Calculate specular
+    vec3 view_direction = normalize(frag_position - camera_position);
+    vec3 reflect_direction = reflect(-light_direction, normal); 
+    float specular_multiplier = pow(max(dot(view_direction, reflect_direction), 0.0), 32);
+    vec3 specular = specular_strength * specular_multiplier * light_color;  
+
+    vec3 result = (ambient + diffusion + specular) * color;
     fragmentation_color = vec4(result, 1.0f);
 }
