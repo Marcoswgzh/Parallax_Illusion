@@ -141,3 +141,5 @@ void SceneRenderer::draw() {
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
 }
+
+void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }

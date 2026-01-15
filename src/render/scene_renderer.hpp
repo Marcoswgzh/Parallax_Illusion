@@ -9,6 +9,9 @@
 #include "renderer.hpp"
 using namespace std;
 
+// 0: Ambient
+// 1: Diffusion
+// 2: Phong
 enum LightType { Ambient = 0, Diffusion = 1, Phong = 2 };
 
 class SceneRenderer : public Renderer {
@@ -22,6 +25,8 @@ class SceneRenderer : public Renderer {
         void operator=(const SceneRenderer&) = delete;
 
         void draw() override;
+
+        void set_light_type(LightType type);
 
     private:
         SceneRenderer();
@@ -38,9 +43,6 @@ class SceneRenderer : public Renderer {
 
         Camera camera;
 
-        // 0: Ambient
-        // 1: Diffusion
-        // 2: Phong
         LightType light_type;
 
         static SceneRenderer* instance;
