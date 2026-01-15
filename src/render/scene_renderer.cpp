@@ -25,6 +25,9 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     this->color_shader.set_mat4("projection", Projector::get_instance()->get_view_projection());
     this->color_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->color_shader.set_int("light_type", this->light_type);
+
+    // Prepare/get data for the buffers
+    vector<float> positioned_vertices = mesh.get_positioned_vertices(3);
     vector<int> indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -35,7 +38,7 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, mesh.get_positioned_vertices().size() * sizeof(float), mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
@@ -59,6 +62,9 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     this->texture_shader.set_mat4("projection", Projector::get_instance()->get_view_projection());
     this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->texture_shader.set_int("light_type", this->light_type);
+
+    // Prepare/get data for the buffers
+    vector<float> positioned_vertices = mesh.get_positioned_vertices(2);
     vector<int> indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -70,7 +76,7 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // Three points per triangle * stride
-    glBufferData(GL_ARRAY_BUFFER, mesh.get_positioned_vertices().size() * sizeof(float), mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);

@@ -20,8 +20,7 @@ int Mesh::get_n_triangles() { return this->n_triangles; }
 glm::vec3 Mesh::get_position() { return this->position; }
 
 // TODO: Make this only execute when position or form is changed
-vector<float> Mesh::get_positioned_vertices() {
-    int offset = 3;  // TODO: Must depend on if using textures or colors
+vector<float> Mesh::get_positioned_vertices(int offset) {
     int stride = (3 + offset);
 
     vector<float> positioned_vertices;
