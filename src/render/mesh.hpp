@@ -18,7 +18,7 @@ class Mesh {
         vector<int>* get_indices();
         int get_n_triangles();
         glm::vec3 get_position();
-        vector<float> get_positioned_vertices();
+        vector<float> get_positioned_vertices(int offset);
         std::optional<Texture> get_texture();
 
     private:
