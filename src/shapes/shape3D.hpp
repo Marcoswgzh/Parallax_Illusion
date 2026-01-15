@@ -18,7 +18,6 @@ class Shape3D {
         float get_y();
         float get_z();
 
-        virtual float get_volume() = 0;
         virtual float get_width() = 0;
         virtual float get_height() = 0;
         virtual float get_depth() = 0;
