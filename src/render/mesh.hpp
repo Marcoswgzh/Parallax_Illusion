@@ -13,6 +13,7 @@ class Mesh {
         vector<int>* get_indices();
         int get_n_triangles();
         glm::vec3 get_position();
+        vector<float> get_positioned_vertices();
 
     private:
         vector<float> vertices;

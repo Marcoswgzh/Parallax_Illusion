@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "../camera/camera.hpp"
 #include "../camera/projection.hpp"
 #include "../gl.h"
 #include "renderer.hpp"
@@ -19,12 +20,12 @@ SceneRenderer* SceneRenderer::get_instance() {
 SceneRenderer::SceneRenderer() {}
 
 void SceneRenderer::update_mesh(Mesh mesh) {
-    // Make sure to use the correct shaders
     // TODO: Use correct shader
+    // Use the shader before setting values
     this->shader.use();
-
     Projector* projector = Projector::get_instance();
-    vector<float> projected = projector->project(mesh, 3);
+    this->shader.set_mat4("projection", projector->get_view_projection());
+    this->shader.set_vec3("camera_position", this->camera.get_camera_position());
     vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -35,7 +36,8 @@ void SceneRenderer::update_mesh(Mesh mesh) {
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), projected.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), mesh.get_positioned_vertices().data(),
+                 GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->n_triangles * 3 * sizeof(unsigned int), flattened_indices.data(),
@@ -78,6 +80,9 @@ vector<int> SceneRenderer::get_flattened_indices() {
 }
 
 void SceneRenderer::draw() {
+    // Update the camera before the draw
+    this->camera.update();
+
     // Don't execute if there is nothing to draw
     if (this->n_triangles <= 0) {
         return;

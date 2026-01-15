@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "../camera/camera.hpp"
 #include "../gl.h"
 #include "../shaders/shaders.hpp"
 #include "renderer.hpp"
@@ -27,7 +28,9 @@ class SceneRenderer : public Renderer {
         vector<int> get_flattened_indices();
 
         // Initialize shaders
-        Shader shader = Shader("vertex_shader.glsl", "fragmentation_shader.glsl");
+        Shader shader = Shader("3D/shader.vert.glsl", "3D/shader.geo.glsl", "3D/shader.frag.glsl");
+
+        Camera camera;
 
         static SceneRenderer* instance;
 };

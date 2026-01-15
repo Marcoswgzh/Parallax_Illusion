@@ -20,7 +20,7 @@ class Projector {
         void operator=(const Projector&) = delete;
 
         void set_view_projection(glm::mat4 view);
-        vector<float> project(Mesh mesh, int offset);
+        glm::mat4 get_view_projection();
 
     private:
         Projector();
