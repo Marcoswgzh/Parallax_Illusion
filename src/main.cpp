@@ -1,6 +1,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <optional>
 #include <vector>
 
 #include "camera/camera.hpp"
@@ -12,6 +13,7 @@
 #include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
 #include "shaders/shaders.hpp"
+#include "shapes/apple_cube.hpp"
 #include "shapes/cube.hpp"
 #include "window_manager.hpp"
 
@@ -62,7 +64,8 @@ int main() {
     Mouse* mouse = Mouse::get_instance();
 
     // Create cube for scene
-    Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
+    // Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
+    AppleCube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0));
 
     vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
@@ -70,7 +73,7 @@ int main() {
         1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
     };
 
-    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0));
+    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0), std::nullopt);
 
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);

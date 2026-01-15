@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(parallax)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Make sure cmake is run from the correct directory
 if(NOT "${CMAKE_SOURCE_DIR}/build" STREQUAL "${CMAKE_BINARY_DIR}")
     message(FATAL_ERROR "Out of source build required. Run from ./build instead.\nYou can safely remove the generated files in your current directory.")
@@ -76,11 +79,15 @@ add_library(glad external/glad/glad.c)
 # Looks in external/glad for header files and adds them to all targets which include it.
 target_include_directories(glad PUBLIC external/glad)
 
+# Does the same for stb_image
+add_library(stb_image external/stb_image/stb_image.cpp)
+target_include_directories(stb_image PUBLIC external/stb_image)
+
 # Compile glm
 add_subdirectory(external/glm-1.0.2)
 
 # Link all dependencies
-target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm)
+target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
@@ -88,3 +95,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Copy all shaders sources to the binary directory
 file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/sources/
      DESTINATION ${CMAKE_BINARY_DIR}/)
+
+# Copy all textures to the textures directory
+file(COPY ${CMAKE_SOURCE_DIR}/textures DESTINATION ${CMAKE_BINARY_DIR})
