@@ -21,13 +21,9 @@ void Camera::update_position_from_face(const Gaze& gaze, float faceWidth) {
     float targetX = gaze.x * MOVEMENT_SCALE_X;
     float targetY = gaze.y * MOVEMENT_SCALE_Y;
 
-    float compensatedWidth = faceWidth * (1.0f + (abs(gaze.x) * 0.5f));
-    float widthDiff = compensatedWidth - REFERENCE_FACE_WIDTH;
-    float targetZ = CENTER_POSITION.z + (widthDiff * DEPTH_SENSITIVITY);
-
     this->cameraPosition.x = interpolate(this->cameraPosition.x, targetX, SMOOTHING_FACTOR);
     this->cameraPosition.y = interpolate(this->cameraPosition.y, targetY, SMOOTHING_FACTOR);
-    this->cameraPosition.z = interpolate(this->cameraPosition.z, targetZ, SMOOTHING_FACTOR);
+    this->cameraPosition.z = CENTER_POSITION.z;
 }
 
 Gaze Camera::compute_gaze_from_face(cv::Rect face, int columns, int rows) {

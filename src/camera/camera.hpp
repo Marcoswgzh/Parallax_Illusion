@@ -27,7 +27,7 @@ class Camera {
         const float DEPTH_SENSITIVITY = 0.02f;
 
         const float SMOOTHING_FACTOR = 0.15f;
-        const glm::vec3 CENTER_POSITION = glm::vec3(0.0f, 0.7f, -5.0f);
+        const glm::vec3 CENTER_POSITION = glm::vec3(0.0f, 0.7f, -2.5f);
 };
 
 #endif
