@@ -9,6 +9,8 @@
 #include "renderer.hpp"
 using namespace std;
 
+enum LightType { Ambient = 0, Diffusion = 1, Phong = 2 };
+
 class SceneRenderer : public Renderer {
     public:
         static SceneRenderer* get_instance();
@@ -35,6 +37,11 @@ class SceneRenderer : public Renderer {
             Shader("3D/texture/shader.vert.glsl", "3D/texture/shader.geo.glsl", "3D/texture/shader.frag.glsl");
 
         Camera camera;
+
+        // 0: Ambient
+        // 1: Diffusion
+        // 2: Phong
+        LightType light_type;
 
         static SceneRenderer* instance;
 };

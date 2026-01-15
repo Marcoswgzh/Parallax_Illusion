@@ -4,7 +4,6 @@
 #include <optional>
 #include <vector>
 
-#include "camera/camera.hpp"
 #include "delta_time.hpp"
 #include "detection/recording.hpp"
 #include "gl.h"
@@ -64,8 +63,8 @@ int main() {
     Mouse* mouse = Mouse::get_instance();
 
     // Create cube for scene
-    // Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
-    AppleCube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0));
+    Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
+    // AppleCube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0));
 
     vector<float> vertices = {
         0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
