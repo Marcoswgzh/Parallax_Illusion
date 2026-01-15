@@ -5,8 +5,7 @@
 #include <optional>
 
 AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position) {
-
-    // Last two elements of each row are texture coordinates, as opposed to last three being the colour information in cube.cpp.
+    // Last two elements of each row are texture coordinates, as opposed to last three being the color information in cube.cpp.
     vector<float> vertices = {
 
         // Front side

@@ -19,7 +19,7 @@ SceneRenderer* SceneRenderer::get_instance() {
 
 SceneRenderer::SceneRenderer() { this->light_type = LightType::Phong; }
 
-void SceneRenderer::update_coloured_mesh(Mesh mesh) {
+void SceneRenderer::update_colored_mesh(Mesh mesh) {
     this->color_shader.use();
 
     Projector* projector = Projector::get_instance();
@@ -104,7 +104,7 @@ void SceneRenderer::update() {
         if (mesh.get_texture().has_value()) {
             this->update_textured_mesh(mesh);
         } else {
-            this->update_coloured_mesh(mesh);
+            this->update_colored_mesh(mesh);
         }
     }
 }

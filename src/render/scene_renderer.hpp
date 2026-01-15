@@ -30,7 +30,7 @@ class SceneRenderer : public Renderer {
 
     private:
         SceneRenderer();
-        void update_coloured_mesh(Mesh mesh);
+        void update_colored_mesh(Mesh mesh);
         void update_textured_mesh(Mesh mesh);
         void update() override;
         vector<int> get_flattened_indices();
