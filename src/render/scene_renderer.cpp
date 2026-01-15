@@ -19,13 +19,12 @@ SceneRenderer* SceneRenderer::get_instance() {
 
 SceneRenderer::SceneRenderer() {}
 
-void SceneRenderer::update_mesh(Mesh mesh) {
-    // TODO: Use correct shader
-    // Use the shader before setting values
-    this->shader.use();
+void SceneRenderer::update_coloured_mesh(Mesh mesh) {
+    this->color_shader.use();
+
     Projector* projector = Projector::get_instance();
-    this->shader.set_mat4("projection", projector->get_view_projection());
-    this->shader.set_vec3("camera_position", this->camera.get_camera_position());
+    this->color_shader.set_mat4("projection", projector->get_view_projection());
+    this->color_shader.set_vec3("camera_position", this->camera.get_camera_position());
     vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -56,10 +55,55 @@ void SceneRenderer::update_mesh(Mesh mesh) {
     this->change = false;
 }
 
+void SceneRenderer::update_textured_mesh(Mesh mesh) {
+    this->texture_shader.use();
+
+    Projector* projector = Projector::get_instance();
+    this->texture_shader.set_mat4("projection", projector->get_view_projection());
+    this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
+    vector<int> flattened_indices = *mesh.get_indices();
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    unsigned int EBO, VBO;
+    glGenBuffers(1, &EBO);
+    glGenBuffers(1, &VBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // Three points per triangle * stride
+    glBufferData(GL_ARRAY_BUFFER, mesh.get_positioned_vertices().size() * sizeof(float),
+                 mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, flattened_indices.size() * sizeof(unsigned int), flattened_indices.data(),
+                 GL_DYNAMIC_DRAW);
+
+    // Tell OpenGL how it should interpret the vertex data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mesh.get_texture().value().get_textureID());
+
+    // Unbind VBO and VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    this->change = false;
+}
+
 void SceneRenderer::update() {
     // Update all the meshes
     for (Mesh mesh : this->meshes) {
-        this->update_mesh(mesh);
+        // Use different update method depending on whether the mesh has a texture or not
+        if (mesh.get_texture().has_value()) {
+            this->update_textured_mesh(mesh);
+        } else {
+            this->update_coloured_mesh(mesh);
+        }
     }
 }
 
