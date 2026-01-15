@@ -27,7 +27,7 @@ vector<float> Mesh::get_positioned_vertices() {
     vector<float> positioned_vertices;
     positioned_vertices.reserve(3 * stride * this->get_n_triangles());
 
-    for (int i = 0; i < 3 * stride * this->get_n_triangles() / stride; i++) {
+    for (int i = 0; i < this->vertices.size() / stride; i++) {
         glm::vec4 positioned = glm::vec4((*this->get_vertices())[i * stride] + this->get_position().x,
                                          (*this->get_vertices())[i * stride + 1] + this->get_position().y,
                                          (*this->get_vertices())[i * stride + 2] + this->get_position().z, 1.0f);

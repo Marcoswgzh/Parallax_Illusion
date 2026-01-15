@@ -20,13 +20,12 @@ SceneRenderer* SceneRenderer::get_instance() {
 SceneRenderer::SceneRenderer() { this->light_type = LightType::Phong; }
 
 void SceneRenderer::update_colored_mesh(Mesh mesh) {
+    // Use shader before setting uniforms
     this->color_shader.use();
-
-    Projector* projector = Projector::get_instance();
-    this->color_shader.set_mat4("projection", projector->get_view_projection());
+    this->color_shader.set_mat4("projection", Projector::get_instance()->get_view_projection());
     this->color_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->color_shader.set_int("light_type", this->light_type);
-    vector<int> flattened_indices = *mesh.get_indices();
+    vector<int> indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -36,12 +35,10 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), mesh.get_positioned_vertices().data(),
-                 GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 18 * sizeof(float), mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->n_triangles * 3 * sizeof(unsigned int), flattened_indices.data(),
-                 GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->n_triangles * 3 * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -57,13 +54,12 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
 }
 
 void SceneRenderer::update_textured_mesh(Mesh mesh) {
+    // Use shader before setting uniforms
     this->texture_shader.use();
-
-    Projector* projector = Projector::get_instance();
-    this->texture_shader.set_mat4("projection", projector->get_view_projection());
+    this->texture_shader.set_mat4("projection", Projector::get_instance()->get_view_projection());
     this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
-    this->color_shader.set_int("light_type", this->light_type);
-    vector<int> flattened_indices = *mesh.get_indices();
+    this->texture_shader.set_int("light_type", this->light_type);
+    vector<int> indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -74,12 +70,10 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // Three points per triangle * stride
-    glBufferData(GL_ARRAY_BUFFER, mesh.get_positioned_vertices().size() * sizeof(float),
-                 mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mesh.get_positioned_vertices().size() * sizeof(float), mesh.get_positioned_vertices().data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, flattened_indices.size() * sizeof(unsigned int), flattened_indices.data(),
-                 GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -106,23 +100,10 @@ void SceneRenderer::update() {
         } else {
             this->update_colored_mesh(mesh);
         }
+
+        glBindVertexArray(this->VAO);
+        glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
     }
-}
-
-vector<int> SceneRenderer::get_flattened_indices() {
-    vector<int> flattened;
-    flattened.reserve(this->n_triangles * 3);
-    int offset = 0;
-    for (Mesh mesh : this->meshes) {
-        for (int index : *mesh.get_indices()) {
-            flattened.push_back(index + offset);
-        }
-
-        // Add the amount of triangles to adjust the indices of the future meshes
-        offset += (int)(mesh.get_vertices()->size() / 6);
-    }
-
-    return flattened;
 }
 
 void SceneRenderer::draw() {
@@ -137,9 +118,6 @@ void SceneRenderer::draw() {
     // TODO: Track position/angle changes in the camera, so we only have to render
     // if the result will be different For now always rerender a 3D scene
     this->update();
-
-    glBindVertexArray(this->VAO);
-    glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
 }
 
 void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }

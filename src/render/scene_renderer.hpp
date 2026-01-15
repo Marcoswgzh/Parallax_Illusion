@@ -33,17 +33,16 @@ class SceneRenderer : public Renderer {
         void update_colored_mesh(Mesh mesh);
         void update_textured_mesh(Mesh mesh);
         void update() override;
-        vector<int> get_flattened_indices();
 
         // Initialize shaders
-        Shader color_shader =
-            Shader("3D/color/shader.vert.glsl", "3D/color/shader.geo.glsl", "3D/color/shader.frag.glsl");
-        Shader texture_shader =
-            Shader("3D/texture/shader.vert.glsl", "3D/texture/shader.geo.glsl", "3D/texture/shader.frag.glsl");
+        Shader color_shader = Shader("3D/color/shader.vert.glsl", "3D/color/shader.geo.glsl", "3D/color/shader.frag.glsl");
+        Shader texture_shader = Shader("3D/texture/shader.vert.glsl", "3D/texture/shader.geo.glsl", "3D/texture/shader.frag.glsl");
 
+        // Scene variables
         Camera camera;
-
         LightType light_type;
+
+        unsigned int VAO;
 
         static SceneRenderer* instance;
 };
