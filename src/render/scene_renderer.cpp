@@ -17,14 +17,15 @@ SceneRenderer* SceneRenderer::get_instance() {
     return instance;
 }
 
-SceneRenderer::SceneRenderer() {}
+SceneRenderer::SceneRenderer() { this->light_type = LightType::Phong; }
 
-void SceneRenderer::update_coloured_mesh(Mesh mesh) {
+void SceneRenderer::update_colored_mesh(Mesh mesh) {
     this->color_shader.use();
 
     Projector* projector = Projector::get_instance();
     this->color_shader.set_mat4("projection", projector->get_view_projection());
     this->color_shader.set_vec3("camera_position", this->camera.get_camera_position());
+    this->color_shader.set_int("light_type", this->light_type);
     vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -61,6 +62,7 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     Projector* projector = Projector::get_instance();
     this->texture_shader.set_mat4("projection", projector->get_view_projection());
     this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
+    this->color_shader.set_int("light_type", this->light_type);
     vector<int> flattened_indices = *mesh.get_indices();
 
     glGenVertexArrays(1, &VAO);
@@ -102,7 +104,7 @@ void SceneRenderer::update() {
         if (mesh.get_texture().has_value()) {
             this->update_textured_mesh(mesh);
         } else {
-            this->update_coloured_mesh(mesh);
+            this->update_colored_mesh(mesh);
         }
     }
 }
@@ -139,3 +141,5 @@ void SceneRenderer::draw() {
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
 }
+
+void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }

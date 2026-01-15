@@ -6,6 +6,7 @@ in vec3 normal;
 out vec4 fragmentation_color;
 
 uniform vec3 camera_position;
+uniform int light_type;
 
 void main() {
     // TODO: Move to uniform block
@@ -36,6 +37,14 @@ void main() {
     float specular_multiplier = pow(max(dot(view_direction, reflect_direction), 0.0), 32);
     vec3 specular = specular_strength * specular_multiplier * light_color;  
 
-    vec3 result = (ambient + diffusion + specular) * color;
+    vec3 result;
+    if (light_type == 0) {
+        result = (ambient) * color;
+    } else if (light_type == 1) {
+        result = (ambient + diffusion) * color;
+    } else {
+        result = (ambient + diffusion + specular) * color;
+    }
+
     fragmentation_color = vec4(result, 1.0f);
 }

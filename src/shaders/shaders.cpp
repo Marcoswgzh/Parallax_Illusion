@@ -115,4 +115,9 @@ void Shader::set_vec3(const char* name, const glm::vec3& value) {
     glUniform3fv(location, 1, &value[0]);
 }
 
+void Shader::set_int(const char* name, int value) {
+    int location = glGetUniformLocation(this->shader_id, name);
+    glUniform1i(location, value);
+}
+
 void Shader::use() { glUseProgram(shader_id); }
