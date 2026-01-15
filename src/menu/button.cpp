@@ -1,39 +1,15 @@
 #include "button.hpp"
-#include "../mouse.hpp"
-#include "../window_manager.hpp"
-#include <iostream>
 
-static Button* active_button = nullptr;
-
-Button::Button(Frame& frame, int x, int y, int width, int height, const cv::Scalar& color)
-    : Frame(frame.getX() + x, frame.getY() + y, width, height, color),
-      parentFrame(frame),
-      localX(x),
-      localY(y),
-      localWidth(width),
-      localHeight(height),
-      localColor(color)
-{
-    active_button = this;
+std::vector<float> createButtonVertices(float x, float y){
+    const float buttonWidth=0.16f; 
+    const float buttonHeight=0.12f;
+    const float gray=0.4f;
+    return {
+        x, y, gray, gray, gray,  x + buttonWidth, y, gray, gray, gray, x, y - buttonHeight, gray, gray, gray,
+        x + buttonWidth, y, gray, gray, gray,  x + buttonWidth, y - buttonHeight, gray, gray, gray,  x, y - buttonHeight, gray, gray, gray,
+    };
 }
 
-void Button::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
-    if(button != GLFW_MOUSE_BUTTON_LEFT || action != GLFW_PRESS)
-        return;
-
-    if(!active_button)
-        return;
-    
-    Mouse* mouse = Mouse::get_instance();
-
-    cv::Point click_point(
-        static_cast<int>(mouse->previous_x),
-        static_cast<int>(mouse->previous_y)
-    );
-
-    if(active_button->getVisual().contains(click_point)){
-        std::cout<<"Button clicked" << std::endl;
-
-        // action
-    }
+bool Button::contains(float cx, float cy){
+    return cx >= x && cx <= x + width && cy <= y && cy >= y - height; //cursor is inside the coordinates of the button
 }

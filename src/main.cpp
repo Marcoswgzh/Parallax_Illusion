@@ -79,8 +79,24 @@ int main() {
     Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
 
     using namespace cv;
-    Menu menu_panel(0, 0, 300, 400, Scalar(0.0f, 1.0f, 0.0f));
+    Menu menu_panel(0, 0, 300, 400, Scalar(255, 153, 255));
     Mesh menu_mesh(menu_panel.getVertices(), {}, 5, glm::vec3(0.0f));
+
+    Button* resetButton = new Button(menu_panel, 10, 10, 100, 40, cv::Scalar(255,0,0));
+
+    resetButton->setOnClick([&]() {
+    std::cout << "Reset camera\n";
+
+    camera_x = 0.0f;
+    camera_y = 0.5f;
+    camera_z = -3.0f;
+
+    camera_view_x = 0.0f;
+    camera_view_y = 0.0f;
+    camera_view_z = 0.0f;
+});
+
+menu.add_button(resetButton);
 
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);

@@ -40,7 +40,15 @@ Cube::Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color) {
 }
 
 // TODO: Implement
-float Cube::get_volume() {}
-float Cube::get_width() {}
-float Cube::get_height() {}
-float Cube::get_depth() {}
+float Cube::get_volume() {
+    return -1;
+}
+float Cube::get_width() {
+    return -1;
+}
+float Cube::get_height() {
+    return -1;
+}
+float Cube::get_depth() {
+    return -1;
+}
