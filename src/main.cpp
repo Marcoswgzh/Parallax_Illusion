@@ -99,21 +99,18 @@ int main() {
     Camera camera;
     Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
 
-    // Menu: hardcoded vertices → Mesh (white panel, 4 triangles)
     std::vector<float> menuVertices = {
-        0.8f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.8f, -1.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, -1.0f, 0.0f, 0.0f, 0.0f,  0.8f, -1.0f, 0.0f, 0.0f, 0.0f
+        0.8f, 1.0f, 0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  0.8f, -1.0f, 0.0f, 0.0f, 0.0f
     };
-    Mesh menu_mesh(menuVertices, {}, 4, glm::vec3(0.0f));
+    Mesh menu_mesh(menuVertices, {}, 6, glm::vec3(0.0f));
 
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);
 
-    // Button: createButtonVertices(gray) → Mesh (2 triangles)
     std::vector<float> buttonVertices = createButtonVertices(0.82f, 0.98f);
-    Mesh button_mesh(buttonVertices, {}, 2, glm::vec3(0.0f));
+    Mesh button_mesh(buttonVertices, {}, 6, glm::vec3(0.0f));
 
-    // Initialize Button struct for contains() check
     menu_button.x = 0.82f;
     menu_button.y = 0.98f;
     menu_button.width = 0.16f;

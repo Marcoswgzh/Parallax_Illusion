@@ -58,6 +58,7 @@ vector<float> MenuRenderer::get_flattened_vertices() {
 }
 
 void MenuRenderer::draw() {
+    glDisable(GL_DEPTH_TEST);
     // Don't execute if there is nothing to draw
     if (this->n_triangles <= 0) {
         return;
@@ -73,4 +74,5 @@ void MenuRenderer::draw() {
 
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
+    glEnable(GL_DEPTH_TEST);
 }
