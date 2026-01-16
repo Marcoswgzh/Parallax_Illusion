@@ -98,34 +98,43 @@ int main() {
     Renderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_mesh);
 
-    std::vector<float> buttonVertices = createButtonVertices(0.82f, 0.98f);
+    std::vector<float> buttonVertices = createButtonVertices(0.82f, 0.98f, 1.0f, 0.0f, 0.0f);
     Mesh button_mesh(buttonVertices, {}, 6, glm::vec3(0.0f));
 
      nolightning_button = {
         .x = 0.82f,
         .y = 0.98f,
         .width = 0.16f,
-        .height = 0.12f
+        .height = 0.12f,
+        .r = 1.0f,
+        .g = 0.0f,
+        .b = 0.0f
     }; 
 
-    std::vector<float> buttonVertices2 = createButtonVertices(0.82f, 0.84f);
+    std::vector<float> buttonVertices2 = createButtonVertices(0.82f, 0.84f, 0.0f, 1.0f, 0.0f);
     Mesh button_mesh2(buttonVertices2, {}, 6, glm::vec3(0.0f));
 
      diffuse_button = {
         .x = 0.82f,
         .y = 0.84f,
         .width = 0.16f,
-        .height = 0.12f
+        .height = 0.12f,
+        .r = 0.0f,
+        .g = 1.0f,
+        .b = 0.0f
     }; 
 
-    std::vector<float> buttonVertices3 = createButtonVertices(0.82f, 0.70f);
+    std::vector<float> buttonVertices3 = createButtonVertices(0.82f, 0.70f, 0.0f, 0.0f, 1.0f);
     Mesh button_mesh3(buttonVertices3, {}, 6, glm::vec3(0.0f));
 
      phong_button = {
         .x = 0.82f,
         .y = 0.70f,
         .width = 0.16f,
-        .height = 0.12f
+        .height = 0.12f,
+        .r = 0.0f,
+        .g = 0.0f,
+        .b = 1.0f
     }; 
 
 
