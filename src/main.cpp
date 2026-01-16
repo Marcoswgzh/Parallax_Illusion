@@ -21,19 +21,9 @@ const float GAZE_SCALE_X = 1.2f;
 const float GAZE_SCALE_Y = 0.8f;
 const float CAMERA_SMOOTHING = 0.18f;
 
-// Camera position
-float camera_x = 0;
-float camera_y = 0.5;
-float camera_z = -3;
-float camera_speed = 0.02;
-
-// Camera look at
-float camera_view_x = 0;
-float camera_view_y = 0;
-float camera_view_z = 0;
-float camera_angle_delta = 1;
-
-Button menu_button;
+Button nolightning_button;
+Button diffuse_button;
+Button phong_button;
 
 // Temporary "menu" toggle
 bool menu = true;
@@ -78,14 +68,14 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
         float cx = (xpos/width) * 2.0f - 1.0f;
         float cy = -(ypos/height) * 2.0f + 1.0f;
 
-        if (menu_button.contains(cx, cy)) {
-            std::cout << "Reset camera" << std::endl;
-            camera_x = 0.0f;
-            camera_y = 0.5f;
-            camera_z = -3.0f;
-            camera_view_x = 0.0f;
-            camera_view_y = 0.0f;
-            camera_view_z = 0.0f;
+        if (nolightning_button.contains(cx, cy)) {
+            std::cout << "no lightning button clicked" << std::endl;
+        }
+        if (diffuse_button.contains(cx, cy)) {
+            std::cout << "diffuse button clicked" << std::endl;
+        }
+        if (phong_button.contains(cx, cy)) {
+            std::cout << "phong button clicked" << std::endl;
         }
     }
 }
@@ -100,8 +90,8 @@ int main() {
     Cube cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
 
     std::vector<float> menuVertices = {
-        0.8f, 1.0f, 0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  0.8f, -1.0f, 0.0f, 0.0f, 0.0f
+        0.8f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  0.8f, 0.54f, 0.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f, 0.54f, 0.0f, 0.0f, 0.0f,  0.8f, 0.54f, 0.0f, 0.0f, 0.0f
     };
     Mesh menu_mesh(menuVertices, {}, 6, glm::vec3(0.0f));
 
@@ -111,13 +101,38 @@ int main() {
     std::vector<float> buttonVertices = createButtonVertices(0.82f, 0.98f);
     Mesh button_mesh(buttonVertices, {}, 6, glm::vec3(0.0f));
 
-    menu_button.x = 0.82f;
-    menu_button.y = 0.98f;
-    menu_button.width = 0.16f;
-    menu_button.height = 0.12f;
+     nolightning_button = {
+        .x = 0.82f,
+        .y = 0.98f,
+        .width = 0.16f,
+        .height = 0.12f
+    }; 
+
+    std::vector<float> buttonVertices2 = createButtonVertices(0.82f, 0.84f);
+    Mesh button_mesh2(buttonVertices2, {}, 6, glm::vec3(0.0f));
+
+     diffuse_button = {
+        .x = 0.82f,
+        .y = 0.84f,
+        .width = 0.16f,
+        .height = 0.12f
+    }; 
+
+    std::vector<float> buttonVertices3 = createButtonVertices(0.82f, 0.70f);
+    Mesh button_mesh3(buttonVertices3, {}, 6, glm::vec3(0.0f));
+
+     phong_button = {
+        .x = 0.82f,
+        .y = 0.70f,
+        .width = 0.16f,
+        .height = 0.12f
+    }; 
+
 
     glfwSetMouseButtonCallback(window_manager->get_window(), mouseButtonCallback);
     renderer2D->add(button_mesh);
+    renderer2D->add(button_mesh2);
+    renderer2D->add(button_mesh3);
 
     glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetKeyCallback(window_manager->get_window(), key_callback);
