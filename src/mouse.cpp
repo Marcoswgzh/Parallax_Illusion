@@ -5,7 +5,14 @@
 Mouse* Mouse::instance = nullptr;
 static bool first = true;
 
-void mouse_callback(GLFWwindow* window, double x_pos, double y_pos) {
+Mouse::Mouse() {
+    this->previous_x = 0.0f;
+    this->previous_y = 0.0f;
+    this->x_delta = 0.0f;
+    this->y_delta = 0.0f;
+}
+
+void Mouse::mouse_callback(GLFWwindow* window, double x_pos, double y_pos) {
     Mouse* mouse = Mouse::get_instance();
     if (first) {
         mouse->previous_x = x_pos;
@@ -29,7 +36,3 @@ Mouse* Mouse::get_instance() {
     return instance;
 }
 
-Mouse::Mouse() {
-    WindowManager* window_manager = WindowManager::get_instance();
-    glfwSetCursorPosCallback(window_manager->get_window(), mouse_callback);
-}

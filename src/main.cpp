@@ -23,20 +23,12 @@ const float CAMERA_SMOOTHING = 0.18f;
 // TODO: Do this with the menu when it exists
 bool menu = true;
 
-/*void process_input(Camera* camera) {
+void process_input() {
     GLFWwindow* window = WindowManager::get_instance()->get_window();
-
-    // WASD + vertical
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move_forward();
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move_backward();
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move_left();
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move_right();
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move_up();
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move_down();
 
     // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
-}*/
+}
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_T && action == GLFW_PRESS) {
@@ -46,18 +38,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 
     // Toggle menu (and also if mouse is captured in center for movement)
-    /*if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         menu = !menu;
         if (menu) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         } else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
-    }*/
-
-    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, true);
     }
+}
+
+void global_mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    Mouse::get_instance()->mouse_callback(window, xpos, ypos);
 }
 
 int main() {
@@ -109,13 +101,17 @@ int main() {
     // Set a key callback for one time keypresses
     glfwSetKeyCallback(window_manager->get_window(), key_callback);
 
+    glfwSetCursorPosCallback(window_manager->get_window(), global_mouse_callback);
+
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
         DeltaTime::get_instance()->update();
         recorder->update();
 
         // First handle input
-        //process_input(&camera);
+        process_input();
+
+        camera.update();
 
         // Apply gaze input if enabled
         if (recorder->use_detection()) {

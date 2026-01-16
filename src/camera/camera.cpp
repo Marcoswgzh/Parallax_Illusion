@@ -7,6 +7,7 @@
 
 #include "../delta_time.hpp"
 #include "../mouse.hpp"
+#include "../window_manager.hpp"
 #include "projection.hpp"
 
 static float clamp_value(float value, float low, float high) {
@@ -14,16 +15,17 @@ static float clamp_value(float value, float low, float high) {
 }
 
 Camera::Camera() {
-    this->cameraPosition = CENTER_POSITION;
+    this->camera_position = CENTER_POSITION;
+    this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
 }
 
 void Camera::update_position_from_face(const Gaze& gaze, float faceWidth) {
     float targetX = gaze.x * MOVEMENT_SCALE_X;
     float targetY = gaze.y * MOVEMENT_SCALE_Y;
 
-    this->cameraPosition.x = interpolate(this->cameraPosition.x, targetX, SMOOTHING_FACTOR);
-    this->cameraPosition.y = interpolate(this->cameraPosition.y, targetY, SMOOTHING_FACTOR);
-    this->cameraPosition.z = CENTER_POSITION.z;
+    this->camera_position.x = interpolate(this->camera_position.x, targetX, SMOOTHING_FACTOR);
+    this->camera_position.y = interpolate(this->camera_position.y, targetY, SMOOTHING_FACTOR);
+    this->camera_position.z = CENTER_POSITION.z;
 }
 
 Gaze Camera::compute_gaze_from_face(cv::Rect face, int columns, int rows) {
@@ -41,9 +43,76 @@ Gaze Camera::compute_gaze_from_face(cv::Rect face, int columns, int rows) {
 
 float Camera::interpolate(float a, float b, float t) { return a + (b - a) * t; }
 
+float Camera::get_speed() { return this->speed * DeltaTime::get_instance()->get_delta_time(); }
+
+float Camera::get_sensitivity() { return this->sensitivity /** DeltaTime::get_instance()->get_delta_time()*/; }
+
+glm::vec3 Camera::get_camera_position() { return this->camera_position; }
+
+void Camera::move_forward() { this->camera_position += this->camera_front * this->get_speed(); }
+void Camera::move_backward() { this->camera_position -= this->camera_front * this->get_speed(); }
+void Camera::move_left() {
+    this->camera_position -= glm::normalize(glm::cross(this->camera_front, this->camera_up)) * this->get_speed();
+}
+
+void Camera::move_right() {
+    this->camera_position += glm::normalize(glm::cross(this->camera_front, this->camera_up)) * this->get_speed();
+}
+
+void Camera::move_up() { this->camera_position += this->get_speed() * this->camera_up; }
+void Camera::move_down() { this->camera_position -= this->get_speed() * this->camera_up; }
+
 void Camera::view() {
-    glm::vec3 target = this->cameraPosition +  glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::mat4 view = glm::lookAt(this->cameraPosition, target, this->cameraUp);
+    glm::vec3 target = this->camera_position + this->camera_front;
+    glm::mat4 view = glm::lookAt(this->camera_position, target, this->camera_up);
     Projector* projector = Projector::get_instance();
     projector->set_view_projection(view);
 }
+
+void Camera::update_mouse_view() {
+    Mouse* mouse = Mouse::get_instance();
+
+    yaw += mouse->x_delta * this->get_sensitivity();
+    pitch -= mouse->y_delta * this->get_sensitivity();
+
+    // Bounds for pitch to prevent view from flipping
+    if (this->pitch > 89.0f) this->pitch = 89.0f;
+    if (this->pitch < -89.0f) this->pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    direction.y = sin(glm::radians(this->pitch));
+    direction.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    this->camera_front = glm::normalize(direction);
+
+    // Reset the mouse deltas
+    mouse->x_delta = 0;
+    mouse->y_delta = 0;
+}
+
+void Camera::process_input() {
+    GLFWwindow* window = WindowManager::get_instance()->get_window();
+
+    // WASD + vertical
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) this->move_forward();
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) this->move_backward();
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) this->move_left();
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) this->move_right();
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) this->move_up();
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) this->move_down();
+}
+
+void Camera::update() {
+    // Process key input
+    this->process_input();
+
+    // Update the view based on mouse input
+    this->update_mouse_view();
+
+    // TODO: Process recorder input
+
+    // Compute the new camera view
+    this->view();
+}
+
+

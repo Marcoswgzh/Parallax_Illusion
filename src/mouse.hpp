@@ -7,6 +7,8 @@ class Mouse {
     public:
         static Mouse* get_instance();
 
+        void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
+        
         // Scene renderer should not be cloneable
         Mouse(Mouse& other) = delete;
 
