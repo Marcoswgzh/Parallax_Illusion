@@ -1,17 +1,17 @@
 #include "frame.hpp"
 #include "../render/menu_renderer.hpp"
 
-Frame::Frame(glm::vec2 position, glm::vec2 size, glm::vec3 color) {
+Frame::Frame(glm::vec2 position, glm::vec2 size, glm::vec3 color, int z_level) {
     MenuRenderer* menu_renderer = MenuRenderer::get_instance();
 
     // Store frame info
     this->position = position;
     this->size = size;
     this->color = color;
-    this->id = menu_renderer->add(this->calculate_mesh());
+    this->id = menu_renderer->add(this->calculate_surface());
 }
 
-Mesh Frame::calculate_mesh() {
+Surface Frame::calculate_surface() {
     // Calculate vertices for menu
     vector<float> vertices = {
         // Triangle 1
@@ -30,7 +30,7 @@ Mesh Frame::calculate_mesh() {
         position.x + size.x, position.y, color.x, color.y, color.z,
     };
 
-    return Mesh(vertices, {}, 2, glm::vec3(0.0), std::nullopt);
+    return Surface(vertices, 2, glm::vec2(0.0));
 }
 
 glm::vec2 Frame::get_position() {

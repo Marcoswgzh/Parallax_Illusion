@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "../gl.h"
-#include "renderer.hpp"
 using namespace std;
 
 MenuRenderer* MenuRenderer::instance = nullptr;
@@ -50,8 +49,8 @@ vector<float> MenuRenderer::get_flattened_vertices() {
     vector<float> flattened;
     flattened.reserve(this->n_triangles * 15);
 
-    for (Mesh mesh : this->meshes) {
-        flattened.insert(flattened.end(), (*mesh.get_vertices()).begin(), (*mesh.get_vertices()).end());
+    for (Surface surface : this->surfaces) {
+        flattened.insert(flattened.end(), (*surface.get_vertices()).begin(), (*surface.get_vertices()).end());
     }
 
     return flattened;
@@ -73,4 +72,30 @@ void MenuRenderer::draw() {
 
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
+}
+
+int MenuRenderer::add(Surface surface) {
+    // Make sure the change is noted
+    this->change = true;
+
+    // Update the total amount of triangles and number of visual objects
+    this->n_triangles += surface.get_n_triangles();
+
+    // Add the triangles from the current object to the triangles vector
+    this->surfaces.push_back(surface);
+
+    // Return the index of the added item (for later control of the mesh)
+    return this->surfaces.size();
+}
+
+void MenuRenderer::remove(int index, int n_triangles) {
+    // Make sure the change is noted
+    this->change = true;
+
+    // Update the total amount of triangles and number of visual objects
+    this->n_triangles -= n_triangles;
+
+    // Remove the visual object
+    // TODO: Make sure this indexing is correct
+    this->surfaces.erase(this->surfaces.begin() + index);
 }

@@ -1,0 +1,22 @@
+#ifndef SURFACE
+#define SURFACE
+
+#include <glm/glm.hpp>
+#include <vector>
+using namespace std;
+
+class Surface {
+    public:
+        Surface(vector<float> vertices, int n_triangles, glm::vec2 position);
+
+        vector<float>* get_vertices();
+        int get_n_triangles();
+        glm::vec2 get_position();
+
+    private:
+        vector<float> vertices;
+        int n_triangles;
+        glm::vec2 position;
+};
+
+#endif

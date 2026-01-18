@@ -5,7 +5,6 @@
 #include "../camera/camera.hpp"
 #include "../camera/projection.hpp"
 #include "../gl.h"
-#include "renderer.hpp"
 using namespace std;
 
 SceneRenderer* SceneRenderer::instance = nullptr;
@@ -124,6 +123,33 @@ void SceneRenderer::draw() {
     // TODO: Track position/angle changes in the camera, so we only have to render
     // if the result will be different For now always rerender a 3D scene
     this->update();
+}
+
+int SceneRenderer::add(Mesh mesh) {
+    // Make sure the change is noted
+    this->change = true;
+
+    // Update the total amount of triangles and number of visual objects
+    this->n_triangles += mesh.get_n_triangles();
+
+    // Add the triangles from the current object to the triangles vector
+    this->meshes.push_back(mesh);
+
+    // Return the index of the added item (for later control of the visual
+    // object)
+    return this->meshes.size();
+}
+
+void SceneRenderer::remove(int index, int n_triangles) {
+    // Make sure the change is noted
+    this->change = true;
+
+    // Update the total amount of triangles and number of visual objects
+    this->n_triangles -= n_triangles;
+
+    // Remove the visual object
+    // TODO: Make sure this indexing is correct
+    this->meshes.erase(this->meshes.begin() + index);
 }
 
 void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }

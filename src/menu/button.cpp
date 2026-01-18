@@ -1,6 +1,6 @@
 #include "button.hpp"
 
-Button::Button(Frame frame, glm::vec2 position, glm::vec2 size, glm::vec3 color) : Frame(this->get_relative_position(frame, position), size, color) {}
+Button::Button(Frame frame, glm::vec2 position, glm::vec2 size, glm::vec3 color) : Frame(this->get_relative_position(frame, position), size, color, 0) {}
 
 glm::vec2 Button::get_relative_position(Frame frame, glm::vec2 position) {
     return frame.get_position() + position;

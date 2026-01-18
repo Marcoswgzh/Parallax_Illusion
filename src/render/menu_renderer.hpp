@@ -5,10 +5,10 @@
 
 #include "../gl.h"
 #include "../shaders/shaders.hpp"
-#include "renderer.hpp"
+#include "surface.hpp"
 using namespace std;
 
-class MenuRenderer : public Renderer {
+class MenuRenderer {
     public:
         static MenuRenderer* get_instance();
 
@@ -18,17 +18,24 @@ class MenuRenderer : public Renderer {
         // Scene renderer should not be assignable
         void operator=(const MenuRenderer&) = delete;
 
-        void draw() override;
+        int add(Surface surface);
+        void remove(int index, int n_triangles);
+        void draw();
 
     private:
+        static MenuRenderer* instance;
+
         MenuRenderer();
         vector<float> get_flattened_vertices();
-        void update() override;
+        void update();
 
         // Initialize shaders
         Shader shader = Shader("2D/shader.vert.glsl", "2D/shader.frag.glsl");
 
-        static MenuRenderer* instance;
+        unsigned int VAO;
+        bool change;               // Tracks changes in the visual objects
+        int n_triangles;           // Total amount of triangles in the renderer
+        vector<Surface> surfaces;  // All the meshes in the renderer
 };
 
 #endif

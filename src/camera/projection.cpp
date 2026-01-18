@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 
-#include "../render/renderer.hpp"
 #include "../window_manager.hpp"
 using namespace std;
 
