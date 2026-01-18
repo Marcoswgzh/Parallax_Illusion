@@ -1,11 +1,31 @@
+#include <iostream>
+
 #include "menu.hpp"
-#include "container.hpp"
+#include "../mouse.hpp"
 
-#include <optional>
+Menu* Menu::instance = nullptr;
 
-Menu::Menu() {
-    // Create menu container
-    Container container(std::nullopt, glm::vec2(0.0), glm::vec2(0.5), glm::vec3(1.0));
+Menu* Menu::get_instance() {
+    if (instance == nullptr) {
+        instance = new Menu();
+    }
+    return instance;
+}
 
-    Button button(container, glm::vec2(0.0, 0.0), glm::vec2(0.1), glm::vec3(0.0));
+Menu::Menu() {}
+
+void Menu::handle_click_events(glm::vec2 position) {
+    Mouse* mouse = Mouse::get_instance();
+
+    if (this->scene_1.contains(position)) {
+        std::cout << "Scene 1" << std::endl;
+    }
+
+    if (this->scene_2.contains(position)) {
+        std::cout << "Scene 2" << std::endl;
+    }
+
+    if (this->scene_3.contains(position)) {
+        std::cout << "Scene 3" << std::endl;
+    }
 }

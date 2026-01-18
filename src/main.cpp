@@ -69,18 +69,8 @@ int main() {
     Cube cube4(glm::vec3(2.0, 2.0, 2.0), glm::vec3(4.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
     AppleCube apple_cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, -4.0, 0.0));
 
-    Menu menu;
-
-    vector<float> vertices = {
-        0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-
-        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-    };
-
-    Surface menu_surface(vertices, 4, glm::vec2(0.0), 0);
-
-    MenuRenderer* renderer2D = MenuRenderer::get_instance();
-    renderer2D->add(menu_surface);
+    // Initiate menu by getting its instance
+    Menu::get_instance();
 
     // Captures the mouse, so it can be used for movement
     glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
