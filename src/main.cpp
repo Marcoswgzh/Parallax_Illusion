@@ -15,6 +15,7 @@
 #include "shapes/apple_cube.hpp"
 #include "shapes/cube.hpp"
 #include "window_manager.hpp"
+#include "menu/menu.hpp"
 
 // Gaze config
 // TODO: Shoudn't be configured here, but in camera file
@@ -69,16 +70,18 @@ int main() {
     Cube cube4(glm::vec3(2.0, 2.0, 2.0), glm::vec3(4.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
     AppleCube apple_cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, -4.0, 0.0));
 
-    vector<float> vertices = {
-        0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+    Menu menu;
 
-        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-    };
+    // vector<float> vertices = {
+    //     0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
 
-    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0), std::nullopt);
+    //     1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
+    // };
 
-    Renderer* renderer2D = MenuRenderer::get_instance();
-    renderer2D->add(menu_mesh);
+    //Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0), std::nullopt);
+
+    // Renderer* renderer2D = MenuRenderer::get_instance();
+    // renderer2D->add(menu_mesh);
 
     // Captures the mouse, so it can be used for movement
     glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -108,7 +111,7 @@ int main() {
         SceneRenderer::get_instance()->draw();
 
         // Draw menu
-        renderer2D->draw();
+        MenuRenderer::get_instance()->draw();
 
         // Swap buffers (refresh the screen with the created render)
         glfwSwapBuffers(window_manager->get_window());
