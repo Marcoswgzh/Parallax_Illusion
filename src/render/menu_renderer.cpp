@@ -7,8 +7,6 @@ using namespace std;
 
 MenuRenderer* MenuRenderer::instance = nullptr;
 
-// TODO: One scene renderer for each window (so create a vector of instances
-// instead)
 MenuRenderer* MenuRenderer::get_instance() {
     if (instance == nullptr) {
         instance = new MenuRenderer();
@@ -18,8 +16,12 @@ MenuRenderer* MenuRenderer::get_instance() {
 
 MenuRenderer::MenuRenderer() {}
 
-void MenuRenderer::update() {
-    vector<float> flattened = this->get_flattened_vertices();
+void MenuRenderer::update_surface(Surface surface) {
+    // Make sure to use the shaders before setting uniforms
+    this->shader.use();
+    this->shader.set_int("z_level", 1);
+
+    vector<float> vertices = *surface.get_vertices();
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -28,7 +30,7 @@ void MenuRenderer::update() {
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    glBufferData(GL_ARRAY_BUFFER, this->n_triangles * 15 * sizeof(float), flattened.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -39,9 +41,15 @@ void MenuRenderer::update() {
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
 
-    // Change has been handled, so reset state
-    this->change = false;
+void MenuRenderer::update() {
+    for (Surface surface : this->surfaces) {
+        this->update_surface(surface);
+
+        glBindVertexArray(this->VAO);
+        glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
+    }
 }
 
 vector<float> MenuRenderer::get_flattened_vertices() {
@@ -56,28 +64,7 @@ vector<float> MenuRenderer::get_flattened_vertices() {
     return flattened;
 }
 
-void MenuRenderer::draw() {
-    // Don't execute if there is nothing to draw
-    if (this->n_triangles <= 0) {
-        return;
-    }
-
-    // Make sure to use the correct shaders
-    this->shader.use();
-
-    // Only update when a change has happened
-    if (this->change) {
-        this->update();
-    }
-
-    glBindVertexArray(this->VAO);
-    glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
-}
-
 int MenuRenderer::add(Surface surface) {
-    // Make sure the change is noted
-    this->change = true;
-
     // Update the total amount of triangles and number of visual objects
     this->n_triangles += surface.get_n_triangles();
 
@@ -89,9 +76,6 @@ int MenuRenderer::add(Surface surface) {
 }
 
 void MenuRenderer::remove(int index, int n_triangles) {
-    // Make sure the change is noted
-    this->change = true;
-
     // Update the total amount of triangles and number of visual objects
     this->n_triangles -= n_triangles;
 
@@ -99,3 +83,13 @@ void MenuRenderer::remove(int index, int n_triangles) {
     // TODO: Make sure this indexing is correct
     this->surfaces.erase(this->surfaces.begin() + index);
 }
+
+void MenuRenderer::draw() {
+    // Don't execute if there is nothing to draw
+    if (this->n_triangles <= 0) {
+        return;
+    }
+
+    this->update();
+}
+

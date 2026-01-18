@@ -77,7 +77,7 @@ int main() {
         1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
     };
 
-    Surface menu_surface(vertices, 4, glm::vec2(0.0));
+    Surface menu_surface(vertices, 4, glm::vec2(0.0), 0);
 
     MenuRenderer* renderer2D = MenuRenderer::get_instance();
     renderer2D->add(menu_surface);

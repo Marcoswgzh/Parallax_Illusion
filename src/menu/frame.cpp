@@ -8,6 +8,7 @@ Frame::Frame(glm::vec2 position, glm::vec2 size, glm::vec3 color, int z_level) {
     this->position = position;
     this->size = size;
     this->color = color;
+    this->z_level = z_level;
     this->id = menu_renderer->add(this->calculate_surface());
 }
 
@@ -30,7 +31,7 @@ Surface Frame::calculate_surface() {
         position.x + size.x, position.y, color.x, color.y, color.z,
     };
 
-    return Surface(vertices, 2, glm::vec2(0.0));
+    return Surface(vertices, 2, glm::vec2(0.0), this->z_level);
 }
 
 glm::vec2 Frame::get_position() {
@@ -43,4 +44,8 @@ glm::vec2 Frame::get_size() {
 
 glm::vec3 Frame::get_color() {
     return this->color;
+}
+
+int Frame::get_z_level() {
+    return this->z_level;
 }

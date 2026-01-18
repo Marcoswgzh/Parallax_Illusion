@@ -93,7 +93,7 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    this->change = false;
+    this->change = false; // TODO: MOVE
 }
 
 void SceneRenderer::update() {
