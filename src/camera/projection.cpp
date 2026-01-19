@@ -27,7 +27,7 @@ void Projector::set_view_projection(glm::mat4 view) {
     int width, height;
     glfwGetFramebufferSize(WindowManager::get_instance()->get_window(), &width, &height);
 
-    this->projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+    this->projection = glm::perspective(glm::radians(this->fov), (float)width / (float)height, 0.1f, 100.0f);
     this->view_projection = this->projection * view;
 }
 

@@ -20,8 +20,9 @@ class Camera {
         float interpolate(float a, float b, float t);
 
         // View methods
-        void view();
+        void set_view();
         void update_mouse_view();
+        void update_recorder_view();
 
         // Move methods
         void move_forward();

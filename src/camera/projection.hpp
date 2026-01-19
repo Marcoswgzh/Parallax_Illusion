@@ -27,6 +27,7 @@ class Projector {
 
         glm::mat4 projection;
         glm::mat4 view_projection;
+        float fov = 45.0;
 };
 
 #endif
