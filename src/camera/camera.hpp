@@ -34,6 +34,9 @@ class Camera {
         // Getters
         glm::vec3 get_camera_position();
 
+        void toggle_key_movement();
+        void toggle_movement();
+
     private:
         void process_input();
 
@@ -48,6 +51,9 @@ class Camera {
         glm::vec3 camera_position;
         glm::vec3 camera_front;
         const glm::vec3 camera_up = glm::vec3(0, 1, 0);  // This will stay the same
+
+        bool key_movement = false;
+        bool movement = false;
 };
 
 #endif

@@ -1,16 +1,18 @@
 #ifndef MOUSE
 #define MOUSE
 
+#include <glm/glm.hpp>
+
 #include "gl.h"
 
 class Mouse {
     public:
         static Mouse* get_instance();
 
-        // Scene renderer should not be cloneable
+        // Menu should not be cloneable
         Mouse(Mouse& other) = delete;
 
-        // Scene renderer should not be assignable
+        // Menu should not be assignable
         void operator=(const Mouse&) = delete;
 
         float previous_x;
