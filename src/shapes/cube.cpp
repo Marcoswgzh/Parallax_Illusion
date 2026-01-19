@@ -39,16 +39,3 @@ Cube::Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color) {
 
     this->id = SceneRenderer::get_instance()->add(mesh);
 }
-
-// TODO: Implement
-float Cube::get_width() {
-    return 0.0;
-}
-
-float Cube::get_height() {
-    return 0.0;
-}
-
-float Cube::get_depth() {
-    return 0.0;
-}

@@ -98,9 +98,3 @@ AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position) {
 
     this->id = SceneRenderer::get_instance()->add(mesh);
 }
-
-// TODO: Implement
-float AppleCube::get_volume() {}
-float AppleCube::get_width() {}
-float AppleCube::get_height() {}
-float AppleCube::get_depth() {}

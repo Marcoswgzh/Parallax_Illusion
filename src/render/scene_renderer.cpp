@@ -51,8 +51,6 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-    this->change = false;
 }
 
 void SceneRenderer::update_textured_mesh(Mesh mesh) {
@@ -92,8 +90,6 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-    this->change = false; // TODO: MOVE
 }
 
 void SceneRenderer::update() {
@@ -120,15 +116,10 @@ void SceneRenderer::draw() {
         return;
     }
 
-    // TODO: Track position/angle changes in the camera, so we only have to render
-    // if the result will be different For now always rerender a 3D scene
     this->update();
 }
 
 int SceneRenderer::add(Mesh mesh) {
-    // Make sure the change is noted
-    this->change = true;
-
     // Update the total amount of triangles and number of visual objects
     this->n_triangles += mesh.get_n_triangles();
 
@@ -141,9 +132,6 @@ int SceneRenderer::add(Mesh mesh) {
 }
 
 void SceneRenderer::remove(int index, int n_triangles) {
-    // Make sure the change is noted
-    this->change = true;
-
     // Update the total amount of triangles and number of visual objects
     this->n_triangles -= n_triangles;
 
@@ -160,4 +148,12 @@ void SceneRenderer::toggle_movement() {
 
 void SceneRenderer::toggle_key_movement() {
     this->camera.toggle_key_movement();
+}
+
+void SceneRenderer::remove_current_scene() {
+    this->meshes.clear();
+    this->n_triangles = 0;
+    this->light_type = LightType::Phong;
+
+    // TODO: RESET CAMERA
 }

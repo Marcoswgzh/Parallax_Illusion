@@ -32,6 +32,8 @@ class SceneRenderer {
         void toggle_movement();
         void toggle_key_movement();
 
+        void remove_current_scene();
+
     private:
         static SceneRenderer* instance;
 
@@ -49,7 +51,6 @@ class SceneRenderer {
         LightType light_type;
 
         unsigned int VAO;
-        bool change;          // Tracks changes in the meshes
         int n_triangles;      // Total amount of triangles in the renderer
         vector<Mesh> meshes;  // All the meshes in the renderer
 };
