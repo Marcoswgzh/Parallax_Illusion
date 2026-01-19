@@ -37,6 +37,7 @@ class Camera {
 
         void toggle_key_movement();
         void toggle_movement();
+        void reset();
 
     private:
         void process_input();

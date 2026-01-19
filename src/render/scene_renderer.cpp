@@ -146,5 +146,6 @@ void SceneRenderer::remove_current_scene() {
     this->n_triangles = 0;
     this->light_type = LightType::Phong;
 
-    // TODO: RESET CAMERA
+    // Reset the camera as well
+    this->camera.reset();
 }
