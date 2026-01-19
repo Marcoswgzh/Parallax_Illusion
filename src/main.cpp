@@ -17,10 +17,6 @@
 #include "shapes/model.hpp"
 #include "menu/menu.hpp"
 
-// Temporary "menu" toggle
-// TODO: Do this with the menu when it exists
-bool menu = true;
-
 void process_input() {
     GLFWwindow* window = WindowManager::get_instance()->get_window();
 
