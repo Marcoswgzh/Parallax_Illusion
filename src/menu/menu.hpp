@@ -17,9 +17,14 @@ class Menu {
         
         void handle_click_events(glm::vec2 position);
 
+        void toggle();
+        bool should_display();
+
     private:
         Menu();
         static Menu* instance;
+
+        bool display = true;
 
         // Create menu container
         glm::vec3 container_color = glm::vec3(0.234, 0.246, 0.340);

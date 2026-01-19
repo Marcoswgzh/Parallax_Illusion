@@ -12,6 +12,8 @@ class Frame {
         glm::vec2 get_size();
         glm::vec3 get_color();
         int get_z_level();
+        void toggle_display();
+        bool should_display();
 
     private:
         glm::vec2 position;
@@ -19,6 +21,7 @@ class Frame {
         glm::vec3 color;
         int z_level;
         int id;
+        bool display = true;
 
         Surface calculate_surface();
 };

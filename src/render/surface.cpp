@@ -1,6 +1,7 @@
-#include "surface.hpp"
-
 #include <glm/glm.hpp>
+#include <iostream>
+
+#include "surface.hpp"
 
 Surface::Surface(vector<float> vertices, int n_triangles, glm::vec2 position, int z_level) {
     this->vertices = vertices;
@@ -17,4 +18,12 @@ glm::vec2 Surface::get_position() { return this->position; }
 
 int Surface::get_z_level() {
     return this->z_level;
+}
+
+void Surface::toggle_display() {
+    this->display = !this->display;
+}
+
+bool Surface::should_display() {
+    return this->display;
 }

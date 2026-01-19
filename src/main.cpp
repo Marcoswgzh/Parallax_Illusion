@@ -42,12 +42,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     // Toggle menu (and also if mouse is captured in center for movement)
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        menu = !menu;
-        if (menu) {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        } else {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
+        Menu::get_instance()->toggle();
     }
 }
 
@@ -71,9 +66,6 @@ int main() {
 
     // Initiate menu by getting its instance
     Menu::get_instance();
-
-    // Captures the mouse, so it can be used for movement
-    glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Set a key callback for one time keypresses
     glfwSetKeyCallback(window_manager->get_window(), key_callback);

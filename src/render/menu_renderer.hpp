@@ -20,6 +20,7 @@ class MenuRenderer {
 
         int add(Surface surface);
         void remove(int index, int n_triangles);
+        Surface* get_surface(int index);
         void draw();
 
     private:

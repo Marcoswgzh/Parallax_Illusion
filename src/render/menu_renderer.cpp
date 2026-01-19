@@ -17,9 +17,14 @@ MenuRenderer* MenuRenderer::get_instance() {
 MenuRenderer::MenuRenderer() {}
 
 void MenuRenderer::update_surface(Surface surface) {
+    // Don't display surfaces which shouldn't be displayed
+    if (!surface.should_display()) {
+        return;
+    }
+
     // Make sure to use the shaders before setting uniforms
     this->shader.use();
-    this->shader.set_int("z_level", 1);
+    this->shader.set_int("z_level", surface.get_z_level());
 
     vector<float> vertices = *surface.get_vertices();
 
@@ -41,14 +46,14 @@ void MenuRenderer::update_surface(Surface surface) {
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    glBindVertexArray(this->VAO);
+    glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
 }
 
 void MenuRenderer::update() {
     for (Surface surface : this->surfaces) {
         this->update_surface(surface);
-
-        glBindVertexArray(this->VAO);
-        glDrawArrays(GL_TRIANGLES, 0, this->n_triangles * 3);
     }
 }
 
@@ -82,6 +87,10 @@ void MenuRenderer::remove(int index, int n_triangles) {
     // Remove the visual object
     // TODO: Make sure this indexing is correct
     this->surfaces.erase(this->surfaces.begin() + index);
+}
+
+Surface* MenuRenderer::get_surface(int index) {
+    return &this->surfaces.at(index);
 }
 
 void MenuRenderer::draw() {

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "frame.hpp"
 #include "../render/menu_renderer.hpp"
 
@@ -48,4 +50,13 @@ glm::vec3 Frame::get_color() {
 
 int Frame::get_z_level() {
     return this->z_level;
+}
+
+void Frame::toggle_display() {
+    this->display = !this->display;
+    MenuRenderer::get_instance()->get_surface(this->id - 1)->toggle_display();
+}
+
+bool Frame::should_display() {
+    return this->display;
 }
