@@ -49,6 +49,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_M && action == GLFW_PRESS) {
         SceneRenderer::get_instance()->toggle_key_movement();
     }
+
+    // Switch between light types
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Ambient);
+    }
+
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Diffusion);
+    }
+
+    if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Phong);
+    }
 }
 
 int main() {
