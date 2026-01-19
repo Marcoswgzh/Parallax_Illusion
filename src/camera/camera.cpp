@@ -18,11 +18,17 @@ Camera::Camera() {
 
 /// Updates the camera according to all active movement types (key, mouse and tracking-based).
 void Camera::update() {
-    // Process key input
-    this->process_input();
+    if (!this->movement) {
+        return;
+    }
 
-    // Update the view based on mouse input
-    this->update_mouse_view();
+    if (this->key_movement) {
+        // Process key input
+        this->process_input();
+
+        // Update the view based on mouse input
+        this->update_mouse_view();
+    }
 
     // Process recorder input and update the camera position accordingly
     this->update_recorder_view();

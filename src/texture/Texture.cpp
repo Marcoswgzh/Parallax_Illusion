@@ -22,11 +22,9 @@ Texture::Texture(std::string imagePath) {
 
     if (channelCount == 4) {
         internalFormat = GL_RGBA;
-    }
-    else {
+    } else {
         // Assume 3 channels.
         internalFormat = GL_RGB;
-
     } 
 
     // Actually generate the texture
