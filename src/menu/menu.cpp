@@ -43,6 +43,7 @@ void Menu::handle_click_events(glm::vec2 position) {
 void Menu::toggle() {
     this->display = !this->display;
     this->container.toggle_display();
+    this->menu_title.toggle_display();
     this->scene_1_button.toggle_display();
     this->scene_2_button.toggle_display();
     this->scene_3_button.toggle_display();

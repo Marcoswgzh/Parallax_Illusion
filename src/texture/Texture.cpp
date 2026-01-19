@@ -3,6 +3,7 @@
 #include <stb_image.h>
 #include <glm/glm.hpp>
 #include <glad.h>
+#include <iostream>
 
 Texture::Texture(std::string imagePath) {
     this->imagePath = imagePath;
@@ -10,6 +11,12 @@ Texture::Texture(std::string imagePath) {
     // Read the data
     int width, height, channelCount;
     unsigned char *data = stbi_load(imagePath.c_str(), &width, &height, &channelCount, 0);
+
+    // Throw an error if loading the texture went wrong
+    if (data == nullptr) {
+        std::cerr << "Could not load texture" << std::endl;
+        exit(1);
+    }
 
     // Create a texture
     unsigned int textureID;
