@@ -44,6 +44,7 @@ WindowManager::WindowManager() {
 
     // Enable depth testing (closer objects are drawn over further objects)
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     // Set a background color
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

@@ -9,13 +9,13 @@
 #include "gl.h"
 #include "mouse.hpp"
 #include "render/menu_renderer.hpp"
-#include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
 #include "shaders/shaders.hpp"
 #include "shapes/apple_cube.hpp"
 #include "shapes/cube.hpp"
 #include "window_manager.hpp"
 #include "shapes/model.hpp"
+#include "menu/menu.hpp"
 
 // Gaze config
 // TODO: Shoudn't be configured here, but in camera file
@@ -43,12 +43,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     // Toggle menu (and also if mouse is captured in center for movement)
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        menu = !menu;
-        if (menu) {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        } else {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
+        Menu::get_instance()->toggle();
+    }
+
+    // Toggle key-based movement
+    if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->toggle_key_movement();
+    }
+
+    // Switch between light types
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Ambient);
+    }
+
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Diffusion);
+    }
+
+    if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Phong);
     }
 }
 
@@ -74,19 +87,8 @@ int main() {
     // Model model2("models/backpack/backpack.obj", glm::vec3(0.0, 5.0, 0.0));
     Model model3("models/monkey/monke.obj", glm::vec3(0.0, 0.0, 0.0));
 
-    vector<float> vertices = {
-        0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-
-        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-    };
-
-    Mesh menu_mesh(vertices, {}, 4, glm::vec3(0.0, 0.0, 0.0), std::nullopt);
-
-    Renderer* renderer2D = MenuRenderer::get_instance();
-    renderer2D->add(menu_mesh);
-
-    // Captures the mouse, so it can be used for movement
-    glfwSetInputMode(window_manager->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // Initiate menu by getting its instance
+    Menu::get_instance();
 
     // Set a key callback for one time keypresses
     glfwSetKeyCallback(window_manager->get_window(), key_callback);
@@ -113,7 +115,7 @@ int main() {
         SceneRenderer::get_instance()->draw();
 
         // Draw menu
-        renderer2D->draw();
+        MenuRenderer::get_instance()->draw();
 
         // Swap buffers (refresh the screen with the created render)
         glfwSwapBuffers(window_manager->get_window());

@@ -6,7 +6,7 @@
 #include "../camera/camera.hpp"
 #include "../gl.h"
 #include "../shaders/shaders.hpp"
-#include "renderer.hpp"
+#include "mesh.hpp"
 using namespace std;
 
 // 0: Ambient
@@ -14,7 +14,7 @@ using namespace std;
 // 2: Phong
 enum LightType { Ambient = 0, Diffusion = 1, Phong = 2 };
 
-class SceneRenderer : public Renderer {
+class SceneRenderer {
     public:
         static SceneRenderer* get_instance();
 
@@ -24,15 +24,21 @@ class SceneRenderer : public Renderer {
         // Scene renderer should not be assignable
         void operator=(const SceneRenderer&) = delete;
 
-        void draw() override;
-
+        int add(Mesh mesh);
+        void remove(int index, int n_triangles);
+        void draw();
         void set_light_type(LightType type);
 
+        void toggle_movement();
+        void toggle_key_movement();
+
     private:
+        static SceneRenderer* instance;
+
         SceneRenderer();
         void update_colored_mesh(Mesh mesh);
         void update_textured_mesh(Mesh mesh);
-        void update() override;
+        void update();
 
         // Initialize shaders
         Shader color_shader = Shader("3D/color/shader.vert.glsl", "3D/color/shader.geo.glsl", "3D/color/shader.frag.glsl");
@@ -43,8 +49,9 @@ class SceneRenderer : public Renderer {
         LightType light_type;
 
         unsigned int VAO;
-
-        static SceneRenderer* instance;
+        bool change;          // Tracks changes in the meshes
+        int n_triangles;      // Total amount of triangles in the renderer
+        vector<Mesh> meshes;  // All the meshes in the renderer
 };
 
 #endif
