@@ -36,15 +36,67 @@ void Recorder::start() {
         std::cerr << "Error: Could not open camera" << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 }
 
 void Recorder::update() {
     // Updates must be done in the correct order
     this->update_frame();
     this->update_face();
+
+    // Calculate the center of the face and adjust face center with camera resolution
+    cv::Point3f face_center(this->face.x + this->face.width / 2.0, this->face.y + this->face.height / 2.0, this->face.width);
+    face_center.x /= this->frame.cols;
+    face_center.y /= this->frame.rows;
+    face_center.z /= this->frame.cols;
+
+    if (this->first) {
+        this->previous = face_center;
+        this->first = false;
+    }
+
+    // Recalculate the deltas
+    this->delta = face_center - this->previous;
+
+    // Shift the previous deltas with the new one (FIFO)
+    this->previous_deltas.push_back(this->delta);
+    if (this->previous_deltas.size() > this->n_previous) {
+        this->previous_deltas.pop_front();
+    }
+
+    // If the delta is too small and the average direction vector is short (i.e. random short jitters) then set the delta's to 0
+    cv::Point3f average_direction = this->get_average_direction();
+    if (abs(this->delta.x) < this->small_delta.x * this->face.width && abs(average_direction.x) < this->small_average_direction.x * this->face.width) {
+        this->delta.x = 0.0;
+    }
+    
+    if (abs(this->delta.y) < this->small_delta.y * this->face.width && abs(average_direction.y) < this->small_average_direction.y * this->face.width) {
+        this->delta.y = 0.0;
+    }
+    
+    if (abs(this->delta.z) < this->small_delta.z * this->face.width  && abs(average_direction.z) < this->small_average_direction.z * this->face.width) {
+        this->delta.z = 0.0;
+    }
+
+    // Deltas should be between these values (found by experimenting)
+    this->delta.x = fmax(fmin(this->delta.x, 0.01), -0.01);
+    this->delta.y = fmax(fmin(this->delta.y, 0.01), -0.01);
+    this->delta.z = fmax(fmin(this->delta.z, 0.01), -0.01);
+
+    // Caculate a speed vector
+    this->speed += glm::vec3(delta.x, delta.y, delta.z);
+    this->speed /= 2.0;
+
+    // Update the previous coordinates
+    this->previous = face_center;
+}
+
+cv::Point3f Recorder::get_average_direction() {
+    cv::Point3f sum = cv::Point3f(0.0, 0.0, 0.0);
+    for (cv::Point3f point : this->previous_deltas) {
+        sum += point;
+    }
+
+    return sum / this->n_previous;
 }
 
 void Recorder::update_frame() {
@@ -66,7 +118,9 @@ void Recorder::update_face() {
     face_cascade.detectMultiScale(gray, faces, 1.1, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(60, 60));
 
     // If there are no faces detected in the current frame, use the most recent detected face
-    if (faces.empty()) return;
+    if (faces.empty()) {
+        return;
+    }
 
     // Deciding the best face based on size (distance from screen)
     cv::Rect closest_face = faces[0];
@@ -77,6 +131,7 @@ void Recorder::update_face() {
     this->face = closest_face;
 }
 
+// TODO: delete (if not used outside of update method)
 cv::Mat Recorder::get_frame() { return this->frame; }
 
 cv::Rect Recorder::get_face() { return this->face; }
@@ -84,3 +139,23 @@ cv::Rect Recorder::get_face() { return this->face; }
 bool Recorder::use_detection() { return this->detection; }
 
 void Recorder::toggle() { this->detection = !this->detection; }
+
+float Recorder::get_x_delta() {
+    return this->delta.x;
+}
+
+float Recorder::get_y_delta() {
+    return this->delta.y;
+}
+
+ float Recorder::get_z_delta() {
+    return this->delta.z;
+ }
+
+void Recorder::reset_deltas() {
+    this->delta = cv::Point3f(0.0, 0.0, 0.0);
+}
+
+glm::vec3 Recorder::get_speed() {
+    return this->speed;
+}

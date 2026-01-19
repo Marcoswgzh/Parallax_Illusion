@@ -17,12 +17,6 @@
 #include "shapes/model.hpp"
 #include "menu/menu.hpp"
 
-// Gaze config
-// TODO: Shoudn't be configured here, but in camera file
-const float GAZE_SCALE_X = 1.2f;
-const float GAZE_SCALE_Y = 0.8f;
-const float CAMERA_SMOOTHING = 0.18f;
-
 // Temporary "menu" toggle
 // TODO: Do this with the menu when it exists
 bool menu = true;
@@ -76,17 +70,6 @@ int main() {
     // Init mouse
     Mouse* mouse = Mouse::get_instance();
 
-    // Create cube for scene
-    // Cube cube1(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
-    // Cube cube2(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 4.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
-    // Cube cube3(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, 0.0, 4.0), glm::vec3(0.2, 0.4, 0.8));
-    // Cube cube4(glm::vec3(2.0, 2.0, 2.0), glm::vec3(4.0, 0.0, 0.0), glm::vec3(0.2, 0.4, 0.8));
-    // AppleCube apple_cube(glm::vec3(2.0, 2.0, 2.0), glm::vec3(0.0, -4.0, 0.0));
-
-    // Model model1("models/apple.obj", glm::vec3(0.0, 0.0, 0.0));
-    // Model model2("models/backpack/backpack.obj", glm::vec3(0.0, 5.0, 0.0));
-    Model model3("models/monkey/monke.obj", glm::vec3(0.0, 0.0, 0.0));
-
     // Initiate menu by getting its instance
     Menu::get_instance();
 
@@ -100,14 +83,6 @@ int main() {
 
         // First handle input
         process_input();
-
-        // Apply gaze input if enabled
-        // if (recorder->use_detection()) {
-        //     cv::Rect face = recorder->get_face();
-        //     cv::Mat frame = recorder->get_frame();
-        //     Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
-        //     camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
-        // }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
