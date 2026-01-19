@@ -8,6 +8,7 @@
 class Button : public Frame {
     public:
         Button(Frame frame, glm::vec2 position, glm::vec2 size, glm::vec3 color);
+        Button(Frame frame, glm::vec2 position, glm::vec2 size, Texture texture);
         bool contains(glm::vec2 point);
 
     private:
