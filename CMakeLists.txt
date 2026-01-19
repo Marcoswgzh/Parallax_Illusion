@@ -70,6 +70,9 @@ find_package(OpenCV REQUIRED)
 # Find OpenGL
 find_package(OpenGL REQUIRED)
 
+# Find assimp (for model loading)
+find_package(assimp REQUIRED)
+
 # Compile GLFW
 add_subdirectory(external/glfw-3.4)
 
@@ -87,7 +90,7 @@ target_include_directories(stb_image PUBLIC external/stb_image)
 add_subdirectory(external/glm-1.0.2)
 
 # Link all dependencies
-target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image)
+target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image assimp)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
@@ -98,3 +101,4 @@ file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/sources/
 
 # Copy all textures to the textures directory
 file(COPY ${CMAKE_SOURCE_DIR}/textures DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/models DESTINATION ${CMAKE_BINARY_DIR})
