@@ -12,6 +12,7 @@ Menu* Menu::get_instance() {
     if (instance == nullptr) {
         instance = new Menu();
     }
+
     return instance;
 }
 

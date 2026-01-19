@@ -131,15 +131,6 @@ int SceneRenderer::add(Mesh mesh) {
     return this->meshes.size();
 }
 
-void SceneRenderer::remove(int index, int n_triangles) {
-    // Update the total amount of triangles and number of visual objects
-    this->n_triangles -= n_triangles;
-
-    // Remove the visual object
-    // TODO: Make sure this indexing is correct
-    this->meshes.erase(this->meshes.begin() + index);
-}
-
 void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }
 
 void SceneRenderer::toggle_movement() {
@@ -155,5 +146,6 @@ void SceneRenderer::remove_current_scene() {
     this->n_triangles = 0;
     this->light_type = LightType::Phong;
 
-    // TODO: RESET CAMERA
+    // Reset the camera as well
+    this->camera.reset();
 }

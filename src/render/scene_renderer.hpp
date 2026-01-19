@@ -25,7 +25,6 @@ class SceneRenderer {
         void operator=(const SceneRenderer&) = delete;
 
         int add(Mesh mesh);
-        void remove(int index, int n_triangles);
         void draw();
         void set_light_type(LightType type);
 

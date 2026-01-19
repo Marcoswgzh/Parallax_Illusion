@@ -80,15 +80,6 @@ int MenuRenderer::add(Surface surface) {
     return this->surfaces.size();
 }
 
-void MenuRenderer::remove(int index, int n_triangles) {
-    // Update the total amount of triangles and number of visual objects
-    this->n_triangles -= n_triangles;
-
-    // Remove the visual object
-    // TODO: Make sure this indexing is correct
-    this->surfaces.erase(this->surfaces.begin() + index);
-}
-
 Surface* MenuRenderer::get_surface(int index) {
     return &this->surfaces.at(index);
 }

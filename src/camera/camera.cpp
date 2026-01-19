@@ -13,17 +13,22 @@
 
 
 Camera::Camera() {
-    this->camera_position = glm::vec3(0.f, 0.5f, -3.f);
-    this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
+    this->reset();
 }
 
 /// Updates the camera according to all active movement types (key, mouse and tracking-based).
 void Camera::update() {
-    // Process key input
-    this->process_input();
+    if (!this->movement) {
+        return;
+    }
 
-    // Update the view based on mouse input
-    this->update_mouse_view();
+    if (this->key_movement) {
+        // Process key input
+        this->process_input();
+
+        // Update the view based on mouse input
+        this->update_mouse_view();
+    }
 
     // Process recorder input and update the camera position accordingly
     this->update_recorder_view();
@@ -69,10 +74,9 @@ void Camera::update_recorder_view() {
     Recorder* recorder = Recorder::get_instance();
     recorder->update();
 
-    // TODO: Changes should be smaller when face is closer (width higher)
     this->camera_position -= glm::normalize(glm::cross(this->camera_front, this->camera_up)) * recorder->get_speed().x * 20.0f;
     this->camera_position -= this->camera_up * recorder->get_speed().y * 20.0f;
-    // this->camera_position += this->camera_front * recorder->get_z_delta() * 50.0f;
+    this->camera_position += this->camera_front * recorder->get_speed().z * 80.0f;
     recorder->reset_deltas();
 }
 
@@ -129,4 +133,9 @@ void Camera::toggle_key_movement() {
 
 void Camera::toggle_movement() {
     this->movement = !this->movement;
+}
+
+void Camera::reset() {
+    this->camera_position = glm::vec3(0.f, 0.5f, -3.f);
+    this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
 }
