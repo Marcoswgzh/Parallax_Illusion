@@ -70,8 +70,8 @@ find_package(OpenCV REQUIRED)
 # Find OpenGL
 find_package(OpenGL REQUIRED)
 
-# Find assimp (for model loading)
-find_package(assimp REQUIRED)
+# Find assimp (for model loading) (Quiet, because if it's not found, it is handled after everything else)
+find_package(assimp QUIET)
 
 # Compile GLFW
 add_subdirectory(external/glfw-3.4)
@@ -89,8 +89,30 @@ target_include_directories(stb_image PUBLIC external/stb_image)
 # Compile glm
 add_subdirectory(external/glm-1.0.2)
 
+# If assimp is not present on the systen, download and statically link it
+if (NOT assimp_FOUND)
+    include(FetchContent)
+
+    # Make assimp build statically
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_FRAMEWORK OFF CACHE BOOL "" FORCE)
+
+    # Disable features that are not required like debugging tools
+    set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+        assimp
+        URL https://github.com/assimp/assimp/archive/refs/tags/v5.4.3.zip
+    )
+
+    FetchContent_MakeAvailable(assimp)
+endif()
+
 # Link all dependencies
-target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image assimp)
+target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image assimp::assimp)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
