@@ -100,7 +100,18 @@ AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position) {
 }
 
 // TODO: Implement
-float AppleCube::get_volume() {}
-float AppleCube::get_width() {}
-float AppleCube::get_height() {}
-float AppleCube::get_depth() {}
+float AppleCube::get_volume() {
+    return 0.0;
+}
+
+float AppleCube::get_width() {
+    return 0.0;
+}
+
+float AppleCube::get_height() {
+    return 0.0;
+}
+
+float AppleCube::get_depth() {
+    return 0.0;
+}
