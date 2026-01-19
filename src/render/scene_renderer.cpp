@@ -153,3 +153,11 @@ void SceneRenderer::remove(int index, int n_triangles) {
 }
 
 void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }
+
+void SceneRenderer::toggle_movement() {
+    this->camera.toggle_movement();
+}
+
+void SceneRenderer::toggle_key_movement() {
+    this->camera.toggle_key_movement();
+}

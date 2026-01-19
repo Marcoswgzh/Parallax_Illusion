@@ -3,6 +3,7 @@
 #include "menu.hpp"
 #include "../mouse.hpp"
 #include "../window_manager.hpp"
+#include "../render/scene_renderer.hpp"
 
 Menu* Menu::instance = nullptr;
 
@@ -43,6 +44,9 @@ void Menu::toggle() {
     } else {
         glfwSetInputMode(WindowManager::get_instance()->get_window(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
+
+    // Also toggle any camera movement
+    SceneRenderer::get_instance()->toggle_movement();
 }
 
 bool Menu::should_display() {

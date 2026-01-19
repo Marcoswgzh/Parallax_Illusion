@@ -101,14 +101,28 @@ void Camera::process_input() {
 }
 
 void Camera::update() {
-    // Process key input
-    this->process_input();
+    if (!this->movement) {
+        return;
+    }
 
-    // Update the view based on mouse input
-    this->update_mouse_view();
+    if (this->key_movement) {
+        // Process key input
+        this->process_input();
+
+        // Update the view based on mouse input
+        this->update_mouse_view();
+    }
 
     // TODO: Process recorder input
 
     // Compute the new camera view
     this->view();
+}
+
+void Camera::toggle_key_movement() {
+    this->key_movement = !this->key_movement;
+}
+
+void Camera::toggle_movement() {
+    this->movement = !this->movement;
 }

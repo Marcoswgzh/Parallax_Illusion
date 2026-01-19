@@ -29,6 +29,9 @@ class SceneRenderer {
         void draw();
         void set_light_type(LightType type);
 
+        void toggle_movement();
+        void toggle_key_movement();
+
     private:
         static SceneRenderer* instance;
 

@@ -44,6 +44,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         Menu::get_instance()->toggle();
     }
+
+    // Toggle key-based movement
+    if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->toggle_key_movement();
+    }
 }
 
 int main() {
