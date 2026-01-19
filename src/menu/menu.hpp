@@ -24,18 +24,16 @@ class Menu {
         Menu();
         static Menu* instance;
 
-        bool display = true;
-
         // Create menu container
         glm::vec3 container_color = glm::vec3(0.234, 0.246, 0.340);
         Container container = Container(std::nullopt, glm::vec2(-1.0), glm::vec2(2.0), container_color);
 
         // Create menu scene buttons
         glm::vec3 button_color = glm::vec3(0.164, 0.172, 0.238);
-        Button scene_1 = Button(container, glm::vec2(0.2, 0.6), glm::vec2(0.4), button_color);
-        Button scene_2 = Button(container, glm::vec2(0.8, 0.6), glm::vec2(0.4), button_color);
-        Button scene_3 = Button(container, glm::vec2(1.4, 0.6), glm::vec2(0.4), button_color);
-        vector<Button> buttons = {scene_1, scene_2, scene_3};
+        Button scene_1_button = Button(container, glm::vec2(0.2, 0.6), glm::vec2(0.4), button_color);
+        Button scene_2_button = Button(container, glm::vec2(0.8, 0.6), glm::vec2(0.4), button_color);
+        Button scene_3_button = Button(container, glm::vec2(1.4, 0.6), glm::vec2(0.4), button_color);
+        vector<Button> buttons = {scene_1_button, scene_2_button, scene_3_button};
 };
 
 #endif

@@ -13,11 +13,6 @@ class AppleCube : public Shape3D {
     public:
         AppleCube(glm::vec3 dimensions, glm::vec3 position);
 
-        float get_volume();
-        float get_width();
-        float get_height();
-        float get_depth();
-
     private:
 };
 

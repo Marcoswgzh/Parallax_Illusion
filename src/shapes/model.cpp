@@ -30,7 +30,7 @@ Model::Model(std::string path, glm::vec3 position) {
 
     // Add generated Meshes to Renderer
     for (Mesh& mesh : this->meshes) {
-        SceneRenderer::get_instance()->add(mesh);
+        this->ids.push_back(SceneRenderer::get_instance()->add(mesh));
     }
 }
 

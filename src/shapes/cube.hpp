@@ -12,10 +12,6 @@ class Cube : public Shape3D {
     public:
         Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color);
 
-        float get_width();
-        float get_height();
-        float get_depth();
-
     private:
 };
 

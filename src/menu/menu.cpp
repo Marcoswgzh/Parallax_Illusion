@@ -4,6 +4,7 @@
 #include "../mouse.hpp"
 #include "../window_manager.hpp"
 #include "../render/scene_renderer.hpp"
+#include "../scenes/scene_handler.hpp"
 
 Menu* Menu::instance = nullptr;
 
@@ -19,25 +20,31 @@ Menu::Menu() {}
 void Menu::handle_click_events(glm::vec2 position) {
     Mouse* mouse = Mouse::get_instance();
 
-    if (this->scene_1.contains(position) && this->scene_1.should_display()) {
-        std::cout << "Scene 1" << std::endl;
+    if (this->scene_1_button.contains(position) && this->scene_1_button.should_display()) {
+        SceneRenderer::get_instance()->remove_current_scene();
+        SceneHandler::get_instance()->show_scene_1();
+        this->toggle();
     }
 
-    if (this->scene_2.contains(position) && this->scene_2.should_display()) {
-        std::cout << "Scene 2" << std::endl;
+    if (this->scene_2_button.contains(position) && this->scene_2_button.should_display()) {
+        SceneRenderer::get_instance()->remove_current_scene();
+        SceneHandler::get_instance()->show_scene_2();
+        this->toggle();
     }
 
-    if (this->scene_3.contains(position) && this->scene_3.should_display()) {
-        std::cout << "Scene 3" << std::endl;
+    if (this->scene_3_button.contains(position) && this->scene_3_button.should_display()) {
+        SceneRenderer::get_instance()->remove_current_scene();
+        SceneHandler::get_instance()->show_scene_3();
+        this->toggle();
     }
 }
 
 void Menu::toggle() {
     this->display = !this->display;
     this->container.toggle_display();
-    this->scene_1.toggle_display();
-    this->scene_2.toggle_display();
-    this->scene_3.toggle_display();
+    this->scene_1_button.toggle_display();
+    this->scene_2_button.toggle_display();
+    this->scene_3_button.toggle_display();
 
     if (!this->display) {
         glfwSetInputMode(WindowManager::get_instance()->get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -51,4 +58,8 @@ void Menu::toggle() {
 
 bool Menu::should_display() {
     return this->display;
+}
+
+bool Menu::has_loaded_scene() {
+    return this->scene_loaded;
 }
