@@ -74,10 +74,9 @@ void Camera::update_recorder_view() {
     Recorder* recorder = Recorder::get_instance();
     recorder->update();
 
-    // TODO: Changes should be smaller when face is closer (width higher)
     this->camera_position -= glm::normalize(glm::cross(this->camera_front, this->camera_up)) * recorder->get_speed().x * 20.0f;
     this->camera_position -= this->camera_up * recorder->get_speed().y * 20.0f;
-    // this->camera_position += this->camera_front * recorder->get_z_delta() * 50.0f;
+    this->camera_position += this->camera_front * recorder->get_speed().z * 80.0f;
     recorder->reset_deltas();
 }
 
