@@ -59,7 +59,3 @@ void Menu::toggle() {
 bool Menu::should_display() {
     return this->display;
 }
-
-bool Menu::has_loaded_scene() {
-    return this->scene_loaded;
-}

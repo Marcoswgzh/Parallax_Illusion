@@ -24,6 +24,8 @@ class Menu {
         Menu();
         static Menu* instance;
 
+        bool display = true;
+
         // Create menu container
         glm::vec3 container_color = glm::vec3(0.234, 0.246, 0.340);
         Container container = Container(std::nullopt, glm::vec2(-1.0), glm::vec2(2.0), container_color);
