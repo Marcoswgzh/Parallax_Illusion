@@ -10,13 +10,17 @@ Texture::Texture(std::string imagePath) {
 
     // Read the data
     int width, height, channelCount;
+
+    // printf("Loading %s.\n", imagePath.c_str());
+
     unsigned char *data = stbi_load(imagePath.c_str(), &width, &height, &channelCount, 0);
 
-    // Throw an error if loading the texture went wrong
     if (data == nullptr) {
-        std::cerr << "Could not load texture" << std::endl;
-        exit(1);
+        printf("Failed to load texture %s!\n", imagePath.c_str());
     }
+    // else {
+    //     printf("Loaded!\n");
+    // }
 
     // Create a texture
     unsigned int textureID;
