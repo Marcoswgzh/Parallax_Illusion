@@ -27,7 +27,7 @@ void SceneHandler::show_scene_2() {
 }
 
 void SceneHandler::show_scene_3() {
-    // TODO scene 3
+    Model model3("models/nature/Nature.obj", glm::vec3(0.0, 0.0, 0.0));
 }
 
 void SceneHandler::remove_current_scene() {}

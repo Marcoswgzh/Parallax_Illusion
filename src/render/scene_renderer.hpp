@@ -49,7 +49,7 @@ class SceneRenderer {
         Camera camera;
         LightType light_type;
 
-        unsigned int VAO;
+        unsigned int VBO, EBO, VAO;
         int n_triangles;      // Total amount of triangles in the renderer
         vector<Mesh> meshes;  // All the meshes in the renderer
 };

@@ -32,7 +32,6 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    unsigned int EBO, VBO;
     glGenBuffers(1, &EBO);
     glGenBuffers(1, &VBO);
 
@@ -48,18 +47,20 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Unbind VBO and VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
     // Draw
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
 
+    glFinish();
+
     // Delete VBO, EBO and VAO
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &this->VBO);
+    glDeleteBuffers(1, &this->EBO);
     glDeleteVertexArrays(1, &this->VAO);
+
+    // Unbind VBO and VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 void SceneRenderer::update_textured_mesh(Mesh mesh) {
@@ -76,11 +77,10 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    unsigned int EBO, VBO;
-    glGenBuffers(1, &EBO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &this->EBO);
+    glGenBuffers(1, &this->VBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
     // Three points per triangle * stride
     glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
 
@@ -96,17 +96,19 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mesh.get_texture().value().get_textureID());
 
-    // Unbind VBO and VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
     // Draw
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
 
+    glFinish();
+
+    // Unbind VBO and VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     // Delete VBO, EBO and VAO
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &this->VBO);
+    glDeleteBuffers(1, &this->EBO);
     glDeleteVertexArrays(1, &this->VAO);
 }
 
