@@ -21,6 +21,7 @@ class SceneHandler {
 
     private:
         SceneHandler();
+        void show_apple_cube_scene();
         static SceneHandler* instance;
 };
 

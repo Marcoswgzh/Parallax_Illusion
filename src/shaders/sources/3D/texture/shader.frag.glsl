@@ -38,7 +38,15 @@ void main() {
     float specular_multiplier = pow(max(dot(view_direction, reflect_direction), 0.0), 32);
     vec3 specular = specular_strength * specular_multiplier * light_color;  
 
-    vec3 color = texture(mesh_texture, texture_coordinates).rgb;
+    vec4 tex = texture(mesh_texture, texture_coordinates);
+
+    if (tex.a < 0.1) {
+        // If the pixel is transparent, do not draw anything.
+        discard;
+    }
+
+    vec3 color = tex.rgb;
+    
     vec3 result;
     if (light_type == 0) {
         result = (ambient) * color;
