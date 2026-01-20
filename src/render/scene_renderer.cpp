@@ -20,7 +20,7 @@ SceneRenderer::SceneRenderer() { this->light_type = LightType::Phong; }
 
 void SceneRenderer::update_mesh(Mesh* mesh, int offset) {
     // Prepare/get data for the buffers
-    vector<float> positioned_vertices = mesh->get_positioned_vertices(3);
+    vector<float> positioned_vertices = mesh->get_positioned_vertices(offset);
     vector<unsigned int> indices = *mesh->get_indices();
 
     glGenVertexArrays(1, &mesh->VAO);
@@ -36,9 +36,9 @@ void SceneRenderer::update_mesh(Mesh* mesh, int offset) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (3 + offset) * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (3 + offset) * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // Unbind VBO and VAO
@@ -90,7 +90,7 @@ void SceneRenderer::update() {
 
         // Draw
         glBindVertexArray(mesh.VAO);
-        glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, mesh.get_indices()->size(), GL_UNSIGNED_INT, 0);
     }
 }
 
