@@ -37,6 +37,7 @@ class SceneRenderer {
         static SceneRenderer* instance;
 
         SceneRenderer();
+        void update_mesh(Mesh* mesh, int offset);
         void update_colored_mesh(Mesh* mesh);
         void update_textured_mesh(Mesh* mesh);
         void update();
