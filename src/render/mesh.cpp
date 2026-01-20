@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-Mesh::Mesh(vector<float> vertices, vector<int> indices, int n_triangles, glm::vec3 position,
+Mesh::Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles, glm::vec3 position,
            std::optional<Texture> texture) {
     this->vertices = vertices;
     this->indices = indices;
@@ -13,7 +13,7 @@ Mesh::Mesh(vector<float> vertices, vector<int> indices, int n_triangles, glm::ve
 
 vector<float>* Mesh::get_vertices() { return &this->vertices; }
 
-vector<int>* Mesh::get_indices() { return &this->indices; }
+vector<unsigned int>* Mesh::get_indices() { return &this->indices; }
 
 int Mesh::get_n_triangles() { return this->n_triangles; }
 
@@ -46,3 +46,11 @@ vector<float> Mesh::get_positioned_vertices(int offset) {
 }
 
 std::optional<Texture> Mesh::get_texture() { return this->texture; }
+
+bool Mesh::is_loaded() {
+    return this->loaded;
+}
+
+void Mesh::set_loaded(bool status) {
+    this->loaded = status;
+}

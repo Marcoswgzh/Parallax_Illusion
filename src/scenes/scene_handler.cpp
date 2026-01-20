@@ -23,11 +23,12 @@ void SceneHandler::show_scene_1() {
 }
 
 void SceneHandler::show_scene_2() {
-    Model model3("models/monkey/monke.obj", glm::vec3(0.0, 0.0, 0.0));
+    Model model3("models/monkey/monke.obj", glm::vec3(-2.0, 0.0, 0.0));
+    Model model4("models/monkey/monke.obj", glm::vec3(2.0, 0.0, 0.0));
 }
 
 void SceneHandler::show_scene_3() {
-    // TODO scene 3
+    Model model3("models/nature/Nature.obj", glm::vec3(0.0, 0.0, 0.0));
 }
 
 void SceneHandler::remove_current_scene() {}

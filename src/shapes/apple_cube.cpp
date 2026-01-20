@@ -68,7 +68,7 @@ AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position) {
         dimensions.x, dimensions.y, 0.0f,         1.0f,         0.0f, // (23) Front higher right corner
     };
 
-    vector<int> indices = {
+    vector<unsigned int> indices = {
         // Front side
         0, 1, 3, // Right Triangle
         0, 3, 2, // Left Triangle
