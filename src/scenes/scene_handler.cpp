@@ -23,7 +23,7 @@ void SceneHandler::show_scene_1() {
 }
 
 void SceneHandler::show_scene_2() {
-    SceneRenderer::get_instance()->set_light_position(glm::vec3(5.0f, 30.0f, 1.0f));
+    SceneRenderer::get_instance()->set_light_position(glm::vec3(-5.0f, 30.0f, 5.0f));
     SceneRenderer::get_instance()->set_light_color(glm::vec3(1.0f, 1.0f, 1.0f));
 
     Model model3("models/nature/nature.obj", glm::vec3(0.0, -2.0, 0.0));
