@@ -114,6 +114,10 @@ endif()
 # Link all dependencies
 target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image assimp::assimp)
 
+target_compile_options(parallax PRIVATE
+    $<$<CONFIG:RelWithDebInfo>:-O2 -g>
+)
+
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 

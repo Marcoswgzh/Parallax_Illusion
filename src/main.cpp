@@ -75,7 +75,6 @@ int main() {
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
         DeltaTime::get_instance()->update();
-        recorder->update();
 
         // First handle input
         process_input();
