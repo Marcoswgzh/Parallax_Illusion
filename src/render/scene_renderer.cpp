@@ -29,8 +29,6 @@ void SceneRenderer::update_colored_mesh(Mesh* mesh) {
         return;
     }
 
-    cout << "HERE" << endl;
-
     // Prepare/get data for the buffers
     vector<float> positioned_vertices = mesh->get_positioned_vertices(3);
     vector<unsigned int> indices = *mesh->get_indices();
@@ -53,10 +51,6 @@ void SceneRenderer::update_colored_mesh(Mesh* mesh) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Draw
-    glBindVertexArray(mesh->VAO);
-    glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
-
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -74,8 +68,6 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
     if (mesh->is_loaded()) {
         return;
     }
-
-    cout << "HERE" << endl;
 
     // Prepare/get data for the buffers
     vector<float> positioned_vertices = mesh->get_positioned_vertices(2);
@@ -103,10 +95,6 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mesh->get_texture().value().get_textureID());
 
-    // Draw
-    glBindVertexArray(mesh->VAO);
-    glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
-
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -123,6 +111,10 @@ void SceneRenderer::update() {
         } else {
             this->update_colored_mesh(&mesh);
         }
+
+        // Draw
+        glBindVertexArray(mesh.VAO);
+        glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
     }
 }
 
