@@ -1,109 +1,92 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <optional>
 #include <vector>
 
-#include "camera/camera.hpp"
+#include "delta_time.hpp"
 #include "detection/recording.hpp"
 #include "gl.h"
+#include "mouse.hpp"
 #include "render/menu_renderer.hpp"
-#include "render/renderer.hpp"
 #include "render/scene_renderer.hpp"
-#include "scene/projection.hpp"
 #include "shaders/shaders.hpp"
+#include "shapes/apple_cube.hpp"
+#include "shapes/cube.hpp"
 #include "window_manager.hpp"
+#include "shapes/model.hpp"
+#include "menu/menu.hpp"
 
-// Gaze config
-const float GAZE_SCALE_X = 1.2f;
-const float GAZE_SCALE_Y = 0.8f;
-const float CAMERA_SMOOTHING = 0.18f;
-
-void process_input(GLFWwindow* window, Camera* camera, Recorder* recorder) {
-    // WASD + vertical
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera->move(0.0f, 0.0f, camera->get_speed());
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera->move(0.0f, 0.0f, -camera->get_speed());
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera->move(camera->get_speed(), 0.0f, 0.0f);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera->move(-camera->get_speed(), 0.0f, 0.0f);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera->move(0.0f, camera->get_speed(), 0.0f);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) camera->move(0.0f, -camera->get_speed(), 0.0f);
-
-    // Toggle detection
-    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-        recorder->toggle();
-        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
-    }
+void process_input() {
+    GLFWwindow* window = WindowManager::get_instance()->get_window();
 
     // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+        Recorder* recorder = Recorder::get_instance();
+        recorder->toggle();
+        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
+    }
+
+    // Toggle menu (and also if mouse is captured in center for movement)
+    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+        Menu::get_instance()->toggle();
+    }
+
+    // Toggle key-based movement
+    if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->toggle_key_movement();
+    }
+
+    // Switch between light types
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Ambient);
+    }
+
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Diffusion);
+    }
+
+    if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+        SceneRenderer::get_instance()->set_light_type(LightType::Phong);
+    }
+}
+
 int main() {
     // Initialize recorder
-    Recorder recorder;
-    recorder.start();
+    Recorder* recorder = Recorder::get_instance();
+    recorder->start();
 
-    // Initialize camera
-    Camera camera;
-
+    // Get instance of window manager
     WindowManager* window_manager = WindowManager::get_instance();
 
-    vector<float> scene_pyramid = {
-        0.0f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+    // Init mouse
+    Mouse* mouse = Mouse::get_instance();
 
-        1.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+    // Initiate menu by getting its instance
+    Menu::get_instance();
 
-        -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-    };
-    vector<int> scene_pyramid_indices = {0, 1, 2, 0, 3, 4, 0, 4, 5, 0, 5, 1};
-    VisualObject object;
-    object.triangles = scene_pyramid;
-    object.indices = scene_pyramid_indices;
-    object.n_triangles = 4;
-
-    Renderer* renderer3D = SceneRenderer::get_instance();
-    int piramid_render_index = renderer3D->add(object);
-
-    VisualObject menu_object;
-    menu_object.triangles = {
-        0.8f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-
-        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.8f, -1.0f, 1.0f, 0.0f, 0.0f,
-    };
-    menu_object.n_triangles = 4;
-
-    Renderer* renderer2D = MenuRenderer::get_instance();
-    renderer2D->add(menu_object);
+    // Set a key callback for one time keypresses
+    glfwSetKeyCallback(window_manager->get_window(), key_callback);
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
-        recorder.update();
+        DeltaTime::get_instance()->update();
+        recorder->update();
 
         // First handle input
-        process_input(window_manager->get_window(), &camera, &recorder);
-
-        // Apply gaze input if enabled
-        if (recorder.use_detection()) {
-            cv::Rect face = recorder.get_face();
-            cv::Mat frame = recorder.get_frame();
-            Gaze gaze = camera.compute_gaze_from_facial(face, frame.cols, frame.rows);
-            camera.update_camera_gaze(gaze, GAZE_SCALE_X, GAZE_SCALE_Y, CAMERA_SMOOTHING);
-        }
+        process_input();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Compute view matrix
-        glm::vec3 cam_pos = camera.get_camera_position();
-        glm::vec3 cam_target = camera.get_camera_target();
-        glm::mat4 view = glm::lookAt(cam_pos, cam_target, glm::vec3(0, 1, 0));
-
-        Projector* projector = Projector::get_instance();
-        projector->set_view_projection(view);
-
         // Draw scene
-        renderer3D->draw();
+        SceneRenderer::get_instance()->draw();
 
         // Draw menu
-        renderer2D->draw();
+        MenuRenderer::get_instance()->draw();
 
         // Swap buffers (refresh the screen with the created render)
         glfwSwapBuffers(window_manager->get_window());

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../gl.h"
-#include "../render/renderer.hpp"
+#include "../render/mesh.hpp"
 using namespace std;
 
 class Projector {
@@ -19,15 +19,15 @@ class Projector {
         void operator=(const Projector&) = delete;
 
         void set_view_projection(glm::mat4 view);
-        vector<float> project(vector<float> triangles, int n_triangles);
-        vector<float> project_list(vector<VisualObject> objects, int n_triangles);
+        glm::mat4 get_view_projection();
 
     private:
-        Projector(int width, int height);
+        Projector();
         static Projector* instance;
 
         glm::mat4 projection;
         glm::mat4 view_projection;
+        float fov = 45.0;
 };
 
 #endif

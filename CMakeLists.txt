@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(parallax)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Make sure cmake is run from the correct directory
 if(NOT "${CMAKE_SOURCE_DIR}/build" STREQUAL "${CMAKE_BINARY_DIR}")
     message(FATAL_ERROR "Out of source build required. Run from ./build instead.\nYou can safely remove the generated files in your current directory.")
@@ -67,6 +70,9 @@ find_package(OpenCV REQUIRED)
 # Find OpenGL
 find_package(OpenGL REQUIRED)
 
+# Find assimp (for model loading) (Quiet, because if it's not found, it is handled after everything else)
+find_package(assimp QUIET)
+
 # Compile GLFW
 add_subdirectory(external/glfw-3.4)
 
@@ -76,11 +82,37 @@ add_library(glad external/glad/glad.c)
 # Looks in external/glad for header files and adds them to all targets which include it.
 target_include_directories(glad PUBLIC external/glad)
 
+# Does the same for stb_image
+add_library(stb_image external/stb_image/stb_image.cpp)
+target_include_directories(stb_image PUBLIC external/stb_image)
+
 # Compile glm
 add_subdirectory(external/glm-1.0.2)
 
+# If assimp is not present on the systen, download and statically link it
+if (NOT assimp_FOUND)
+    include(FetchContent)
+
+    # Make assimp build statically
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_FRAMEWORK OFF CACHE BOOL "" FORCE)
+
+    # Disable features that are not required like debugging tools
+    set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+        assimp
+        URL https://github.com/assimp/assimp/archive/refs/tags/v5.4.3.zip
+    )
+
+    FetchContent_MakeAvailable(assimp)
+endif()
+
 # Link all dependencies
-target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm)
+target_link_libraries(parallax PRIVATE ${OpenCV_LIBS} OpenGL::GL glfw glad glm stb_image assimp::assimp)
 
 # For language support
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
@@ -88,3 +120,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Copy all shaders sources to the binary directory
 file(COPY ${CMAKE_SOURCE_DIR}/src/shaders/sources/
      DESTINATION ${CMAKE_BINARY_DIR}/)
+
+# Copy all textures to the textures directory
+file(COPY ${CMAKE_SOURCE_DIR}/textures DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/models DESTINATION ${CMAKE_BINARY_DIR})
