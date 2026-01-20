@@ -37,8 +37,8 @@ class SceneRenderer {
         static SceneRenderer* instance;
 
         SceneRenderer();
-        void update_colored_mesh(Mesh mesh);
-        void update_textured_mesh(Mesh mesh);
+        void update_colored_mesh(Mesh* mesh);
+        void update_textured_mesh(Mesh* mesh);
         void update();
 
         // Initialize shaders
