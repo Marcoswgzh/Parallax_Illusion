@@ -51,6 +51,15 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    // Draw
+    glBindVertexArray(this->VAO);
+    glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
+
+    // Delete VBO, EBO and VAO
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &this->VAO);
 }
 
 void SceneRenderer::update_textured_mesh(Mesh mesh) {
@@ -90,6 +99,15 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    // Draw
+    glBindVertexArray(this->VAO);
+    glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
+
+    // Delete VBO, EBO and VAO
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &this->VAO);
 }
 
 void SceneRenderer::update() {
@@ -101,9 +119,6 @@ void SceneRenderer::update() {
         } else {
             this->update_colored_mesh(mesh);
         }
-
-        glBindVertexArray(this->VAO);
-        glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
     }
 }
 
