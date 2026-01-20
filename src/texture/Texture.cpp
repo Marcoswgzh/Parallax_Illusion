@@ -15,7 +15,7 @@ Texture::Texture(std::string imagePath) {
     unsigned char *data = stbi_load(imagePath.c_str(), &width, &height, &channelCount, 0);
 
     if (data == nullptr) {
-        printf("Failed to load texture %s!\n", imagePath);
+        printf("Failed to load texture %s!\n", imagePath.c_str());
     }
     // else {
     //     printf("Loaded!\n");
