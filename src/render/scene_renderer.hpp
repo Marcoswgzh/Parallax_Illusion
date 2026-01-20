@@ -31,6 +31,9 @@ class SceneRenderer {
         void toggle_movement();
         void toggle_key_movement();
 
+        void set_light_position(glm::vec3 position);
+        void set_light_color(glm::vec3 color);
+
         void remove_current_scene();
 
     private:
@@ -49,6 +52,9 @@ class SceneRenderer {
         // Scene variables
         Camera camera;
         LightType light_type;
+
+        glm::vec3 light_position;
+        glm::vec3 light_color;
 
         int n_triangles;      // Total amount of triangles in the renderer
         vector<Mesh> meshes;  // All the meshes in the renderer

@@ -54,6 +54,9 @@ void SceneRenderer::update_colored_mesh(Mesh* mesh) {
     this->color_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->color_shader.set_int("light_type", this->light_type);
 
+    this->color_shader.set_vec3("light_position", this->light_position);
+    this->color_shader.set_vec3("light_color", this->light_color);
+
     if (!mesh->is_loaded()) {
         this->update_mesh(mesh, 3);
     }
@@ -67,6 +70,9 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
     this->texture_shader.set_mat4("projection", Projector::get_instance()->get_view_projection());
     this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->texture_shader.set_int("light_type", this->light_type);
+
+    this->color_shader.set_vec3("light_position", this->light_position);
+    this->color_shader.set_vec3("light_color", this->light_color);
 
     if (!mesh->is_loaded()) {
         this->update_mesh(mesh, 2);
@@ -141,4 +147,12 @@ void SceneRenderer::remove_current_scene() {
 
     // Reset the camera as well
     this->camera.reset();
+}
+
+void SceneRenderer::set_light_position(glm::vec3 position) {
+    this->light_position = position;
+}
+
+void SceneRenderer::set_light_color(glm::vec3 color) {
+    this->light_color = color;
 }

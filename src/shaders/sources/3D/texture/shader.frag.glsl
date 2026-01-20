@@ -8,13 +8,12 @@ out vec4 fragmentation_color;
 uniform vec3 camera_position;
 uniform sampler2D mesh_texture;
 uniform int light_type;
+uniform vec3 light_position;
+uniform vec3 light_color;
 
 void main() {
-    // TODO: Move to uniform block
     float ambient_strength = 0.5;
     float specular_strength = 0.6;
-    vec3 light_color = vec3(1.0f, 1.0f, 1.0f);
-    vec3 light_position = vec3(1.0f, 3.0f, 1.0f);
     vec3 ambient = ambient_strength * light_color;
 
     // Get light direction
