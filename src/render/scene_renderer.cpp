@@ -65,39 +65,39 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
     this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->texture_shader.set_int("light_type", this->light_type);
 
-    if (mesh->is_loaded()) {
-        return;
+    if (!mesh->is_loaded()) {
+        // Prepare/get data for the buffers
+        vector<float> positioned_vertices = mesh->get_positioned_vertices(2);
+        vector<unsigned int> indices = *mesh->get_indices();
+
+        glGenVertexArrays(1, &mesh->VAO);
+        glBindVertexArray(mesh->VAO);
+
+        glGenBuffers(1, &mesh->EBO);
+        glGenBuffers(1, &mesh->VBO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
+        // Three points per triangle * stride
+        glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
+
+        // Tell OpenGL how it should interpret the vertex data
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
     }
-
-    // Prepare/get data for the buffers
-    vector<float> positioned_vertices = mesh->get_positioned_vertices(2);
-    vector<unsigned int> indices = *mesh->get_indices();
-
-    glGenVertexArrays(1, &mesh->VAO);
-    glBindVertexArray(mesh->VAO);
-
-    glGenBuffers(1, &mesh->EBO);
-    glGenBuffers(1, &mesh->VBO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
-    // Three points per triangle * stride
-    glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
-
-    // Tell OpenGL how it should interpret the vertex data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
+    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mesh->get_texture().value().get_textureID());
 
-    // Unbind VBO and VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    if (!mesh->is_loaded()) {
+        // Unbind VBO and VAO
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
 
     mesh->set_loaded(true);
 }
