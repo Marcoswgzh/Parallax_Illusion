@@ -37,8 +37,9 @@ class SceneRenderer {
         static SceneRenderer* instance;
 
         SceneRenderer();
-        void update_colored_mesh(Mesh mesh);
-        void update_textured_mesh(Mesh mesh);
+        void update_mesh(Mesh* mesh, int offset);
+        void update_colored_mesh(Mesh* mesh);
+        void update_textured_mesh(Mesh* mesh);
         void update();
 
         // Initialize shaders
@@ -49,7 +50,6 @@ class SceneRenderer {
         Camera camera;
         LightType light_type;
 
-        unsigned int VAO;
         int n_triangles;      // Total amount of triangles in the renderer
         vector<Mesh> meshes;  // All the meshes in the renderer
 };

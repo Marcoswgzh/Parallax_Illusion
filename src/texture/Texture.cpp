@@ -3,6 +3,7 @@
 #include <stb_image.h>
 #include <glm/glm.hpp>
 #include <glad.h>
+#include <iostream>
 
 Texture::Texture(std::string imagePath) {
     this->imagePath = imagePath;

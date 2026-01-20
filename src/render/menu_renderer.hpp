@@ -28,10 +28,12 @@ class MenuRenderer {
         MenuRenderer();
         vector<float> get_flattened_vertices();
         void update();
-        void update_surface(Surface surface);
+        void update_color_surface(Surface surface);
+        void update_texture_surface(Surface surface);
 
         // Initialize shaders
-        Shader shader = Shader("2D/shader.vert.glsl", "2D/shader.frag.glsl");
+        Shader color_shader = Shader("2D/color/shader.vert.glsl", "2D/color/shader.frag.glsl");
+        Shader texture_shader = Shader("2D/texture/shader.vert.glsl", "2D/texture/shader.frag.glsl");
 
         unsigned int VAO;
         int n_triangles;           // Total amount of triangles in the renderer

@@ -19,11 +19,11 @@ void SceneHandler::show_scene_1() {
 }
 
 void SceneHandler::show_scene_2() {
-    Model model("models/nature/nature.obj", glm::vec3(0.0, 0.0, 0.0));
+    Model model3("models/nature/nature.obj", glm::vec3(0.0, 0.0, 0.0));
 }
 
 void SceneHandler::show_scene_3() {
-    Model model("models/table/table.obj", glm::vec3(0.0, -1.0, 0.0));
+    Model model3("models/table/table.obj", glm::vec3(0.0, 0.0, 0.0));
 }
 
 void SceneHandler::remove_current_scene() {}

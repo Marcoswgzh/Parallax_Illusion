@@ -6,15 +6,6 @@
 Frame::Frame(glm::vec2 position, glm::vec2 size, glm::vec3 color, int z_level) {
     MenuRenderer* menu_renderer = MenuRenderer::get_instance();
 
-    // Store frame info
-    this->position = position;
-    this->size = size;
-    this->color = color;
-    this->z_level = z_level;
-    this->id = menu_renderer->add(this->calculate_surface());
-}
-
-Surface Frame::calculate_surface() {
     // Calculate vertices for menu
     vector<float> vertices = {
         // Triangle 1
@@ -33,7 +24,39 @@ Surface Frame::calculate_surface() {
         position.x + size.x, position.y, color.x, color.y, color.z,
     };
 
-    return Surface(vertices, 2, glm::vec2(0.0), this->z_level);
+    // Store frame info
+    this->position = position;
+    this->size = size;
+    this->z_level = z_level;
+    this->id = menu_renderer->add(Surface(vertices, 2, glm::vec2(0.0), this->z_level));
+}
+
+Frame::Frame(glm::vec2 position, glm::vec2 size, Texture texture, int z_level) {
+    MenuRenderer* menu_renderer = MenuRenderer::get_instance();
+
+    // Calculate vertices for menu
+    vector<float> vertices = {
+        // Triangle 1
+        position.x, position.y, 0.0, 1.0,
+
+        position.x + size.x, position.y, 1.0, 1.0,
+
+        position.x, position.y + size.y, 0.0, 0.0,
+
+
+        // Triangle 2
+        position.x + size.x, position.y + size.y, 1.0, 0.0,
+
+        position.x, position.y + size.y, 0.0, 0.0,
+
+        position.x + size.x, position.y, 1.0, 1.0,
+    };
+
+    // Store frame info
+    this->position = position;
+    this->size = size;
+    this->z_level = z_level;
+    this->id = menu_renderer->add(Surface(vertices, 2, glm::vec2(0.0), this->z_level, texture));
 }
 
 glm::vec2 Frame::get_position() {
@@ -42,10 +65,6 @@ glm::vec2 Frame::get_position() {
 
 glm::vec2 Frame::get_size() {
     return this->size;
-}
-
-glm::vec3 Frame::get_color() {
-    return this->color;
 }
 
 int Frame::get_z_level() {

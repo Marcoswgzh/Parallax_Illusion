@@ -50,7 +50,7 @@ void Model::processNode(aiNode* node, const aiScene* scene, glm::vec3 position) 
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, glm::vec3 position) {
     std::vector<float> vertices;
-    std::vector<int> indices;
+    std::vector<unsigned int> indices;
     
     // Texture Detection, the vertex array needs to be formatted differently depending on whether textures are present or not.
     bool hasTexture = false;
