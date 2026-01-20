@@ -25,20 +25,24 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     this->color_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->color_shader.set_int("light_type", this->light_type);
 
+    if (mesh.is_loaded()) {
+        return;
+    }
+
     // Prepare/get data for the buffers
     vector<float> positioned_vertices = mesh.get_positioned_vertices(3);
-    vector<int> indices = *mesh.get_indices();
+    vector<unsigned int> indices = *mesh.get_indices();
 
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    glGenVertexArrays(1, &mesh.VAO);
+    glBindVertexArray(mesh.VAO);
 
-    glGenBuffers(1, &EBO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &mesh.EBO);
+    glGenBuffers(1, &mesh.VBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.VBO);
     glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
@@ -48,19 +52,14 @@ void SceneRenderer::update_colored_mesh(Mesh mesh) {
     glEnableVertexAttribArray(1);
 
     // Draw
-    glBindVertexArray(this->VAO);
+    glBindVertexArray(mesh.VAO);
     glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
-
-    glFinish();
-
-    // Delete VBO, EBO and VAO
-    glDeleteBuffers(1, &this->VBO);
-    glDeleteBuffers(1, &this->EBO);
-    glDeleteVertexArrays(1, &this->VAO);
 
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    mesh.set_loaded(true);
 }
 
 void SceneRenderer::update_textured_mesh(Mesh mesh) {
@@ -70,21 +69,25 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->texture_shader.set_int("light_type", this->light_type);
 
+    if (mesh.is_loaded()) {
+        return;
+    }
+
     // Prepare/get data for the buffers
     vector<float> positioned_vertices = mesh.get_positioned_vertices(2);
-    vector<int> indices = *mesh.get_indices();
+    vector<unsigned int> indices = *mesh.get_indices();
 
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    glGenVertexArrays(1, &mesh.VAO);
+    glBindVertexArray(mesh.VAO);
 
-    glGenBuffers(1, &this->EBO);
-    glGenBuffers(1, &this->VBO);
+    glGenBuffers(1, &mesh.EBO);
+    glGenBuffers(1, &mesh.VBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.VBO);
     // Three points per triangle * stride
     glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data
@@ -97,19 +100,14 @@ void SceneRenderer::update_textured_mesh(Mesh mesh) {
     glBindTexture(GL_TEXTURE_2D, mesh.get_texture().value().get_textureID());
 
     // Draw
-    glBindVertexArray(this->VAO);
+    glBindVertexArray(mesh.VAO);
     glDrawElements(GL_TRIANGLES, this->n_triangles * 3, GL_UNSIGNED_INT, 0);
-
-    glFinish();
 
     // Unbind VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    // Delete VBO, EBO and VAO
-    glDeleteBuffers(1, &this->VBO);
-    glDeleteBuffers(1, &this->EBO);
-    glDeleteVertexArrays(1, &this->VAO);
+    mesh.set_loaded(true);
 }
 
 void SceneRenderer::update() {
@@ -162,6 +160,12 @@ void SceneRenderer::remove_current_scene() {
     this->meshes.clear();
     this->n_triangles = 0;
     this->light_type = LightType::Phong;
+
+    for (Mesh mesh : this->meshes) {
+        glDeleteBuffers(1, &mesh.VBO);
+        glDeleteBuffers(1, &mesh.EBO);
+        glDeleteVertexArrays(1, &mesh.VAO);
+    }
 
     // Reset the camera as well
     this->camera.reset();

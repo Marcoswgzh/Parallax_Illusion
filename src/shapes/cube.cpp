@@ -23,7 +23,7 @@ Cube::Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color) {
         dimensions.x, 0.0f,         dimensions.z, color.x, color.y, color.z,
     };
 
-    vector<int> indices = {0, 1, 2, 0, 2, 3,
+    vector<unsigned int> indices = {0, 1, 2, 0, 2, 3,
 
                            0, 1, 5, 0, 4, 5,
 
