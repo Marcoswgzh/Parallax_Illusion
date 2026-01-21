@@ -4,25 +4,13 @@
 #include <glm/glm.hpp>
 #include <opencv2/opencv.hpp>
 
-struct Gaze {
-        float x = 0.f;
-        float y = 0.f;
-};
-
 class Camera {
     public:
         Camera();
+
+        // General
+        void reset();
         void update();
-
-        // Parallax methods // TODO: Remove
-        Gaze compute_gaze_from_facial(cv::Rect face, int columns, int rows);
-        void update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing);
-        float interpolate(float a, float b, float t);
-
-        // View methods
-        void set_view();
-        void update_mouse_view();
-        void update_recorder_view();
 
         // Move methods
         void move_forward();
@@ -32,28 +20,38 @@ class Camera {
         void move_up();
         void move_down();
 
+        // Toggles
+        void toggle_key_movement();
+        void toggle_movement();  
+
         // Getters
         glm::vec3 get_camera_position();
 
-        void toggle_key_movement();
-        void toggle_movement();
-        void reset();
-
     private:
+        // General
         void process_input();
 
+        // View methods
+        void update_mouse_view();
+        void update_recorder_view();
+        void set_view();
+
+        // Getters (only to be used privately)
+        float get_speed();
+        float get_sensitivity();
+        
+        // Key-based movement constants
         const float speed = 3.0;
         const float sensitivity = 5.0;
 
-        float get_speed();
-        float get_sensitivity();
-
+        // Camera positioning
         float yaw;
         float pitch;
         glm::vec3 camera_position;
         glm::vec3 camera_front;
-        const glm::vec3 camera_up = glm::vec3(0, 1, 0);  // This will stay the same
+        const glm::vec3 camera_up = glm::vec3(0, 1, 0);
 
+        // Toggle states
         bool key_movement = false;
         bool movement = false;
 };

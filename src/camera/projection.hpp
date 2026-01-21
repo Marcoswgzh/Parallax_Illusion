@@ -18,8 +18,11 @@ class Projector {
         // Projector should not be assignable
         void operator=(const Projector&) = delete;
 
-        void set_view_projection(glm::mat4 view);
+        // Getters
         glm::mat4 get_view_projection();
+
+        // Setters
+        void set_view_projection(glm::mat4 view);
 
     private:
         Projector();

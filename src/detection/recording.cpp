@@ -21,18 +21,12 @@ Recorder::Recorder() {
         std::cerr << "Error loading Haar cascade file." << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    // Load eye haarcascade classifier
-    if (!this->eye_cascade.load(haarcascade_dir + "/haarcascade_eye_tree_eyeglasses.xml")) {
-        std::cerr << "Error loading Haar cascade file." << std::endl;
-        exit(EXIT_FAILURE);
-    }
 }
 
 void Recorder::start() {
     // Open the camera
-    cap.open(0);
-    if (!cap.isOpened()) {
+    capture.open(0);
+    if (!capture.isOpened()) {
         std::cerr << "Error: Could not open camera" << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -82,12 +76,16 @@ void Recorder::update() {
     this->delta.y = fmax(fmin(this->delta.y, 0.01), -0.01);
     this->delta.z = fmax(fmin(this->delta.z, 0.01), -0.01);
 
-    // Caculate a speed vector
+    // Caculate a speed vector and reduce speed by every frame to create a smooth slow down
     this->speed += glm::vec3(delta.x, delta.y, delta.z);
     this->speed /= 2.0;
 
     // Update the previous coordinates
     this->previous = face_center;
+}
+
+void Recorder::reset_deltas() {
+    this->delta = cv::Point3f(0.0, 0.0, 0.0);
 }
 
 cv::Point3f Recorder::get_average_direction() {
@@ -101,7 +99,7 @@ cv::Point3f Recorder::get_average_direction() {
 
 void Recorder::update_frame() {
     cv::Mat temp;
-    this->cap >> temp;
+    this->capture >> temp;
 
     // Don't update frame if frame is empty
     if (!temp.empty()) {
@@ -131,15 +129,6 @@ void Recorder::update_face() {
     this->face = closest_face;
 }
 
-// TODO: delete (if not used outside of update method)
-cv::Mat Recorder::get_frame() { return this->frame; }
-
-cv::Rect Recorder::get_face() { return this->face; }
-
-bool Recorder::use_detection() { return this->detection; }
-
-void Recorder::toggle() { this->detection = !this->detection; }
-
 float Recorder::get_x_delta() {
     return this->delta.x;
 }
@@ -148,12 +137,8 @@ float Recorder::get_y_delta() {
     return this->delta.y;
 }
 
- float Recorder::get_z_delta() {
+float Recorder::get_z_delta() {
     return this->delta.z;
- }
-
-void Recorder::reset_deltas() {
-    this->delta = cv::Point3f(0.0, 0.0, 0.0);
 }
 
 glm::vec3 Recorder::get_speed() {

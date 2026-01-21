@@ -11,15 +11,6 @@ Mesh::Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles
     this->texture = texture;
 }
 
-vector<float>* Mesh::get_vertices() { return &this->vertices; }
-
-vector<unsigned int>* Mesh::get_indices() { return &this->indices; }
-
-int Mesh::get_n_triangles() { return this->n_triangles; }
-
-glm::vec3 Mesh::get_position() { return this->position; }
-
-// TODO: Make this only execute when position or form is changed
 vector<float> Mesh::get_positioned_vertices(int offset) {
     int stride = (3 + offset);
 
@@ -44,6 +35,14 @@ vector<float> Mesh::get_positioned_vertices(int offset) {
 
     return positioned_vertices;
 }
+
+vector<float>* Mesh::get_vertices() { return &this->vertices; }
+
+vector<unsigned int>* Mesh::get_indices() { return &this->indices; }
+
+int Mesh::get_n_triangles() { return this->n_triangles; }
+
+glm::vec3 Mesh::get_position() { return this->position; }
 
 std::optional<Texture> Mesh::get_texture() { return this->texture; }
 

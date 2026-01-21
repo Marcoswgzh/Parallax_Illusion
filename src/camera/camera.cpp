@@ -16,6 +16,13 @@ Camera::Camera() {
     this->reset();
 }
 
+void Camera::reset() {
+    this->yaw = 90.0f;
+    this->pitch = 0.0f;
+    this->camera_position = glm::vec3(0.f, 0.5f, -3.f);
+    this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
+}
+
 /// Updates the camera according to all active movement types (key, mouse and tracking-based).
 void Camera::update() {
     if (!this->movement) {
@@ -135,9 +142,3 @@ void Camera::toggle_movement() {
     this->movement = !this->movement;
 }
 
-void Camera::reset() {
-    this->yaw = 90.0f;
-    this->pitch = 0.0f;
-    this->camera_position = glm::vec3(0.f, 0.5f, -3.f);
-    this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
-}

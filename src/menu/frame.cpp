@@ -59,6 +59,11 @@ Frame::Frame(glm::vec2 position, glm::vec2 size, Texture texture, int z_level) {
     this->id = menu_renderer->add(Surface(vertices, 2, glm::vec2(0.0), this->z_level, texture));
 }
 
+void Frame::toggle_display() {
+    this->display = !this->display;
+    MenuRenderer::get_instance()->get_surface(this->id - 1)->toggle_display();
+}
+
 glm::vec2 Frame::get_position() {
     return this->position;
 }
@@ -69,11 +74,6 @@ glm::vec2 Frame::get_size() {
 
 int Frame::get_z_level() {
     return this->z_level;
-}
-
-void Frame::toggle_display() {
-    this->display = !this->display;
-    MenuRenderer::get_instance()->get_surface(this->id - 1)->toggle_display();
 }
 
 bool Frame::should_display() {

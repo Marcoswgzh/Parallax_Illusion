@@ -44,6 +44,7 @@ Mouse* Mouse::get_instance() {
     if (instance == nullptr) {
         instance = new Mouse();
     }
+
     return instance;
 }
 

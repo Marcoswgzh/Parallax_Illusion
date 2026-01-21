@@ -16,12 +16,12 @@ class Model {
         std::vector<Mesh> meshes; // TODO: Maybe make private if possible
 
     private:
-        std::string directory; // Path of the directory this Model is loaded from
-
+        // Private process methods
         void processNode(aiNode* node, const aiScene* scene, glm::vec3 position);
         Mesh processMesh(aiMesh* mesh, const aiScene* scene, glm::vec3 position);
 
         vector<int> ids;
+        std::string directory; // Path of the directory this Model is loaded from
 };
 
 #endif

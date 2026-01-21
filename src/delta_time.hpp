@@ -13,13 +13,17 @@ class DeltaTime {
         // Scene renderer should not be assignable
         void operator=(const DeltaTime&) = delete;
 
-        float get_delta_time();
+        // Updator method
         void update();
 
+        // Getter
+        float get_delta_time();
+        
     private:
         DeltaTime();
         static DeltaTime* instance;
 
+        // Variables to track delta time
         float delta_time;
         float previous_time;
 };

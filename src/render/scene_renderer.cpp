@@ -115,19 +115,8 @@ int SceneRenderer::add(Mesh mesh) {
     // Add the triangles from the current object to the triangles vector
     this->meshes.push_back(mesh);
 
-    // Return the index of the added item (for later control of the visual
-    // object)
+    // Return the index of the added item (for later control of the visual object)
     return this->meshes.size();
-}
-
-void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }
-
-void SceneRenderer::toggle_movement() {
-    this->camera.toggle_movement();
-}
-
-void SceneRenderer::toggle_key_movement() {
-    this->camera.toggle_key_movement();
 }
 
 void SceneRenderer::remove_current_scene() {
@@ -137,9 +126,9 @@ void SceneRenderer::remove_current_scene() {
 
     // TODO: Look at this
     for (Mesh mesh : this->meshes) {
-        // glDeleteBuffers(1, &mesh.VBO);
-        // glDeleteBuffers(1, &mesh.EBO);
-        // glDeleteVertexArrays(1, &mesh.VAO);
+        glDeleteBuffers(1, &mesh.VBO);
+        glDeleteBuffers(1, &mesh.EBO);
+        glDeleteVertexArrays(1, &mesh.VAO);
     }
 
     // Reset the camera as well
@@ -152,4 +141,14 @@ void SceneRenderer::set_light_position(glm::vec3 position) {
 
 void SceneRenderer::set_light_color(glm::vec3 color) {
     this->light_color = color;
+}
+
+void SceneRenderer::set_light_type(LightType type) { this->light_type = type; }
+
+void SceneRenderer::toggle_movement() {
+    this->camera.toggle_movement();
+}
+
+void SceneRenderer::toggle_key_movement() {
+    this->camera.toggle_key_movement();
 }

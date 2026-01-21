@@ -85,19 +85,6 @@ void MenuRenderer::update() {
     }
 }
 
-// TODO Remove, because not used anymore
-vector<float> MenuRenderer::get_flattened_vertices() {
-    // First flatten the triangle data
-    vector<float> flattened;
-    flattened.reserve(this->n_triangles * 15);
-
-    for (Surface surface : this->surfaces) {
-        flattened.insert(flattened.end(), (*surface.get_vertices()).begin(), (*surface.get_vertices()).end());
-    }
-
-    return flattened;
-}
-
 int MenuRenderer::add(Surface surface) {
     // Update the total amount of triangles and number of visual objects
     this->n_triangles += surface.get_n_triangles();
@@ -109,10 +96,6 @@ int MenuRenderer::add(Surface surface) {
     return this->surfaces.size();
 }
 
-Surface* MenuRenderer::get_surface(int index) {
-    return &this->surfaces.at(index);
-}
-
 void MenuRenderer::draw() {
     // Don't execute if there is nothing to draw
     if (this->n_triangles <= 0) {
@@ -122,3 +105,6 @@ void MenuRenderer::draw() {
     this->update();
 }
 
+Surface* MenuRenderer::get_surface(int index) {
+    return &this->surfaces.at(index);
+}

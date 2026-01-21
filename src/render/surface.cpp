@@ -28,10 +28,6 @@ int Surface::get_z_level() {
     return this->z_level;
 }
 
-void Surface::toggle_display() {
-    this->display = !this->display;
-}
-
 bool Surface::should_display() {
     return this->display;
 }
@@ -46,4 +42,8 @@ bool Surface::is_loaded() {
 
 void Surface::set_loaded(bool status) {
     this->loaded = status;
+}
+
+void Surface::toggle_display() {
+    this->display = !this->display;
 }

@@ -92,8 +92,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, glm::vec3 position) 
                 vertices.push_back(1.0f);
             }
 
-        } 
-        else {
+        } else {
             // Textures are not present, next three value are the RGB colour values.
             vertices.push_back(diffuseColour.r);
             vertices.push_back(diffuseColour.g);

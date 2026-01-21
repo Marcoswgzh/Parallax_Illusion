@@ -7,7 +7,7 @@
 #include "../texture/Texture.hpp"
 
 /**
- * Cube shape.
+ * Cube shape with apple texture.
  */
 class AppleCube : public Shape3D {
     public:

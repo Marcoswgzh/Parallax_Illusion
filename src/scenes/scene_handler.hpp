@@ -13,15 +13,14 @@ class SceneHandler {
         // SceneHandler should not be assignable
         void operator=(const SceneHandler&) = delete;
 
+        // General
         void show_scene_1();
         void show_scene_2();
         void show_scene_3();
-
         void remove_current_scene();
 
     private:
         SceneHandler();
-        void show_apple_cube_scene();
         static SceneHandler* instance;
 };
 

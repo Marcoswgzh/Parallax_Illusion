@@ -25,12 +25,6 @@ void process_input() {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
-        Recorder* recorder = Recorder::get_instance();
-        recorder->toggle();
-        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
-    }
-
     // Toggle menu (and also if mouse is captured in center for movement)
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         Menu::get_instance()->toggle();

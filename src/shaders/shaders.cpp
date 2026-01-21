@@ -103,6 +103,8 @@ Shader::Shader(const char* vs_path, const char* gs_path, const char* fs_path) {
     glDeleteShader(fragment_shader);
 }
 
+void Shader::use() { glUseProgram(shader_id); }
+
 void Shader::set_mat4(const char* name, const glm::mat4& value) {
     int location = glGetUniformLocation(this->shader_id, name);
     glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
@@ -117,5 +119,3 @@ void Shader::set_int(const char* name, int value) {
     int location = glGetUniformLocation(this->shader_id, name);
     glUniform1i(location, value);
 }
-
-void Shader::use() { glUseProgram(shader_id); }

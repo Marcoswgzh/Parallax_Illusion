@@ -7,6 +7,7 @@ class Texture {
     public:
         Texture(std::string imagePath);
 
+        // Getters
         std::string get_imagePath();
         int get_textureID();
 

@@ -24,22 +24,25 @@ class SceneRenderer {
         // Scene renderer should not be assignable
         void operator=(const SceneRenderer&) = delete;
 
+        // General
         int add(Mesh mesh);
+        void remove_current_scene();
         void draw();
+
+        // Setters
         void set_light_type(LightType type);
-
-        void toggle_movement();
-        void toggle_key_movement();
-
         void set_light_position(glm::vec3 position);
         void set_light_color(glm::vec3 color);
 
-        void remove_current_scene();
+        // Toggles
+        void toggle_movement();
+        void toggle_key_movement();
 
     private:
+        SceneRenderer();
         static SceneRenderer* instance;
 
-        SceneRenderer();
+        // Private update methods
         void update_mesh(Mesh* mesh, int offset);
         void update_colored_mesh(Mesh* mesh);
         void update_textured_mesh(Mesh* mesh);
@@ -52,7 +55,6 @@ class SceneRenderer {
         // Scene variables
         Camera camera;
         LightType light_type;
-
         glm::vec3 light_position;
         glm::vec3 light_color;
 
