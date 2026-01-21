@@ -59,8 +59,6 @@ void SceneRenderer::update_colored_mesh(Mesh* mesh) {
     if (!mesh->is_loaded()) {
         this->update_mesh(mesh, 3);
     }
-    
-    glBindVertexArray(mesh->VAO); // TODO: Might be able to remove this line
 }
 
 void SceneRenderer::update_textured_mesh(Mesh* mesh) {
@@ -79,7 +77,6 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
     glBindVertexArray(mesh->VAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mesh->get_texture().value().get_textureID());
-    glBindVertexArray(0); // TODO: Might be able to remove this line
 }
 
 void SceneRenderer::update() {
@@ -95,6 +92,7 @@ void SceneRenderer::update() {
         // Draw
         glBindVertexArray(mesh.VAO);
         glDrawElements(GL_TRIANGLES, mesh.get_indices()->size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
 }
 

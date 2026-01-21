@@ -48,8 +48,6 @@ void MenuRenderer::update_color_surface(Surface* surface) {
     if (!surface->is_loaded()) {
         this->update_surface(surface, 3);
     }
-
-    glBindVertexArray(surface->VAO); // TODO: Might be able to remove this line
 }
 
 void MenuRenderer::update_texture_surface(Surface* surface) {
@@ -65,7 +63,6 @@ void MenuRenderer::update_texture_surface(Surface* surface) {
     glBindVertexArray(surface->VAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, surface->get_texture().value().get_textureID());
-    glBindVertexArray(0); // TODO: Might be able to remove this line
 }
 
 void MenuRenderer::update() {
@@ -83,7 +80,8 @@ void MenuRenderer::update() {
         }
 
         glBindVertexArray(surface.VAO);
-        glDrawArrays(GL_TRIANGLES, 0, surface.get_n_triangles() * 3); // TODO: CHECK
+        glDrawArrays(GL_TRIANGLES, 0, surface.get_n_triangles() * 3);
+        glBindVertexArray(0);
     }
 }
 
