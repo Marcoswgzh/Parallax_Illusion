@@ -15,9 +15,9 @@ class Mouse {
         // Mouse should not be assignable
         void operator=(const Mouse&) = delete;
 
+        // Variables to track mouse delta's
         float previous_x;
         float previous_y;
-
         float x_delta;
         float y_delta;
 

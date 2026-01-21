@@ -6,7 +6,6 @@
 #include "../gl.h"
 #include "../shaders/shaders.hpp"
 #include "surface.hpp"
-using namespace std;
 
 class MenuRenderer {
     public:
@@ -18,15 +17,18 @@ class MenuRenderer {
         // Scene renderer should not be assignable
         void operator=(const MenuRenderer&) = delete;
 
+        // General
         int add(Surface surface);
-        Surface* get_surface(int index);
         void draw();
 
+        // Getter
+        Surface* get_surface(int index);
+
     private:
+        MenuRenderer();
         static MenuRenderer* instance;
 
-        MenuRenderer();
-        vector<float> get_flattened_vertices();
+        // Update methods
         void update();
         void update_color_surface(Surface* surface);
         void update_texture_surface(Surface* surface);

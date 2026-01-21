@@ -12,6 +12,7 @@ class Container : public Frame {
         Container(optional<Frame> frame, glm::vec2 position, glm::vec2 size, glm::vec3 color);
 
     private:
+        // Private calculations
         glm::vec2 get_relative_position(std::optional<Frame> frame, glm::vec2 position);
         int calculate_z_level(std::optional<Frame> frame);
 };

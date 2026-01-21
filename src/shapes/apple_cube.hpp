@@ -4,10 +4,10 @@
 #include "../gl.h"
 #include "../render/mesh.hpp"
 #include "shape3D.hpp"
-#include "../texture/Texture.hpp"
+#include "../texture/texture.hpp"
 
 /**
- * Cube shape.
+ * Cube shape with apple texture.
  */
 class AppleCube : public Shape3D {
     public:

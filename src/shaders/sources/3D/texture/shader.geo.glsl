@@ -16,6 +16,7 @@ void main()
     vec3 pos_B = v_frag_position[1].xyz;
     vec3 pos_C = v_frag_position[2].xyz;
 
+    // Calculate the normal vector of the triangle
     vec3 CA = pos_A - pos_C;
     vec3 CB = pos_B - pos_C;
     normal = cross(CA, CB);

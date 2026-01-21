@@ -5,14 +5,15 @@
 
 class Texture {
     public:
-        Texture(std::string imagePath);
+        Texture(std::string image_path);
 
-        std::string get_imagePath();
-        int get_textureID();
+        // Getters
+        std::string get_image_path();
+        int get_texture_id();
 
     private:
-        std::string imagePath;
-        int textureID;
+        std::string image_path;
+        int texture_id;
 };
 
 #endif
