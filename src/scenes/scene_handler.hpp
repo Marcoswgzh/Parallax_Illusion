@@ -15,7 +15,6 @@ class SceneHandler {
         void show_scene_1();
         void show_scene_2();
         void show_scene_3();
-        void remove_current_scene();
 
     private:
         SceneHandler();

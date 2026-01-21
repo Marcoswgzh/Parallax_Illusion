@@ -2,6 +2,9 @@
 
 #include <glm/glm.hpp>
 
+/**
+ * Mesh constructor. A mesh holds all information about a 3D object. 
+ */
 Mesh::Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles, glm::vec3 position,
            std::optional<Texture> texture) {
     this->vertices = vertices;
@@ -11,6 +14,9 @@ Mesh::Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles
     this->texture = texture;
 }
 
+/**
+ * Adds the world position to the local coordinates of the vertices (so the vertices can be projected).
+ */
 vector<float> Mesh::get_positioned_vertices(int offset) {
     int stride = (3 + offset);
     vector<float> positioned_vertices;
@@ -36,20 +42,41 @@ vector<float> Mesh::get_positioned_vertices(int offset) {
     return positioned_vertices;
 }
 
+/**
+ * Gets the vertices.
+ */
 vector<float>* Mesh::get_vertices() { return &this->vertices; }
 
+/**
+ * Gets the indices.
+ */
 vector<unsigned int>* Mesh::get_indices() { return &this->indices; }
 
+/**
+ * Gets the number of traingles in the mesh.
+ */
 int Mesh::get_n_triangles() { return this->n_triangles; }
 
+/**
+ * Gets the postion of the mesh.
+ */
 glm::vec3 Mesh::get_position() { return this->position; }
 
+/**
+ * Optionally gets the texture of the mesh.
+ */
 std::optional<Texture> Mesh::get_texture() { return this->texture; }
 
+/**
+ * Gets if the mesh is already loaded into a buffer.
+ */
 bool Mesh::is_loaded() {
     return this->loaded;
 }
 
+/**
+ * Sets the meshes loaded status.
+ */
 void Mesh::set_loaded(bool status) {
     this->loaded = status;
 }

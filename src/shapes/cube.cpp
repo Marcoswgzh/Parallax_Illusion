@@ -4,6 +4,9 @@
 #include "../render/mesh.hpp"
 #include "../render/scene_renderer.hpp"
 
+/**
+ * Constructs a cube based on a given size, position and color.
+ */
 Cube::Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color) {
     vector<float> vertices = {
         0.0f,         0.0f,         0.0f,         color.x, color.y, color.z,

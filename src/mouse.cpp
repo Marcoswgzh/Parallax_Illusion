@@ -5,6 +5,9 @@
 Mouse* Mouse::instance = nullptr;
 static bool first = true;
 
+/**
+ * Mouse callback function used for swiping actions, it calculates/tracks the delta's from these actions.
+ */
 void mouse_callback(GLFWwindow* window, double x_pos, double y_pos) {
     Mouse* mouse = Mouse::get_instance();
     if (first) {
@@ -22,7 +25,11 @@ void mouse_callback(GLFWwindow* window, double x_pos, double y_pos) {
     mouse->previous_y = y_pos;
 }
 
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+/**
+ * Mouse callback function used for clicking actions, it determines the click position on the screen 
+ * and passes it along to the menu click handler.
+ */
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (button != GLFW_MOUSE_BUTTON_LEFT || action != GLFW_PRESS){
         return;
     }
@@ -38,6 +45,9 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     Menu::get_instance()->handle_click_events(click_position);
 }
 
+/**
+ * Gets the single mouse instance.
+ */
 Mouse* Mouse::get_instance() {
     if (instance == nullptr) {
         instance = new Mouse();
@@ -46,8 +56,11 @@ Mouse* Mouse::get_instance() {
     return instance;
 }
 
+/**
+ * Mouse constructor. Wraps around the mouse callbacks and holds the delta information.
+ */
 Mouse::Mouse() {
     WindowManager* window_manager = WindowManager::get_instance();
     glfwSetCursorPosCallback(window_manager->get_window(), mouse_callback);
-    glfwSetMouseButtonCallback(window_manager->get_window(), mouseButtonCallback);
+    glfwSetMouseButtonCallback(window_manager->get_window(), mouse_button_callback);
 }

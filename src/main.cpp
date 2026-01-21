@@ -7,6 +7,9 @@
 #include "render/menu_renderer.hpp"
 #include "delta_time.hpp"
 
+/**
+ * Processes key input which doesn't belong to any particular object.
+ */
 void process_input() {
     GLFWwindow* window = WindowManager::get_instance()->get_window();
 
@@ -14,6 +17,9 @@ void process_input() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
 
+/**
+ * Handles key callbacks, used for toggles.
+ */
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     // Toggle menu (and also if mouse is captured in center for movement)
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
@@ -39,6 +45,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+/**
+ * The main function, which contains the main program loop and loads the necessary 
+ * objects before the render loop starts.
+ */
 int main() {
     // Initialize recorder
     Recorder* recorder = Recorder::get_instance();

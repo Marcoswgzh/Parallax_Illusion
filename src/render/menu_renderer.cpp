@@ -3,6 +3,9 @@
 
 MenuRenderer* MenuRenderer::instance = nullptr;
 
+/**
+ * Gets the single menu renderer instance.
+ */
 MenuRenderer* MenuRenderer::get_instance() {
     if (instance == nullptr) {
         instance = new MenuRenderer();
@@ -11,8 +14,15 @@ MenuRenderer* MenuRenderer::get_instance() {
     return instance;
 }
 
+/**
+ * Menu renderer constructor. The menu renderer handles all 2D rendering. It holds all the created surfaces.
+ */
 MenuRenderer::MenuRenderer() {}
 
+/**
+ * Loads a single surface into a buffer. This only has to be done once and only has to be done 
+ * again if the position or shape of the surface has changed.
+ */
 void MenuRenderer::update_surface(Surface* surface, int offset) {
     // Bind VBO and VAO
     glGenVertexArrays(1, &surface->VAO);
@@ -36,6 +46,10 @@ void MenuRenderer::update_surface(Surface* surface, int offset) {
     surface->set_loaded(true);
 }
 
+/**
+ * Updates a colored surface. It only loads a surface if it hasn't been loaded before.
+ * It does always update the shaders.
+ */
 void MenuRenderer::update_color_surface(Surface* surface) {
     // Make sure to use the shaders before setting uniforms
     this->color_shader.use();
@@ -47,6 +61,10 @@ void MenuRenderer::update_color_surface(Surface* surface) {
     }
 }
 
+/**
+ * Updates a textured surface. It only loads a surface if it hasn't been loaded before.
+ * It does always update the shaders.
+ */
 void MenuRenderer::update_texture_surface(Surface* surface) {
     // Make sure to use the shaders before setting uniforms
     this->texture_shader.use();
@@ -59,9 +77,13 @@ void MenuRenderer::update_texture_surface(Surface* surface) {
 
     glBindVertexArray(surface->VAO);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, surface->get_texture().value().get_textureID());
+    glBindTexture(GL_TEXTURE_2D, surface->get_texture().value().get_texture_id());
 }
 
+/**
+ * Iterates over all the surfaces and updates them. It skips the ones which should not be displayed.
+ * It also decides between using colored or textured rendering.
+ */
 void MenuRenderer::update() {
     for (Surface& surface : this->surfaces) {
         // Don't display surfaces which shouldn't be displayed
@@ -82,6 +104,9 @@ void MenuRenderer::update() {
     }
 }
 
+/**
+ * Adds a surface to the menu renderer. It returns the size after adding so the surface can be retrieved with its index.
+ */
 int MenuRenderer::add(Surface surface) {
     // Update the total amount of triangles and number of visual objects
     this->n_triangles += surface.get_n_triangles();
@@ -89,10 +114,13 @@ int MenuRenderer::add(Surface surface) {
     // Add the triangles from the current object to the triangles vector
     this->surfaces.push_back(surface);
 
-    // Return the index of the added item (for later control of the mesh)
+    // Return the index of the added item (for later control of the surface)
     return this->surfaces.size();
 }
 
+/**
+ * Simple wrapper method to draw all the 2D surfaces.
+ */
 void MenuRenderer::draw() {
     // Don't execute if there is nothing to draw
     if (this->n_triangles <= 0) {
@@ -102,6 +130,9 @@ void MenuRenderer::draw() {
     this->update();
 }
 
+/**
+ * Gets a surface by id.
+ */
 Surface* MenuRenderer::get_surface(int index) {
     return &this->surfaces.at(index);
 }

@@ -5,6 +5,9 @@
 
 Recorder* Recorder::instance = nullptr;
 
+/**
+ * Gets the single recorder instance.
+ */
 Recorder* Recorder::get_instance() {
     if (instance == nullptr) {
         instance = new Recorder();
@@ -13,6 +16,9 @@ Recorder* Recorder::get_instance() {
     return instance;
 }
 
+/**
+ * The recorder class records and tracks the face of the user.
+ */
 Recorder::Recorder() {
     // Convert OpenCV path predefined macro to string
     std::string haarcascade_dir(HAARCASCADE_DIR);
@@ -24,6 +30,9 @@ Recorder::Recorder() {
     }
 }
 
+/**
+ * Start the recorder camera capture.
+ */
 void Recorder::start() {
     // Open the camera
     capture.open(0);
@@ -33,6 +42,10 @@ void Recorder::start() {
     }
 }
 
+/**
+ * Updates the recorder, it get the frame then the face, then the stabilization methods are 
+ * executed to get stable tracking.
+ */
 void Recorder::update() {
     // Updates must be done in the correct order
     this->update_frame();
@@ -85,10 +98,16 @@ void Recorder::update() {
     this->previous = face_center;
 }
 
+/**
+ * This resets the deltas to zero.
+ */
 void Recorder::reset_deltas() {
     this->delta = cv::Point3f(0.0, 0.0, 0.0);
 }
 
+/**
+ * This gets the average direction of the previous delta's. 
+ */
 cv::Point3f Recorder::get_average_direction() {
     cv::Point3f sum = cv::Point3f(0.0, 0.0, 0.0);
     for (cv::Point3f point : this->previous_deltas) {
@@ -98,6 +117,9 @@ cv::Point3f Recorder::get_average_direction() {
     return sum / this->n_previous;
 }
 
+/**
+ * Updates the current frame, it uses the previous frame if the current frame can't be found.
+ */
 void Recorder::update_frame() {
     cv::Mat temp;
     this->capture >> temp;
@@ -108,6 +130,10 @@ void Recorder::update_frame() {
     }
 }
 
+/**
+ * Finds a face in the current frame. It will not set a new face if no faces are found (so the previous face will be used) 
+ * and if there are multiple faces the biggest (the closest) face will be used.
+ */
 void Recorder::update_face() {
     cv::Mat gray;
     cv::cvtColor(this->frame, gray, cv::COLOR_BGR2GRAY);
@@ -130,18 +156,30 @@ void Recorder::update_face() {
     this->face = closest_face;
 }
 
+/**
+ * Gets the x-component of the delta.
+ */
 float Recorder::get_x_delta() {
     return this->delta.x;
 }
 
+/**
+ * Gets the y-component of the delta.
+ */
 float Recorder::get_y_delta() {
     return this->delta.y;
 }
 
+/**
+ * Gets the z-component of the delta.
+ */
 float Recorder::get_z_delta() {
     return this->delta.z;
 }
 
+/**
+ * Gets the speed calculated based on the delta's.
+ */
 glm::vec3 Recorder::get_speed() {
     return this->speed;
 }

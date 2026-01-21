@@ -7,6 +7,9 @@
 
 Projector* Projector::instance = nullptr;
 
+/**
+ * Gets the single projector instance.
+ */
 Projector* Projector::get_instance() {
     if (instance == nullptr) {
         instance = new Projector();
@@ -16,7 +19,7 @@ Projector* Projector::get_instance() {
 }
 
 /**
- * Constructs the projector.
+ * Constructs the projector. The projector wraps around the projection calculations.
  */
 Projector::Projector() {}
 

@@ -5,8 +5,11 @@
 #include "model.hpp"
 #include "../render/scene_renderer.hpp"
 
+/**
+ * Model constructor. It imports and parses .obj files to be converted into our meshes, 
+ * so they can be rendered in our own scenes.
+ */
 Model::Model(std::string path, glm::vec3 position) {
-
     Assimp::Importer import;
 
     // Triangulate: Make every mesh a triangle in case we get non-triangle meshes.
@@ -34,6 +37,9 @@ Model::Model(std::string path, glm::vec3 position) {
     }
 }
 
+/**
+ * Processes a single node. It creates the meshes.
+ */
 void Model::processNode(aiNode* node, const aiScene* scene, glm::vec3 position) {
     // get all the meshes from assimp's structure and store them in our own structure for later
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
@@ -48,29 +54,32 @@ void Model::processNode(aiNode* node, const aiScene* scene, glm::vec3 position) 
     }
 }
 
+/**
+ * Converts an aiMesh to our own mesh objects.
+ */
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, glm::vec3 position) {
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
     
     // Texture Detection, the vertex array needs to be formatted differently depending on whether textures are present or not.
-    bool hasTexture = false;
-    std::string texturePath = "";
-    aiColor3D diffuseColour(1.0f, 1.0f, 1.0f); // Default colour is white if no colour data is found inside the obj file.
+    bool has_texture = false;
+    std::string texture_path = "";
+    aiColor3D diffuse_color(1.0f, 1.0f, 1.0f); // Default colour is white if no colour data is found inside the obj file.
 
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         // Check for texture data
         if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
-            aiString textureFileName; // file name + extension, no path
-            material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFileName);
-            texturePath = this->directory + "/" + textureFileName.C_Str();
-            hasTexture = true;
+            aiString texture_filename; // file name + extension, no path
+            material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_filename);
+            texture_path = this->directory + "/" + texture_filename.C_Str();
+            has_texture = true;
         } 
         else {
             // If no texture is found, we will use the colour of the vertex instead.
-            // If no colour info is present, material->Get() will not modify diffuseColour (default white)
-            material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColour);
+            // If no colour info is present, material->Get() will not modify diffuse_color (default white)
+            material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color);
         }
     }
 
@@ -80,7 +89,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, glm::vec3 position) 
         vertices.push_back(mesh->mVertices[i].y);
         vertices.push_back(mesh->mVertices[i].z);
 
-        if (hasTexture) {
+        if (has_texture) {
             // Textures are present, next two values are the UV coordinates.
 
             if (mesh->mTextureCoords[0]) {
@@ -94,9 +103,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, glm::vec3 position) 
 
         } else {
             // Textures are not present, next three value are the RGB colour values.
-            vertices.push_back(diffuseColour.r);
-            vertices.push_back(diffuseColour.g);
-            vertices.push_back(diffuseColour.b);
+            vertices.push_back(diffuse_color.r);
+            vertices.push_back(diffuse_color.g);
+            vertices.push_back(diffuse_color.b);
         }
     }
 
@@ -109,9 +118,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, glm::vec3 position) 
     }
 
     // Create the final Mesh.
-    if (hasTexture) {
+    if (has_texture) {
         // number of triangles = number of indices / 3, since assimp will triangulate all the meshes.
-        return Mesh(vertices, indices, indices.size() / 3, position, Texture(texturePath));
+        return Mesh(vertices, indices, indices.size() / 3, position, Texture(texture_path));
     } else {
         // number of triangles = number of indices / 3, since assimp will triangulate all the meshes.
         return Mesh(vertices, indices, indices.size() / 3, position, std::nullopt);

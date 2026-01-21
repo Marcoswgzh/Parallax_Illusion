@@ -7,6 +7,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glVi
 
 WindowManager* WindowManager::instance = nullptr;
 
+/**
+ * Gets the single window manager instance.
+ */
 WindowManager* WindowManager::get_instance() {
     if (instance == nullptr) {
         instance = new WindowManager();
@@ -14,6 +17,9 @@ WindowManager* WindowManager::get_instance() {
     return instance;
 }
 
+/**
+ * Window manager constructor. Initialized a window with GLFW.
+ */
 WindowManager::WindowManager() {
     // Initialize window with glfw
     glfwInit();
@@ -53,4 +59,7 @@ WindowManager::WindowManager() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
 
+/**
+ * Gets the window.
+ */
 GLFWwindow* WindowManager::get_window() { return this->window; }
