@@ -14,7 +14,7 @@ class Camera {
         Camera();
         void update();
 
-        // Parallax methods
+        // Parallax methods // TODO: Remove
         Gaze compute_gaze_from_facial(cv::Rect face, int columns, int rows);
         void update_camera_gaze(const Gaze& gaze, float gazeScaleX, float gazeScaleY, float smoothing);
         float interpolate(float a, float b, float t);
@@ -48,8 +48,8 @@ class Camera {
         float get_speed();
         float get_sensitivity();
 
-        float yaw = 90.0f;
-        float pitch = 0.0f;
+        float yaw;
+        float pitch;
         glm::vec3 camera_position;
         glm::vec3 camera_front;
         const glm::vec3 camera_up = glm::vec3(0, 1, 0);  // This will stay the same

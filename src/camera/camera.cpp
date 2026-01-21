@@ -136,6 +136,8 @@ void Camera::toggle_movement() {
 }
 
 void Camera::reset() {
+    this->yaw = 90.0f;
+    this->pitch = 0.0f;
     this->camera_position = glm::vec3(0.f, 0.5f, -3.f);
     this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
 }

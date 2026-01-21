@@ -39,3 +39,11 @@ bool Surface::should_display() {
 std::optional<Texture> Surface::get_texture() {
     return this->texture;
 }
+
+bool Surface::is_loaded() {
+    return this->loaded;
+}
+
+void Surface::set_loaded(bool status) {
+    this->loaded = status;
+}
