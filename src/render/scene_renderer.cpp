@@ -30,14 +30,14 @@ void SceneRenderer::update_mesh(Mesh* mesh, int offset) {
     vector<unsigned int> indices = *mesh->get_indices();
 
     // Create VBO, EBO and VAO buffers
-    glGenVertexArrays(1, &mesh->VAO);
-    glGenBuffers(1, &mesh->EBO);
-    glGenBuffers(1, &mesh->VBO);
+    glGenVertexArrays(1, mesh->get_vao());
+    glGenBuffers(1, mesh->get_ebo());
+    glGenBuffers(1, mesh->get_vbo());
 
     // Bind buffers
-    glBindVertexArray(mesh->VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+    glBindVertexArray(*mesh->get_vao());
+    glBindBuffer(GL_ARRAY_BUFFER, *mesh->get_vbo());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *mesh->get_ebo());
 
     // Fill the buffers with vertex and index data
     glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
@@ -91,7 +91,7 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
         this->update_mesh(mesh, 2);
     }
 
-    glBindVertexArray(mesh->VAO);
+    glBindVertexArray(*mesh->get_vao());
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mesh->get_texture().value().get_texture_id());
 }
@@ -111,7 +111,7 @@ void SceneRenderer::update() {
         }
 
         // Draw
-        glBindVertexArray(mesh.VAO);
+        glBindVertexArray(*mesh.get_vao());
         glDrawElements(GL_TRIANGLES, mesh.get_indices()->size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
@@ -157,9 +157,9 @@ void SceneRenderer::remove_current_scene() {
 
     // TODO: Look at this
     for (Mesh mesh : this->meshes) {
-        glDeleteBuffers(1, &mesh.VBO);
-        glDeleteBuffers(1, &mesh.EBO);
-        glDeleteVertexArrays(1, &mesh.VAO);
+        glDeleteBuffers(1, mesh.get_vbo());
+        glDeleteBuffers(1, mesh.get_ebo());
+        glDeleteVertexArrays(1, mesh.get_vao());
     }
 
     // Reset the camera as well

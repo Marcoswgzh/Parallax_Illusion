@@ -25,10 +25,10 @@ MenuRenderer::MenuRenderer() {}
  */
 void MenuRenderer::update_surface(Surface* surface, int offset) {
     // Bind VBO and VAO
-    glGenVertexArrays(1, &surface->VAO);
-    glBindVertexArray(surface->VAO);
-    glGenBuffers(1, &surface->VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, surface->VBO);
+    glGenVertexArrays(1, surface->get_vao());
+    glBindVertexArray(*surface->get_vao());
+    glGenBuffers(1, surface->get_vbo());
+    glBindBuffer(GL_ARRAY_BUFFER, *surface->get_vbo());
 
     // Load vertices into the buffers
     vector<float> vertices = *surface->get_vertices();
@@ -75,7 +75,7 @@ void MenuRenderer::update_texture_surface(Surface* surface) {
         this->update_surface(surface, 2);
     }
 
-    glBindVertexArray(surface->VAO);
+    glBindVertexArray(*surface->get_vao());
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, surface->get_texture().value().get_texture_id());
 }
@@ -98,7 +98,7 @@ void MenuRenderer::update() {
             this->update_color_surface(&surface);
         }
 
-        glBindVertexArray(surface.VAO);
+        glBindVertexArray(*surface.get_vao());
         glDrawArrays(GL_TRIANGLES, 0, surface.get_n_triangles() * 3);
         glBindVertexArray(0);
     }

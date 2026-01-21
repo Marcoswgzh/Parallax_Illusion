@@ -137,7 +137,7 @@ void Recorder::update_frame() {
 void Recorder::update_face() {
     cv::Mat gray;
     cv::cvtColor(this->frame, gray, cv::COLOR_BGR2GRAY);
-    cv::equalizeHist(gray, gray);  // TODO: Check what this does
+    cv::equalizeHist(gray, gray);
 
     std::vector<cv::Rect> faces;
     face_cascade.detectMultiScale(gray, faces, 1.1, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(60, 60));

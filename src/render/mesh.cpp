@@ -75,6 +75,27 @@ bool Mesh::is_loaded() {
 }
 
 /**
+ * Gets the VBO.
+ */
+unsigned int* Mesh::get_vbo() {
+    return &this->VBO;
+}
+
+/**
+ * Gets the EBO.
+ */
+unsigned int* Mesh::get_ebo() {
+    return &this->EBO;
+}
+
+/**
+ * Gets the VAO.
+ */
+unsigned int* Mesh::get_vao() {
+    return &this->VAO;
+}
+
+/**
  * Sets the meshes loaded status.
  */
 void Mesh::set_loaded(bool status) {

@@ -20,14 +20,15 @@ class Surface {
         bool should_display();
         bool is_loaded();
         std::optional<Texture> get_texture();
+        unsigned int* get_vbo();
+        unsigned int* get_vao();
+
 
         // Setter
         void set_loaded(bool status);
 
         // Toggle
         void toggle_display();
-
-        unsigned int VBO, EBO, VAO; // TODO: Create getter function for this?
 
     private:
         // Surface properties
@@ -40,6 +41,9 @@ class Surface {
         // Surface states
         bool display = true;
         bool loaded = false;
+
+        // Surface buffers
+        unsigned int VBO, VAO;
 };
 
 #endif

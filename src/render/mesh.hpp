@@ -20,11 +20,12 @@ class Mesh {
         glm::vec3 get_position();
         std::optional<Texture> get_texture();
         bool is_loaded();
+        unsigned int* get_vbo();
+        unsigned int* get_ebo();
+        unsigned int* get_vao();
 
         // Setter
         void set_loaded(bool status);
-
-        unsigned int VBO, EBO, VAO; // TODO: Make getters for these values (if possible)
 
     private:
         // Mesh properties
@@ -36,6 +37,9 @@ class Mesh {
 
         // Mesh state
         bool loaded = false;
+
+        // Mesh buffers
+        unsigned int VBO, EBO, VAO;
 };
 
 #endif

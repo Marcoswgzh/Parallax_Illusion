@@ -67,6 +67,20 @@ bool Surface::is_loaded() {
 }
 
 /**
+ * Gets the VBO.
+ */
+unsigned int* Surface::get_vbo() {
+    return &this->VBO;
+}
+
+/**
+ * Gets the VAO.
+ */
+unsigned int* Surface::get_vao() {
+    return &this->VAO;
+}
+
+/**
  * Sets the surfaces loaded status.
  */
 void Surface::set_loaded(bool status) {
