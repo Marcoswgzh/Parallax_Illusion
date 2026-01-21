@@ -35,11 +35,12 @@ class Menu {
         Frame menu_title = Frame(glm::vec2(-0.5, 0.4), glm::vec2(1.0, 0.314), menu_texture, 1);
 
         // Create menu scene buttons
-        glm::vec3 button_color = glm::vec3(0.164, 0.172, 0.238);
-        Texture texture = Texture("textures/apple_skin.png");
-        Button scene_1_button = Button(container, glm::vec2(0.2, 0.6), glm::vec2(0.4), texture);
-        Button scene_2_button = Button(container, glm::vec2(0.8, 0.6), glm::vec2(0.4), button_color);
-        Button scene_3_button = Button(container, glm::vec2(1.4, 0.6), glm::vec2(0.4), button_color);
+        Texture stars_texture = Texture("textures/stars.jpg");
+        Texture nature_texture = Texture("textures/nature.jpg");
+        Texture table_texture = Texture("textures/table.jpg");
+        Button scene_1_button = Button(container, glm::vec2(0.2, 0.6), glm::vec2(0.4), stars_texture);
+        Button scene_2_button = Button(container, glm::vec2(0.8, 0.6), glm::vec2(0.4), nature_texture);
+        Button scene_3_button = Button(container, glm::vec2(1.4, 0.6), glm::vec2(0.4), table_texture);
 };
 
 #endif
