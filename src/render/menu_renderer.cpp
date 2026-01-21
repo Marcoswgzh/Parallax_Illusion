@@ -11,20 +11,21 @@ MenuRenderer* MenuRenderer::get_instance() {
     if (instance == nullptr) {
         instance = new MenuRenderer();
     }
+
     return instance;
 }
 
 MenuRenderer::MenuRenderer() {}
 
 void MenuRenderer::update_surface(Surface* surface, int offset) {
-    vector<float> vertices = *surface->get_vertices();
-
+    // Bind VBO and VAO
     glGenVertexArrays(1, &surface->VAO);
     glBindVertexArray(surface->VAO);
-
     glGenBuffers(1, &surface->VBO);
     glBindBuffer(GL_ARRAY_BUFFER, surface->VBO);
 
+    // Load vertices into the buffers
+    vector<float> vertices = *surface->get_vertices();
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data

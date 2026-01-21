@@ -66,10 +66,12 @@ void Camera::update_mouse_view() {
     if (this->pitch > 89.0f) this->pitch = 89.0f;
     if (this->pitch < -89.0f) this->pitch = -89.0f;
 
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-    direction.y = sin(glm::radians(this->pitch));
-    direction.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    // Calculate a direction vector based on yaw and pitch
+    glm::vec3 direction(
+        cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch)),
+        sin(glm::radians(this->pitch)),
+        sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch))
+    );
     this->camera_front = glm::normalize(direction);
 
     // Reset the mouse deltas
@@ -141,4 +143,3 @@ void Camera::toggle_key_movement() {
 void Camera::toggle_movement() {
     this->movement = !this->movement;
 }
-

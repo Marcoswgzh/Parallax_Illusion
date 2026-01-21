@@ -14,6 +14,7 @@ Projector* Projector::get_instance() {
     if (instance == nullptr) {
         instance = new Projector();
     }
+    
     return instance;
 }
 

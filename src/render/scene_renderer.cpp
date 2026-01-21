@@ -23,16 +23,18 @@ void SceneRenderer::update_mesh(Mesh* mesh, int offset) {
     vector<float> positioned_vertices = mesh->get_positioned_vertices(offset);
     vector<unsigned int> indices = *mesh->get_indices();
 
+    // Create VBO, EBO and VAO buffers
     glGenVertexArrays(1, &mesh->VAO);
-    glBindVertexArray(mesh->VAO);
-
     glGenBuffers(1, &mesh->EBO);
     glGenBuffers(1, &mesh->VBO);
 
+    // Bind buffers
+    glBindVertexArray(mesh->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
-    glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+
+    // Fill the buffers with vertex and index data
+    glBufferData(GL_ARRAY_BUFFER, positioned_vertices.size() * sizeof(float), positioned_vertices.data(), GL_DYNAMIC_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
     // Tell OpenGL how it should interpret the vertex data

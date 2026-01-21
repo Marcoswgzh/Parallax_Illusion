@@ -23,59 +23,62 @@ string Shader::read_shader(char const* path) {
     return buffer.str();
 }
 
-unsigned int Shader::load(string shaderSource, GLenum shaderType) {
-    const char* source = shaderSource.c_str();
-    unsigned int shader = glCreateShader(shaderType);
+unsigned int Shader::load(string shader_source, GLenum shader_type) {
+    const char* source = shader_source.c_str();
+    unsigned int shader = glCreateShader(shader_type);
     glShaderSource(shader, 1, &source, NULL);
     glCompileShader(shader);
 
     // Check if the shader compilation was succesful
     int success;
-    int logLength = 512;
-    char* infoLog = new char[logLength];
+    int log_length = 512;
+    char* info_log = new char[log_length];
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
     if (!success) {
-        glGetShaderInfoLog(shader, logLength, NULL, infoLog);
-        std::cout << "ERROR: Shader compilation failed: \n" << infoLog << std::endl;
+        glGetShaderInfoLog(shader, log_length, NULL, info_log);
+        std::cout << "ERROR: Shader compilation failed: \n" << info_log << std::endl;
     }
 
     return shader;
 }
 
 Shader::Shader(const char* vs_path, const char* fs_path) {
+    // Get the shaders source text
     string vertex_shader_source = read_shader(vs_path);
     string fragmentation_shader_source = read_shader(fs_path);
 
-    unsigned int vertexShader = load(vertex_shader_source, GL_VERTEX_SHADER);
-    unsigned int fragmentShader = load(fragmentation_shader_source, GL_FRAGMENT_SHADER);
+    // Load shaders
+    unsigned int vertex_shader = load(vertex_shader_source, GL_VERTEX_SHADER);
+    unsigned int fragment_shader = load(fragmentation_shader_source, GL_FRAGMENT_SHADER);
 
     this->shader_id = glCreateProgram();
-    glAttachShader(this->shader_id, vertexShader);
-    glAttachShader(this->shader_id, fragmentShader);
+    glAttachShader(this->shader_id, vertex_shader);
+    glAttachShader(this->shader_id, fragment_shader);
     glLinkProgram(this->shader_id);
 
     // Check if linking the shader program was succesful
     int success;
-    int logLength = 512;
-    char* infoLog = new char[logLength];
+    int log_length = 512;
+    char* info_log = new char[log_length];
     glGetProgramiv(this->shader_id, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(this->shader_id, 512, NULL, infoLog);
-        std::cout << "ERROR: Linking shader program failed: \n" << infoLog << std::endl;
+        glGetProgramInfoLog(this->shader_id, 512, NULL, info_log);
+        std::cout << "ERROR: Linking shader program failed: \n" << info_log << std::endl;
     }
 
-    // Delete the shader objects, because we don't need them anymore (already
-    // linked)
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    // Delete the shader objects, because we don't need them anymore (already linked)
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
 }
 
 Shader::Shader(const char* vs_path, const char* gs_path, const char* fs_path) {
+    // Get the shaders source text
     string vertex_shader_source = this->read_shader(vs_path);
     string geometry_shader_source = this->read_shader(gs_path);
     string fragmentation_shader_source = this->read_shader(fs_path);
 
+    // Load shaders
     unsigned int vertex_shader = this->load(vertex_shader_source, GL_VERTEX_SHADER);
     unsigned int geometry_shader = this->load(geometry_shader_source, GL_GEOMETRY_SHADER);
     unsigned int fragment_shader = this->load(fragmentation_shader_source, GL_FRAGMENT_SHADER);
@@ -88,16 +91,15 @@ Shader::Shader(const char* vs_path, const char* gs_path, const char* fs_path) {
 
     // Check if linking the shader program was succesful
     int success;
-    int logLength = 512;
-    char* infoLog = new char[logLength];
+    int log_length = 512;
+    char* info_log = new char[log_length];
     glGetProgramiv(this->shader_id, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(this->shader_id, 512, NULL, infoLog);
-        std::cout << "ERROR: Linking shader program failed: \n" << infoLog << std::endl;
+        glGetProgramInfoLog(this->shader_id, 512, NULL, info_log);
+        std::cout << "ERROR: Linking shader program failed: \n" << info_log << std::endl;
     }
 
-    // Delete the shader objects, because we don't need them anymore (already
-    // linked)
+    // Delete the shader objects, because we don't need them anymore (already linked)
     glDeleteShader(vertex_shader);
     glDeleteShader(geometry_shader);
     glDeleteShader(fragment_shader);

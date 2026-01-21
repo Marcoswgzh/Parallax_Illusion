@@ -9,6 +9,7 @@ Recorder* Recorder::get_instance() {
     if (instance == nullptr) {
         instance = new Recorder();
     }
+
     return instance;
 }
 

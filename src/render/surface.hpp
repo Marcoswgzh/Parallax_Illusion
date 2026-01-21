@@ -23,7 +23,7 @@ class Surface {
         // Setter
         void set_loaded(bool status);
 
-        // Toggler
+        // Toggle
         void toggle_display();
 
         unsigned int VBO, EBO, VAO; // TODO: Create getter function for this?

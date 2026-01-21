@@ -13,10 +13,10 @@ Mesh::Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles
 
 vector<float> Mesh::get_positioned_vertices(int offset) {
     int stride = (3 + offset);
-
     vector<float> positioned_vertices;
     positioned_vertices.reserve(3 * stride * this->get_n_triangles());
 
+    // Add the position of each mesh to their local coordinates
     for (int i = 0; i < this->vertices.size() / stride; i++) {
         glm::vec4 positioned = glm::vec4((*this->get_vertices())[i * stride] + this->get_position().x,
                                          (*this->get_vertices())[i * stride + 1] + this->get_position().y,

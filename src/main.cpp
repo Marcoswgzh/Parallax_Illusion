@@ -68,6 +68,7 @@ int main() {
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
+        // Update the delta time
         DeltaTime::get_instance()->update();
 
         // First handle input
