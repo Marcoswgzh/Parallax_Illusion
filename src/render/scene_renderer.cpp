@@ -41,7 +41,7 @@ void SceneRenderer::update_mesh(Mesh* mesh, int offset) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (3 + offset) * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Unbind VBO and VAO
+    // Unbind VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     mesh->set_loaded(true);
@@ -53,7 +53,6 @@ void SceneRenderer::update_colored_mesh(Mesh* mesh) {
     this->color_shader.set_mat4("projection", Projector::get_instance()->get_view_projection());
     this->color_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->color_shader.set_int("light_type", this->light_type);
-
     this->color_shader.set_vec3("light_position", this->light_position);
     this->color_shader.set_vec3("light_color", this->light_color);
 
@@ -61,7 +60,7 @@ void SceneRenderer::update_colored_mesh(Mesh* mesh) {
         this->update_mesh(mesh, 3);
     }
     
-    glBindVertexArray(mesh->VAO);
+    glBindVertexArray(mesh->VAO); // TODO: Might be able to remove this line
 }
 
 void SceneRenderer::update_textured_mesh(Mesh* mesh) {
@@ -70,7 +69,6 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
     this->texture_shader.set_mat4("projection", Projector::get_instance()->get_view_projection());
     this->texture_shader.set_vec3("camera_position", this->camera.get_camera_position());
     this->texture_shader.set_int("light_type", this->light_type);
-
     this->color_shader.set_vec3("light_position", this->light_position);
     this->color_shader.set_vec3("light_color", this->light_color);
 
@@ -81,7 +79,7 @@ void SceneRenderer::update_textured_mesh(Mesh* mesh) {
     glBindVertexArray(mesh->VAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mesh->get_texture().value().get_textureID());
-    glBindVertexArray(0);
+    glBindVertexArray(0); // TODO: Might be able to remove this line
 }
 
 void SceneRenderer::update() {

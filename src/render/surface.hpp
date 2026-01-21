@@ -17,6 +17,10 @@ class Surface {
         int get_z_level();
         void toggle_display();
         bool should_display();
+        bool is_loaded();
+        void set_loaded(bool status);
+
+        unsigned int VBO, EBO, VAO;
 
         std::optional<Texture> get_texture();
 
@@ -26,6 +30,7 @@ class Surface {
         glm::vec2 position;
         int z_level;
         bool display = true;
+        bool loaded = false;
 
         std::optional<Texture> texture;
 };
