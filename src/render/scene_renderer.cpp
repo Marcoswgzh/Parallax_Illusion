@@ -135,6 +135,7 @@ void SceneRenderer::remove_current_scene() {
     this->n_triangles = 0;
     this->light_type = LightType::Phong;
 
+    // TODO: Look at this
     for (Mesh mesh : this->meshes) {
         // glDeleteBuffers(1, &mesh.VBO);
         // glDeleteBuffers(1, &mesh.EBO);
