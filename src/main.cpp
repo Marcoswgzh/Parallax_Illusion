@@ -1,21 +1,11 @@
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <optional>
-#include <vector>
-
-#include "delta_time.hpp"
-#include "detection/recording.hpp"
 #include "gl.h"
+#include "render/scene_renderer.hpp"
+#include "menu/menu.hpp"
+#include "detection/recording.hpp"
+#include "window_manager.hpp"
 #include "mouse.hpp"
 #include "render/menu_renderer.hpp"
-#include "render/scene_renderer.hpp"
-#include "shaders/shaders.hpp"
-#include "shapes/apple_cube.hpp"
-#include "shapes/cube.hpp"
-#include "window_manager.hpp"
-#include "shapes/model.hpp"
-#include "menu/menu.hpp"
+#include "delta_time.hpp"
 
 void process_input() {
     GLFWwindow* window = WindowManager::get_instance()->get_window();

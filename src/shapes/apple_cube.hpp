@@ -4,7 +4,7 @@
 #include "../gl.h"
 #include "../render/mesh.hpp"
 #include "shape3D.hpp"
-#include "../texture/Texture.hpp"
+#include "../texture/texture.hpp"
 
 /**
  * Cube shape with apple texture.

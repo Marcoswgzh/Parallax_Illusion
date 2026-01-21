@@ -1,7 +1,7 @@
-#include "recording.hpp"
-
 #include <iostream>
 #include <opencv2/opencv.hpp>
+
+#include "recording.hpp"
 
 Recorder* Recorder::instance = nullptr;
 

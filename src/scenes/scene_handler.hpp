@@ -1,8 +1,6 @@
 #ifndef SCENE_HANDLER
 #define SCENE_HANDLER
 
-#include <optional>
-
 class SceneHandler {
     public:
         static SceneHandler* get_instance();

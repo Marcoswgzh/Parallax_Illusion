@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "mouse.hpp"
 #include "window_manager.hpp"
 #include "menu/menu.hpp"

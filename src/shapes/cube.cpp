@@ -1,8 +1,8 @@
-#include "cube.hpp"
+#include <optional>
 
+#include "cube.hpp"
 #include "../render/mesh.hpp"
 #include "../render/scene_renderer.hpp"
-#include <optional>
 
 Cube::Cube(glm::vec3 dimensions, glm::vec3 position, glm::vec3 color) {
     vector<float> vertices = {

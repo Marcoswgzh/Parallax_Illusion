@@ -1,8 +1,8 @@
-#include "model.hpp"
-
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <optional>
+
+#include "model.hpp"
 #include "../render/scene_renderer.hpp"
 
 Model::Model(std::string path, glm::vec3 position) {

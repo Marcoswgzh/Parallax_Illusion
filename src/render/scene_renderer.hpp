@@ -2,12 +2,12 @@
 #define SCENE_RENDERER
 
 #include <vector>
+using namespace std;
 
 #include "../camera/camera.hpp"
 #include "../gl.h"
 #include "../shaders/shaders.hpp"
 #include "mesh.hpp"
-using namespace std;
 
 // 0: Ambient
 // 1: Diffusion

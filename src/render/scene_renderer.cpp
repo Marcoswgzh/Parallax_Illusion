@@ -1,11 +1,7 @@
 #include "scene_renderer.hpp"
-
-#include <iostream>
-
 #include "../camera/camera.hpp"
 #include "../camera/projection.hpp"
 #include "../gl.h"
-using namespace std;
 
 SceneRenderer* SceneRenderer::instance = nullptr;
 

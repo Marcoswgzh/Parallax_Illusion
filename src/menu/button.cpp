@@ -1,4 +1,5 @@
 #include "button.hpp"
+#include "../texture/texture.hpp"
 
 Button::Button(Frame frame, glm::vec2 position, glm::vec2 size, glm::vec3 color) : Frame(this->get_relative_position(frame, position), size, color, frame.get_z_level() + 1) {}
 Button::Button(Frame frame, glm::vec2 position, glm::vec2 size, Texture texture) : Frame(this->get_relative_position(frame, position), size, texture, frame.get_z_level() + 1) {}

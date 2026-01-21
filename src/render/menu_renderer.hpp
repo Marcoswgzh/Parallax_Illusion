@@ -6,7 +6,6 @@
 #include "../gl.h"
 #include "../shaders/shaders.hpp"
 #include "surface.hpp"
-using namespace std;
 
 class MenuRenderer {
     public:

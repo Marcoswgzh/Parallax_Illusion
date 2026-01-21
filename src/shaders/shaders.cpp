@@ -1,14 +1,13 @@
-#include "shaders.hpp"
-
 #include <cstddef>
 #include <fstream>
 #include <glm/ext/matrix_float3x3.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
+using namespace std;
 
 #include "../gl.h"
-using namespace std;
+#include "shaders.hpp"
 
 string Shader::read_shader(char const* path) {
     std::ifstream file(path);

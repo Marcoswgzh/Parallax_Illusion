@@ -5,8 +5,6 @@
 #include <vector>
 
 #include "../gl.h"
-#include "../render/mesh.hpp"
-using namespace std;
 
 class Projector {
     public:

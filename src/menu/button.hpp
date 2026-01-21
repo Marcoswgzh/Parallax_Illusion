@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "frame.hpp"
+#include "../texture/texture.hpp"
 
 class Button : public Frame {
     public:

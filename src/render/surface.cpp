@@ -1,5 +1,4 @@
 #include <glm/glm.hpp>
-#include <iostream>
 
 #include "surface.hpp"
 

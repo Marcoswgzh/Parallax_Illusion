@@ -1,9 +1,9 @@
 #ifndef MENU
 #define MENU
 
-#include "container.hpp"
-
 #include <optional>
+
+#include "container.hpp"
 
 class Menu {
     public:

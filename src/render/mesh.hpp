@@ -3,11 +3,10 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <optional>
 using namespace std;
 
-#include <optional>
-
-#include "../texture/Texture.hpp"
+#include "../texture/texture.hpp"
 
 class Mesh {
     public:

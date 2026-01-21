@@ -1,9 +1,5 @@
-#include "menu_renderer.hpp"
-
-#include <iostream>
-
 #include "../gl.h"
-using namespace std;
+#include "menu_renderer.hpp"
 
 MenuRenderer* MenuRenderer::instance = nullptr;
 

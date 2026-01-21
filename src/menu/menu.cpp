@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "menu.hpp"
-#include "../mouse.hpp"
 #include "../window_manager.hpp"
 #include "../render/scene_renderer.hpp"
 #include "../scenes/scene_handler.hpp"
@@ -19,8 +16,6 @@ Menu* Menu::get_instance() {
 Menu::Menu() {}
 
 void Menu::handle_click_events(glm::vec2 position) {
-    Mouse* mouse = Mouse::get_instance();
-
     if (this->scene_1_button.contains(position) && this->scene_1_button.should_display()) {
         SceneRenderer::get_instance()->remove_current_scene();
         SceneHandler::get_instance()->show_scene_1();

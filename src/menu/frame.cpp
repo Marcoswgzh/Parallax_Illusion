@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "frame.hpp"
 #include "../render/menu_renderer.hpp"
 

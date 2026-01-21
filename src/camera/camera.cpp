@@ -1,16 +1,13 @@
-#include "camera.hpp"
-
 #include <glm/ext/matrix_transform.hpp>
-#include <iostream>
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include "camera.hpp"
 #include "../delta_time.hpp"
 #include "../mouse.hpp"
 #include "../window_manager.hpp"
 #include "projection.hpp"
 #include "../detection/recording.hpp"
-
 
 Camera::Camera() {
     this->reset();

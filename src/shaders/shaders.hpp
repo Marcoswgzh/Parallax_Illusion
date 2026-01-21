@@ -3,9 +3,9 @@
 
 #include <glm/glm.hpp>
 #include <string>
+using namespace std;
 
 #include "../gl.h"
-using namespace std;
 
 class Shader {
     public:

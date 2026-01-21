@@ -1,12 +1,9 @@
-#include "projection.hpp"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 #include <vector>
 
 #include "../window_manager.hpp"
-using namespace std;
+#include "projection.hpp"
 
 Projector* Projector::instance = nullptr;
 
@@ -14,7 +11,7 @@ Projector* Projector::get_instance() {
     if (instance == nullptr) {
         instance = new Projector();
     }
-    
+
     return instance;
 }
 

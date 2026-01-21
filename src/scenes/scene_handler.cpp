@@ -1,6 +1,4 @@
 #include "scene_handler.hpp"
-#include "../shapes/cube.hpp"
-#include "../shapes/apple_cube.hpp"
 #include "../shapes/model.hpp"
 #include "../render/scene_renderer.hpp"
 

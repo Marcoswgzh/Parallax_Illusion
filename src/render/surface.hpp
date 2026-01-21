@@ -3,8 +3,9 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "../texture/Texture.hpp"
 using namespace std;
+
+#include "../texture/texture.hpp"
 
 class Surface {
     public:
