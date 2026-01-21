@@ -151,16 +151,17 @@ void SceneRenderer::draw() {
  * Removes the current scene and resets the camera.
  */
 void SceneRenderer::remove_current_scene() {
-    this->meshes.clear();
-    this->n_triangles = 0;
-    this->light_type = LightType::Phong;
-
-    // TODO: Look at this
+    // Remove buffer data
     for (Mesh mesh : this->meshes) {
         glDeleteBuffers(1, mesh.get_vbo());
         glDeleteBuffers(1, mesh.get_ebo());
         glDeleteVertexArrays(1, mesh.get_vao());
     }
+
+    // Clear all the data
+    this->meshes.clear();
+    this->n_triangles = 0;
+    this->light_type = LightType::Phong;
 
     // Reset the camera as well
     this->camera.reset();
