@@ -1,13 +1,13 @@
-#include <iostream>
-
 #include "menu.hpp"
-#include "../mouse.hpp"
 #include "../window_manager.hpp"
 #include "../render/scene_renderer.hpp"
 #include "../scenes/scene_handler.hpp"
 
 Menu* Menu::instance = nullptr;
 
+/**
+ * Gets the single menu instance.
+ */
 Menu* Menu::get_instance() {
     if (instance == nullptr) {
         instance = new Menu();
@@ -16,11 +16,15 @@ Menu* Menu::get_instance() {
     return instance;
 }
 
+/**
+ * Menu constructor. The menu holds all the menu frames/content.
+ */
 Menu::Menu() {}
 
+/**
+ * Handles click events from the menu (it checks a click against all buttons in the menu).
+ */
 void Menu::handle_click_events(glm::vec2 position) {
-    Mouse* mouse = Mouse::get_instance();
-
     if (this->scene_1_button.contains(position) && this->scene_1_button.should_display()) {
         SceneRenderer::get_instance()->remove_current_scene();
         SceneHandler::get_instance()->show_scene_1();
@@ -40,6 +44,10 @@ void Menu::handle_click_events(glm::vec2 position) {
     }
 }
 
+/**
+ * Toggles the menu. If the menu is toggled every surface in the menu should be hidden. 
+ * The cursor should also be hidden when turning the menu off (and loading a scene).
+ */
 void Menu::toggle() {
     this->display = !this->display;
     this->container.toggle_display();
@@ -58,6 +66,9 @@ void Menu::toggle() {
     SceneRenderer::get_instance()->toggle_movement();
 }
 
+/**
+ * Gets if the menu should display.
+ */
 bool Menu::should_display() {
     return this->display;
 }

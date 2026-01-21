@@ -3,36 +3,43 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <optional>
 using namespace std;
 
-#include <optional>
-
-#include "../texture/Texture.hpp"
+#include "../texture/texture.hpp"
 
 class Mesh {
     public:
-        Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles, glm::vec3 position,
-             std::optional<Texture> texture);
+        Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles, glm::vec3 position, std::optional<Texture> texture);
 
+        // Getters
+        vector<float> get_positioned_vertices(int offset);
         vector<float>* get_vertices();
         vector<unsigned int>* get_indices();
         int get_n_triangles();
         glm::vec3 get_position();
-        vector<float> get_positioned_vertices(int offset);
         std::optional<Texture> get_texture();
         bool is_loaded();
+        unsigned int* get_vbo();
+        unsigned int* get_ebo();
+        unsigned int* get_vao();
+
+        // Setter
         void set_loaded(bool status);
 
-        unsigned int VBO, EBO, VAO;
-
     private:
+        // Mesh properties
         vector<float> vertices;
         vector<unsigned int> indices;
         int n_triangles;
         glm::vec3 position;
+        std::optional<Texture> texture;
+
+        // Mesh state
         bool loaded = false;
 
-        std::optional<Texture> texture;
+        // Mesh buffers
+        unsigned int VBO, EBO, VAO;
 };
 
 #endif

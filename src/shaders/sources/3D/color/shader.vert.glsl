@@ -8,6 +8,7 @@ out vec3 v_frag_position;
 uniform mat4 projection;
 
 void main() {
+    // Project the vertex with the given projection matrix
     gl_Position = projection * vec4(position, 1.0);
     v_frag_position = position;
     v_color = color;

@@ -1,22 +1,34 @@
-#include "camera.hpp"
-
 #include <glm/ext/matrix_transform.hpp>
-#include <iostream>
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include "camera.hpp"
 #include "../delta_time.hpp"
 #include "../mouse.hpp"
 #include "../window_manager.hpp"
 #include "projection.hpp"
 #include "../detection/recording.hpp"
 
-
+/**
+ * Camera class which handles virtual camera movement in a scene. Can be moved by keys, mouse and tracking-based.
+ */
 Camera::Camera() {
     this->reset();
 }
 
-/// Updates the camera according to all active movement types (key, mouse and tracking-based).
+/**
+ * Resets the camera to its initial position.
+ */
+void Camera::reset() {
+    this->yaw = 90.0f;
+    this->pitch = 0.0f;
+    this->camera_position = glm::vec3(0.f, 0.5f, -3.f);
+    this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
+}
+
+/**
+ * Updates the camera according to all active movement types (key, mouse and tracking-based).
+ */
 void Camera::update() {
     if (!this->movement) {
         return;
@@ -37,6 +49,9 @@ void Camera::update() {
     this->set_view();
 }
 
+/**
+ * Processes keys meant for camera movement.
+ */
 void Camera::process_input() {
     GLFWwindow* window = WindowManager::get_instance()->get_window();
 
@@ -49,6 +64,9 @@ void Camera::process_input() {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) this->move_down();
 }
 
+/**
+ * Updates view based on mouse movement.
+ */
 void Camera::update_mouse_view() {
     Mouse* mouse = Mouse::get_instance();
 
@@ -59,10 +77,12 @@ void Camera::update_mouse_view() {
     if (this->pitch > 89.0f) this->pitch = 89.0f;
     if (this->pitch < -89.0f) this->pitch = -89.0f;
 
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-    direction.y = sin(glm::radians(this->pitch));
-    direction.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    // Calculate a direction vector based on yaw and pitch
+    glm::vec3 direction(
+        cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch)),
+        sin(glm::radians(this->pitch)),
+        sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch))
+    );
     this->camera_front = glm::normalize(direction);
 
     // Reset the mouse deltas
@@ -70,6 +90,9 @@ void Camera::update_mouse_view() {
     mouse->y_delta = 0;
 }
 
+/**
+ * Updates the camera view based on tracked movement.
+ */
 void Camera::update_recorder_view() {
     Recorder* recorder = Recorder::get_instance();
     recorder->update();
@@ -80,6 +103,9 @@ void Camera::update_recorder_view() {
     recorder->reset_deltas();
 }
 
+/**
+ * Sets the newly calculated view.
+ */
 void Camera::set_view() {
     // Compute and set the view matrix
     glm::mat4 view = glm::lookAt(this->camera_position, this->camera_position + this->camera_front, this->camera_up);
@@ -87,55 +113,79 @@ void Camera::set_view() {
     projector->set_view_projection(view);
 }
 
-// Key-based movement
+/**
+ * Move forward.
+ */
 void Camera::move_forward() {
     this->camera_position += this->camera_front * this->get_speed();
 }
 
+/**
+ * Move backward.
+ */
 void Camera::move_backward() {
     this->camera_position -= this->camera_front * this->get_speed();
 }
 
+/**
+ * Move up.
+ */
 void Camera::move_up() { 
     this->camera_position += this->get_speed() * this->camera_up;
 }
 
+/**
+ * Move down.
+ */
 void Camera::move_down() {
     this->camera_position -= this->get_speed() * this->camera_up;
 }
 
+/**
+ * Move left.
+ */
 void Camera::move_left() {
     this->camera_position -= glm::normalize(glm::cross(this->camera_front, this->camera_up)) * this->get_speed();
 }
 
+/**
+ * Move right.
+ */
 void Camera::move_right() {
     this->camera_position += glm::normalize(glm::cross(this->camera_front, this->camera_up)) * this->get_speed();
 }
 
-/// Gets the cameras key-based speed (taking delta time into account, should also be used internally).
+/**
+ * Gets the cameras key-based speed (taking delta time into account, should also be used internally).
+ */
 float Camera::get_speed() {
     return this->speed * DeltaTime::get_instance()->get_delta_time();
 }
 
-/// Gets the cameras mouse-based sensitivity (taking delta time into account, should also be used internally).
+/**
+ * Gets the cameras mouse-based sensitivity (taking delta time into account, should also be used internally).
+ */
 float Camera::get_sensitivity() {
     return this->sensitivity * DeltaTime::get_instance()->get_delta_time();
 }
 
-/// Gets the camera position
+/**
+ * Gets the camera position.
+ */
 glm::vec3 Camera::get_camera_position() {
     return this->camera_position;
 }
 
+/**
+ * Toggles camera key-based movement.
+ */
 void Camera::toggle_key_movement() {
     this->key_movement = !this->key_movement;
 }
 
+/**
+ * Toggles all camera movement.
+ */
 void Camera::toggle_movement() {
     this->movement = !this->movement;
-}
-
-void Camera::reset() {
-    this->camera_position = glm::vec3(0.f, 0.5f, -3.f);
-    this->camera_front = glm::vec3(0.f, 0.f, 1.0f);
 }

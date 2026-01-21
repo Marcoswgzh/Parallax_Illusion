@@ -1,22 +1,15 @@
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <optional>
-#include <vector>
-
-#include "delta_time.hpp"
-#include "detection/recording.hpp"
 #include "gl.h"
+#include "render/scene_renderer.hpp"
+#include "menu/menu.hpp"
+#include "detection/recording.hpp"
+#include "window_manager.hpp"
 #include "mouse.hpp"
 #include "render/menu_renderer.hpp"
-#include "render/scene_renderer.hpp"
-#include "shaders/shaders.hpp"
-#include "shapes/apple_cube.hpp"
-#include "shapes/cube.hpp"
-#include "window_manager.hpp"
-#include "shapes/model.hpp"
-#include "menu/menu.hpp"
+#include "delta_time.hpp"
 
+/**
+ * Processes key input which doesn't belong to any particular object.
+ */
 void process_input() {
     GLFWwindow* window = WindowManager::get_instance()->get_window();
 
@@ -24,13 +17,10 @@ void process_input() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
 
+/**
+ * Handles key callbacks, used for toggles.
+ */
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
-        Recorder* recorder = Recorder::get_instance();
-        recorder->toggle();
-        std::cout << "Face detection " << (recorder->use_detection() ? "ENABLED" : "DISABLED") << std::endl;
-    }
-
     // Toggle menu (and also if mouse is captured in center for movement)
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         Menu::get_instance()->toggle();
@@ -55,6 +45,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+/**
+ * The main function, which contains the main program loop and loads the necessary 
+ * objects before the render loop starts.
+ */
 int main() {
     // Initialize recorder
     Recorder* recorder = Recorder::get_instance();
@@ -74,6 +68,7 @@ int main() {
 
     // Event loop
     while (!glfwWindowShouldClose(window_manager->get_window())) {
+        // Update the delta time
         DeltaTime::get_instance()->update();
 
         // First handle input

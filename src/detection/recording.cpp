@@ -1,17 +1,24 @@
-#include "recording.hpp"
-
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+#include "recording.hpp"
+
 Recorder* Recorder::instance = nullptr;
 
+/**
+ * Gets the single recorder instance.
+ */
 Recorder* Recorder::get_instance() {
     if (instance == nullptr) {
         instance = new Recorder();
     }
+
     return instance;
 }
 
+/**
+ * The recorder class records and tracks the face of the user.
+ */
 Recorder::Recorder() {
     // Convert OpenCV path predefined macro to string
     std::string haarcascade_dir(HAARCASCADE_DIR);
@@ -21,23 +28,24 @@ Recorder::Recorder() {
         std::cerr << "Error loading Haar cascade file." << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    // Load eye haarcascade classifier
-    if (!this->eye_cascade.load(haarcascade_dir + "/haarcascade_eye_tree_eyeglasses.xml")) {
-        std::cerr << "Error loading Haar cascade file." << std::endl;
-        exit(EXIT_FAILURE);
-    }
 }
 
+/**
+ * Start the recorder camera capture.
+ */
 void Recorder::start() {
     // Open the camera
-    cap.open(0);
-    if (!cap.isOpened()) {
+    capture.open(0);
+    if (!capture.isOpened()) {
         std::cerr << "Error: Could not open camera" << std::endl;
         exit(EXIT_FAILURE);
     }
 }
 
+/**
+ * Updates the recorder, it get the frame then the face, then the stabilization methods are 
+ * executed to get stable tracking.
+ */
 void Recorder::update() {
     // Updates must be done in the correct order
     this->update_frame();
@@ -82,7 +90,7 @@ void Recorder::update() {
     this->delta.y = fmax(fmin(this->delta.y, 0.01), -0.01);
     this->delta.z = fmax(fmin(this->delta.z, 0.01), -0.01);
 
-    // Caculate a speed vector
+    // Caculate a speed vector and reduce speed by every frame to create a smooth slow down
     this->speed += glm::vec3(delta.x, delta.y, delta.z);
     this->speed /= 2.0;
 
@@ -90,6 +98,16 @@ void Recorder::update() {
     this->previous = face_center;
 }
 
+/**
+ * This resets the deltas to zero.
+ */
+void Recorder::reset_deltas() {
+    this->delta = cv::Point3f(0.0, 0.0, 0.0);
+}
+
+/**
+ * This gets the average direction of the previous delta's. 
+ */
 cv::Point3f Recorder::get_average_direction() {
     cv::Point3f sum = cv::Point3f(0.0, 0.0, 0.0);
     for (cv::Point3f point : this->previous_deltas) {
@@ -99,9 +117,12 @@ cv::Point3f Recorder::get_average_direction() {
     return sum / this->n_previous;
 }
 
+/**
+ * Updates the current frame, it uses the previous frame if the current frame can't be found.
+ */
 void Recorder::update_frame() {
     cv::Mat temp;
-    this->cap >> temp;
+    this->capture >> temp;
 
     // Don't update frame if frame is empty
     if (!temp.empty()) {
@@ -109,10 +130,14 @@ void Recorder::update_frame() {
     }
 }
 
+/**
+ * Finds a face in the current frame. It will not set a new face if no faces are found (so the previous face will be used) 
+ * and if there are multiple faces the biggest (the closest) face will be used.
+ */
 void Recorder::update_face() {
     cv::Mat gray;
     cv::cvtColor(this->frame, gray, cv::COLOR_BGR2GRAY);
-    cv::equalizeHist(gray, gray);  // TODO: Check what this does
+    cv::equalizeHist(gray, gray);
 
     std::vector<cv::Rect> faces;
     face_cascade.detectMultiScale(gray, faces, 1.1, 3, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(60, 60));
@@ -131,31 +156,30 @@ void Recorder::update_face() {
     this->face = closest_face;
 }
 
-// TODO: delete (if not used outside of update method)
-cv::Mat Recorder::get_frame() { return this->frame; }
-
-cv::Rect Recorder::get_face() { return this->face; }
-
-bool Recorder::use_detection() { return this->detection; }
-
-void Recorder::toggle() { this->detection = !this->detection; }
-
+/**
+ * Gets the x-component of the delta.
+ */
 float Recorder::get_x_delta() {
     return this->delta.x;
 }
 
+/**
+ * Gets the y-component of the delta.
+ */
 float Recorder::get_y_delta() {
     return this->delta.y;
 }
 
- float Recorder::get_z_delta() {
+/**
+ * Gets the z-component of the delta.
+ */
+float Recorder::get_z_delta() {
     return this->delta.z;
- }
-
-void Recorder::reset_deltas() {
-    this->delta = cv::Point3f(0.0, 0.0, 0.0);
 }
 
+/**
+ * Gets the speed calculated based on the delta's.
+ */
 glm::vec3 Recorder::get_speed() {
     return this->speed;
 }

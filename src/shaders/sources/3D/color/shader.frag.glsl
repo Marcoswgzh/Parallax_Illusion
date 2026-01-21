@@ -11,11 +11,14 @@ uniform vec3 light_position;
 uniform vec3 light_color;
 
 void main() {
+    // Constants
     float ambient_strength = 0.5;
     float specular_strength = 0.6;
+
+    // Calculate ambient lighting
     vec3 ambient = ambient_strength * light_color;
 
-    // Get light direction
+    // Make sure the normal vector faces the correct way
     vec3 normal_direction;
     if (!gl_FrontFacing) {
         normal_direction = -normal;
@@ -36,6 +39,7 @@ void main() {
     float specular_multiplier = pow(max(dot(view_direction, reflect_direction), 0.0), 32);
     vec3 specular = specular_strength * specular_multiplier * light_color;  
 
+    // Calculate the resulting light based on the type given by the light_type uniform
     vec3 result;
     if (light_type == 0) {
         result = (ambient) * color;

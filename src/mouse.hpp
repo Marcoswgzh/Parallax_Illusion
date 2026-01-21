@@ -9,15 +9,15 @@ class Mouse {
     public:
         static Mouse* get_instance();
 
-        // Menu should not be cloneable
+        // Mouse should not be cloneable
         Mouse(Mouse& other) = delete;
 
-        // Menu should not be assignable
+        // Mouse should not be assignable
         void operator=(const Mouse&) = delete;
 
+        // Variables to track mouse delta's
         float previous_x;
         float previous_y;
-
         float x_delta;
         float y_delta;
 

@@ -1,9 +1,12 @@
-#include "apple_cube.hpp"
-
-#include "../render/mesh.hpp"
-#include "../render/scene_renderer.hpp"
 #include <optional>
 
+#include "apple_cube.hpp"
+#include "../render/mesh.hpp"
+#include "../render/scene_renderer.hpp"
+
+/**
+ * Constructs an cube with an apple texture.
+ */
 AppleCube::AppleCube(glm::vec3 dimensions, glm::vec3 position) {
     // Last two elements of each row are texture coordinates, as opposed to last three being the color information in cube.cpp.
     vector<float> vertices = {

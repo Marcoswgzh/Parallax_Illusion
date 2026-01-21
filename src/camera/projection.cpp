@@ -1,24 +1,25 @@
-#include "projection.hpp"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 #include <vector>
 
 #include "../window_manager.hpp"
-using namespace std;
+#include "projection.hpp"
 
 Projector* Projector::instance = nullptr;
 
+/**
+ * Gets the single projector instance.
+ */
 Projector* Projector::get_instance() {
     if (instance == nullptr) {
         instance = new Projector();
     }
+
     return instance;
 }
 
 /**
- * Constructs the projector.
+ * Constructs the projector. The projector wraps around the projection calculations.
  */
 Projector::Projector() {}
 

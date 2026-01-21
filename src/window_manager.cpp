@@ -1,12 +1,15 @@
-#include "window_manager.hpp"
-
 #include <iostream>
 using namespace std;
+
+#include "window_manager.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); }
 
 WindowManager* WindowManager::instance = nullptr;
 
+/**
+ * Gets the single window manager instance.
+ */
 WindowManager* WindowManager::get_instance() {
     if (instance == nullptr) {
         instance = new WindowManager();
@@ -14,14 +17,19 @@ WindowManager* WindowManager::get_instance() {
     return instance;
 }
 
+/**
+ * Window manager constructor. Initialized a window with GLFW.
+ */
 WindowManager::WindowManager() {
+    // Initialize window with glfw
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+    
+    #ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 
     // Initial width and height
     int width = 800;
@@ -32,6 +40,7 @@ WindowManager::WindowManager() {
         glfwTerminate();
         exit(1);
     }
+
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -50,4 +59,7 @@ WindowManager::WindowManager() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
 
+/**
+ * Gets the window.
+ */
 GLFWwindow* WindowManager::get_window() { return this->window; }

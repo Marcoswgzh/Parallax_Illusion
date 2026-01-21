@@ -2,6 +2,9 @@
 
 #include <glm/glm.hpp>
 
+/**
+ * Mesh constructor. A mesh holds all information about a 3D object. 
+ */
 Mesh::Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles, glm::vec3 position,
            std::optional<Texture> texture) {
     this->vertices = vertices;
@@ -11,21 +14,15 @@ Mesh::Mesh(vector<float> vertices, vector<unsigned int> indices, int n_triangles
     this->texture = texture;
 }
 
-vector<float>* Mesh::get_vertices() { return &this->vertices; }
-
-vector<unsigned int>* Mesh::get_indices() { return &this->indices; }
-
-int Mesh::get_n_triangles() { return this->n_triangles; }
-
-glm::vec3 Mesh::get_position() { return this->position; }
-
-// TODO: Make this only execute when position or form is changed
+/**
+ * Adds the world position to the local coordinates of the vertices (so the vertices can be projected).
+ */
 vector<float> Mesh::get_positioned_vertices(int offset) {
     int stride = (3 + offset);
-
     vector<float> positioned_vertices;
     positioned_vertices.reserve(3 * stride * this->get_n_triangles());
 
+    // Add the position of each mesh to their local coordinates
     for (int i = 0; i < this->vertices.size() / stride; i++) {
         glm::vec4 positioned = glm::vec4((*this->get_vertices())[i * stride] + this->get_position().x,
                                          (*this->get_vertices())[i * stride + 1] + this->get_position().y,
@@ -45,12 +42,62 @@ vector<float> Mesh::get_positioned_vertices(int offset) {
     return positioned_vertices;
 }
 
+/**
+ * Gets the vertices.
+ */
+vector<float>* Mesh::get_vertices() { return &this->vertices; }
+
+/**
+ * Gets the indices.
+ */
+vector<unsigned int>* Mesh::get_indices() { return &this->indices; }
+
+/**
+ * Gets the number of traingles in the mesh.
+ */
+int Mesh::get_n_triangles() { return this->n_triangles; }
+
+/**
+ * Gets the postion of the mesh.
+ */
+glm::vec3 Mesh::get_position() { return this->position; }
+
+/**
+ * Optionally gets the texture of the mesh.
+ */
 std::optional<Texture> Mesh::get_texture() { return this->texture; }
 
+/**
+ * Gets if the mesh is already loaded into a buffer.
+ */
 bool Mesh::is_loaded() {
     return this->loaded;
 }
 
+/**
+ * Gets the VBO.
+ */
+unsigned int* Mesh::get_vbo() {
+    return &this->VBO;
+}
+
+/**
+ * Gets the EBO.
+ */
+unsigned int* Mesh::get_ebo() {
+    return &this->EBO;
+}
+
+/**
+ * Gets the VAO.
+ */
+unsigned int* Mesh::get_vao() {
+    return &this->VAO;
+}
+
+/**
+ * Sets the meshes loaded status.
+ */
 void Mesh::set_loaded(bool status) {
     this->loaded = status;
 }
